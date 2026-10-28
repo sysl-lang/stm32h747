@@ -1,4 +1,8 @@
 // LCD-TFT Controller
+//
+// Corrected by patches/stm32h747.patch.hocon
+// (sha256 0c8c04f1a7f1838bd293ad6c59ec47877ac4721583bc053f25f8bfb584a0f4e8):
+// - RM0399 LTDC_SSCR: HSW[11:0] is bits 27:16; stm32h747xx.h LTDC_SSCR_HSW_Msk = 0x0FFF0000
 
 module sh.sysl.stm32h747.ltdc
 
@@ -7,7 +11,7 @@ const BASE: u32 = 0x50001000
 
 // Synchronization Size Configuration Register
 const SSCR_OFFSET: u32 = 0x00000008
-const SSCR_HSW_MASK: u32 = 0x03ff0000
+const SSCR_HSW_MASK: u32 = 0x0fff0000
 const SSCR_HSW_SHIFT: u32 = 16
 const SSCR_VSH_MASK: u32 = 0x000007ff
 const SSCR_VSH_SHIFT: u32 = 0

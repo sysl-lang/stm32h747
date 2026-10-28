@@ -1,0 +1,87 @@
+// Corrections to ST's STM32H747_CM7.svd 1.9 (Keil.STM32H7xx_DFP 4.1.3), applied by sysl-lang/svd
+// before the register map is generated. Each entry's `why` names what it was checked against: ST's
+// reference manual RM0399, and ST's own CMSIS header stm32h747xx.h from the same pack, which agree
+// with each other and disagree with the SVD in every case below.
+//
+//     svd constants STM32H747_CM7.svd --patch patches/stm32h747.patch.hocon -o . -m sh.sysl.stm32h747
+
+device = STM32H747_CM7
+
+patches = [
+
+  // ## RCC: the DSI host's clock enable, reset and sleep-mode enable are missing.
+  //
+  // The SVD has LTDCEN at bit 3 and WWDG1EN at bit 6 of APB3ENR and nothing between. The CPU1 view of
+  // each register (C1_…, at RCC + 0x130 onwards) takes the same bits.
+
+  {
+    op = add-field, peripheral = RCC, register = APB3ENR
+    field { name = DSIEN, bitOffset = 4, bitWidth = 1, access = read-write, description = "DSI peripheral clocks enable" }
+    why = "RM0399 RCC_APB3ENR: bit 4 DSIEN; stm32h747xx.h RCC_APB3ENR_DSIEN_Msk = 0x00000010"
+  }
+  {
+    op = add-field, peripheral = RCC, register = C1_APB3ENR
+    field { name = DSIEN, bitOffset = 4, bitWidth = 1, access = read-write, description = "DSI peripheral clocks enable" }
+    why = "RM0399 RCC_C1_APB3ENR: bit 4 DSIEN, as RCC_APB3ENR; stm32h747xx.h uses RCC_APB3ENR_DSIEN for both"
+  }
+  {
+    op = add-field, peripheral = RCC, register = APB3RSTR
+    field { name = DSIRST, bitOffset = 4, bitWidth = 1, access = read-write, description = "DSI block reset" }
+    why = "RM0399 RCC_APB3RSTR: bit 4 DSIRST; stm32h747xx.h RCC_APB3RSTR_DSIRST_Msk = 0x00000010"
+  }
+  {
+    op = add-field, peripheral = RCC, register = APB3LPENR
+    field { name = DSILPEN, bitOffset = 4, bitWidth = 1, access = read-write, description = "DSI peripheral clock enable during CSleep mode" }
+    why = "RM0399 RCC_APB3LPENR: bit 4 DSILPEN; stm32h747xx.h RCC_APB3LPENR_DSILPEN_Msk = 0x00000010"
+  }
+  {
+    op = add-field, peripheral = RCC, register = C1_APB3LPENR
+    field { name = DSILPEN, bitOffset = 4, bitWidth = 1, access = read-write, description = "DSI peripheral clock enable during CSleep mode" }
+    why = "RM0399 RCC_C1_APB3LPENR: bit 4 DSILPEN, as RCC_APB3LPENR; stm32h747xx.h uses RCC_APB3LPENR_DSILPEN for both"
+  }
+
+  // ## EXTI: the per-core blocks.
+  //
+  // RM0399 gives each core its own interrupt mask, event mask and pending registers: CPU1's at 0x80
+  // (EXTI_C1IMR1 …) and CPU2's at 0xC0 (EXTI_C2IMR1 …), the same layout 0x40 further on. The SVD has
+  // only the first, named CPUIMR1 …, which reads as though there were one block for both cores.
+
+  {
+    op = copy-registers, peripheral = EXTI
+    registers = [CPUIMR1, CPUEMR1, CPUPR1, CPUIMR2, CPUEMR2, CPUPR2, CPUIMR3, CPUEMR3, CPUPR3]
+    offset = "0x40"
+    prefix { from = CPU, to = C2 }
+    why = "RM0399 EXTI register map: EXTI_C2IMR1, C2EMR1, C2PR1 … C2PR3 at 0xC0–0xE8, laid out as CPU1's at 0x80–0xA8; stm32h747xx.h EXTI_TypeDef has C2IMR1 at 0xC0 … C2PR3 at 0xE8"
+  }
+  {
+    op = rename-registers, peripheral = EXTI
+    registers = [CPUIMR1, CPUEMR1, CPUPR1, CPUIMR2, CPUEMR2, CPUPR2, CPUIMR3, CPUEMR3, CPUPR3]
+    prefix { from = CPU, to = C1 }
+    why = "RM0399 names the block at 0x80 EXTI_C1IMR1 … EXTI_C1PR3 (CPU1's), beside CPU2's EXTI_C2… at 0xC0"
+  }
+
+  // ## Fields the SVD gives too few bits.
+  //
+  // SAI1, SAI2 and SAI3 derive from SAI4 in the SVD, so correcting SAI4 corrects all four.
+
+  {
+    op = modify-field, peripheral = SAI4, register = SAI_ACR1, field = MCKDIV
+    set { bitWidth = 6 }
+    why = "RM0399 SAI_ACR1: MCKDIV[5:0] is bits 25:20; stm32h747xx.h SAI_xCR1_MCKDIV_Msk = 0x03F00000"
+  }
+  {
+    op = modify-field, peripheral = SAI4, register = SAI_BCR1, field = MCKDIV
+    set { bitWidth = 6 }
+    why = "RM0399 SAI_BCR1: MCKDIV[5:0] is bits 25:20; stm32h747xx.h SAI_xCR1_MCKDIV_Msk = 0x03F00000"
+  }
+  {
+    op = modify-field, peripheral = LTDC, register = SSCR, field = HSW
+    set { bitWidth = 12 }
+    why = "RM0399 LTDC_SSCR: HSW[11:0] is bits 27:16; stm32h747xx.h LTDC_SSCR_HSW_Msk = 0x0FFF0000"
+  }
+  {
+    op = modify-field, peripheral = DMA2D, register = CR, field = MODE
+    set { bitWidth = 3 }
+    why = "RM0399 DMA2D_CR: MODE[2:0] is bits 18:16; stm32h747xx.h DMA2D_CR_MODE_Msk = 0x00070000"
+  }
+]

@@ -7,11 +7,11 @@ STM32H747I-DISCO.
 STMicroelectronics.*
 
 Base addresses, register offsets, field masks and shifts, and the names ST gives the values a field
-takes. One module per peripheral, 124 of them (53 derived from another), 40,228 constants.
+takes. One module per peripheral, 124 of them (53 derived from another), 40,647 constants.
 
 ```
 dependencies {
-  stm32h747 { git = "github.com/sysl-lang/stm32h747", version = "0.1.0" }
+  stm32h747 { git = "github.com/sysl-lang/stm32h747", version = "0.1.1" }
 }
 ```
 
@@ -26,12 +26,14 @@ while read(dsihost.BASE + dsihost.DSI_WISR_OFFSET) & dsihost.DSI_WISR_RRS_MASK =
 
 ## It is generated, and must not be edited
 
-Every `.sysl` file here but one comes from ST's own `STM32H747_CM7.svd` by way of
-[sysl-lang/svd](https://github.com/sysl-lang/svd) 0.1.1:
+Every `.sysl` file here but one comes from ST's own `STM32H747_CM7.svd`, corrected by
+`patches/stm32h747.patch.hocon`, by way of [sysl-lang/svd](https://github.com/sysl-lang/svd) 0.2.0:
 
 ```
-svd constants STM32H747_CM7.svd -o . -m sh.sysl.stm32h747
+svd constants STM32H747_CM7.svd --patch patches/stm32h747.patch.hocon -o . -m sh.sysl.stm32h747
 ```
+
+svd is a build tool, not a dependency: nothing here needs it to build or run.
 
 | | |
 |---|---|
@@ -42,8 +44,8 @@ svd constants STM32H747_CM7.svd -o . -m sh.sysl.stm32h747
 | SVD SHA-256 | `7b73dedce22eeec3ab9cd99ec8a102edb9ced5466f085e09344fd8fbb28b0ae2` |
 | licence | Apache-2.0 (the file's own `SPDX-License-Identifier`, and the pack's `LICENSE-Apache-2.0`) |
 
-A hand edit is lost the next time the chip is regenerated. A correction belongs in the generator, or
-in a newer SVD.
+A hand edit is lost the next time the chip is regenerated. A correction belongs in the patch file, the
+generator, or a newer SVD.
 
 **`sh/sysl/stm32h747/tests.sysl` is the one exception** — the only hand-written file, and the guard on
 regeneration. It checks addresses and field positions from the peripherals benchtop models — RCC,
@@ -65,22 +67,32 @@ register map, and none of it reaches this package:
 
 The generator does not emit interrupts, so a program on either core uses this package as it is.
 
-## Where ST's SVD is wrong
+## Corrections applied by `patches/stm32h747.patch.hocon`
 
 ST's SVD 1.9 disagrees with RM0399 in places, and ST's own CMSIS header `stm32h747xx.h` sides with the
-manual each time. They were found while writing the tests, and the generated files are left as the SVD says
-until ST ships a corrected one:
+manual each time. Each is corrected by an entry in the patch file, whose `why` is quoted below; every
+module a correction touched names the patch file, its SHA-256 and those reasons in its header, and
+`tests.sysl` checks each corrected value against the manual.
 
-| | the SVD says | RM0399 says |
+| | the SVD says | corrected to, because |
 |---|---|---|
-| `RCC_APB3ENR.DSIEN`, `RCC_APB3RSTR.DSIRST` | absent | bit 4 |
-| `SAI_xCR1.MCKDIV` | 4 bits, `0x00F00000` | 6 bits, `0x03F00000` |
-| `LTDC_SSCR.HSW` | 10 bits, `0x03FF0000` | 12 bits, `0x0FFF0000` |
-| `DMA2D_CR.MODE` | 2 bits, `0x00030000` | 3 bits, `0x00070000` |
-| EXTI's CPU2 block (`C2IMR1`… at `0xC0`) | absent; the CPU1 block at `0x80` is named `CPUIMR1`… | both |
+| `RCC.APB3ENR.DSIEN` | absent | bit 4 — RM0399 RCC_APB3ENR: bit 4 DSIEN; stm32h747xx.h RCC_APB3ENR_DSIEN_Msk = 0x00000010 |
+| `RCC.C1_APB3ENR.DSIEN` | absent | bit 4 — RM0399 RCC_C1_APB3ENR: bit 4 DSIEN, as RCC_APB3ENR; stm32h747xx.h uses RCC_APB3ENR_DSIEN for both |
+| `RCC.APB3RSTR.DSIRST` | absent | bit 4 — RM0399 RCC_APB3RSTR: bit 4 DSIRST; stm32h747xx.h RCC_APB3RSTR_DSIRST_Msk = 0x00000010 |
+| `RCC.APB3LPENR.DSILPEN` | absent | bit 4 — RM0399 RCC_APB3LPENR: bit 4 DSILPEN; stm32h747xx.h RCC_APB3LPENR_DSILPEN_Msk = 0x00000010 |
+| `RCC.C1_APB3LPENR.DSILPEN` | absent | bit 4 — RM0399 RCC_C1_APB3LPENR: bit 4 DSILPEN, as RCC_APB3LPENR; stm32h747xx.h uses RCC_APB3LPENR_DSILPEN for both |
+| EXTI's CPU2 block, `C2IMR1` … `C2PR3` | absent | at `0xC0`–`0xE8` — RM0399 EXTI register map: EXTI_C2IMR1, C2EMR1, C2PR1 … C2PR3 at 0xC0–0xE8, laid out as CPU1's at 0x80–0xA8; stm32h747xx.h EXTI_TypeDef has C2IMR1 at 0xC0 … C2PR3 at 0xE8 |
+| EXTI's CPU1 block at `0x80` | named `CPUIMR1` … `CPUPR3` | `C1IMR1` … `C1PR3` — RM0399 names the block at 0x80 EXTI_C1IMR1 … EXTI_C1PR3 (CPU1's), beside CPU2's EXTI_C2… at 0xC0 |
+| `SAI_ACR1.MCKDIV`, `SAI_BCR1.MCKDIV` | 4 bits, `0x00F00000` | 6 bits, `0x03F00000` — RM0399 SAI_xCR1: MCKDIV[5:0] is bits 25:20; stm32h747xx.h SAI_xCR1_MCKDIV_Msk = 0x03F00000 |
+| `LTDC_SSCR.HSW` | 10 bits, `0x03FF0000` | 12 bits, `0x0FFF0000` — RM0399 LTDC_SSCR: HSW[11:0] is bits 27:16; stm32h747xx.h LTDC_SSCR_HSW_Msk = 0x0FFF0000 |
+| `DMA2D_CR.MODE` | 2 bits, `0x00030000` | 3 bits, `0x00070000` — RM0399 DMA2D_CR: MODE[2:0] is bits 18:16; stm32h747xx.h DMA2D_CR_MODE_Msk = 0x00070000 |
 
-The three mask widths are ignored tests in `tests.sysl`, written with the manual's values. A program
-that needs one of these writes the manual's value itself, and should say why.
+The SAI correction is made on `SAI4`, from which the SVD derives `SAI1`–`SAI3`, so it reaches all four.
+
+**One disagreement is deliberately not patched.** `HSEM`'s `COREID` is four bits, 11:8, in the SVD,
+and eight, `0x0000FF00`, in `stm32h747xx.h`. RM0399 sides with the SVD: `HSEM_Rx`, `HSEM_RLRx` and
+`HSEM_CR` each give `COREID[3:0]` at bits 11:8, with bit 12 reserved. The header is the one that is
+wider than the manual, so the generated value stays, and `tests.sysl` checks it.
 
 ## What it does not do
 
@@ -104,4 +116,4 @@ only kind that wants it.
 ISC for the sysl in this repository (`LICENSE`). The register names, addresses and descriptions are
 STMicroelectronics', from `STM32H747_CM7.svd`, Copyright (c) 2024 STMicroelectronics, under the Apache
 License 2.0 (`LICENSE-Apache-2.0`). The generated files are that SVD converted to sysl declarations by
-`sysl-lang/svd`; nothing else in it was changed.
+`sysl-lang/svd`, with the corrections listed above; nothing else in it was changed.

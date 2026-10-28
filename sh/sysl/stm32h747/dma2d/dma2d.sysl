@@ -1,4 +1,8 @@
 // DMA2D
+//
+// Corrected by patches/stm32h747.patch.hocon
+// (sha256 0c8c04f1a7f1838bd293ad6c59ec47877ac4721583bc053f25f8bfb584a0f4e8):
+// - RM0399 DMA2D_CR: MODE[2:0] is bits 18:16; stm32h747xx.h DMA2D_CR_MODE_Msk = 0x00070000
 
 module sh.sysl.stm32h747.dma2d
 
@@ -25,7 +29,7 @@ const CR_CTCIE_MASK: u32 = 0x00001000
 const CR_CTCIE_SHIFT: u32 = 12
 const CR_CEIE_MASK: u32 = 0x00002000
 const CR_CEIE_SHIFT: u32 = 13
-const CR_MODE_MASK: u32 = 0x00030000
+const CR_MODE_MASK: u32 = 0x00070000
 const CR_MODE_SHIFT: u32 = 16
 
 // DMA2D Interrupt Status Register

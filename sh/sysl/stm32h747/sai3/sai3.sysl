@@ -1,3 +1,8 @@
+// Corrected by patches/stm32h747.patch.hocon
+// (sha256 0c8c04f1a7f1838bd293ad6c59ec47877ac4721583bc053f25f8bfb584a0f4e8):
+// - RM0399 SAI_ACR1: MCKDIV[5:0] is bits 25:20; stm32h747xx.h SAI_xCR1_MCKDIV_Msk = 0x03F00000
+// - RM0399 SAI_BCR1: MCKDIV[5:0] is bits 25:20; stm32h747xx.h SAI_xCR1_MCKDIV_Msk = 0x03F00000
+
 module sh.sysl.stm32h747.sai3
 
 // The peripheral's base address. Every offset below is from here.
@@ -34,7 +39,7 @@ const SAI_ACR1_DMAEN_MASK: u32 = 0x00020000
 const SAI_ACR1_DMAEN_SHIFT: u32 = 17
 const SAI_ACR1_NOMCK_MASK: u32 = 0x00080000
 const SAI_ACR1_NOMCK_SHIFT: u32 = 19
-const SAI_ACR1_MCKDIV_MASK: u32 = 0x00f00000
+const SAI_ACR1_MCKDIV_MASK: u32 = 0x03f00000
 const SAI_ACR1_MCKDIV_SHIFT: u32 = 20
 const SAI_ACR1_OSR_MASK: u32 = 0x04000000
 const SAI_ACR1_OSR_SHIFT: u32 = 26
@@ -162,7 +167,7 @@ const SAI_BCR1_DMAEN_MASK: u32 = 0x00020000
 const SAI_BCR1_DMAEN_SHIFT: u32 = 17
 const SAI_BCR1_NOMCK_MASK: u32 = 0x00080000
 const SAI_BCR1_NOMCK_SHIFT: u32 = 19
-const SAI_BCR1_MCKDIV_MASK: u32 = 0x00f00000
+const SAI_BCR1_MCKDIV_MASK: u32 = 0x03f00000
 const SAI_BCR1_MCKDIV_SHIFT: u32 = 20
 const SAI_BCR1_OSR_MASK: u32 = 0x04000000
 const SAI_BCR1_OSR_SHIFT: u32 = 26

@@ -1,9 +1,10 @@
 // The STM32H747's register map — ST's dual-core Cortex-M7/M4, as sysl constants.
 //
 // **Every line of sysl in this package but `tests.sysl` is generated.** It comes from ST's own
-// `STM32H747_CM7.svd`, the CMSIS description shipped in Keil's STM32H7xx device family pack, by way of
-// [sysl-lang/svd](https://github.com/sysl-lang/svd). Nothing generated should be hand-edited: a
-// correction belongs in the generator or in a newer SVD, and anything typed in by hand is lost the next
+// `STM32H747_CM7.svd`, the CMSIS description shipped in Keil's STM32H7xx device family pack, corrected by
+// `patches/stm32h747.patch.hocon`, by way of [sysl-lang/svd](https://github.com/sysl-lang/svd). Nothing
+// generated should be hand-edited: a correction belongs in the patch file, the generator or a newer SVD,
+// and anything typed in by hand is lost the next
 // time the chip is regenerated. `README.md` records the exact command, the pack and the SVD's SHA-256.
 //
 // There is no `dependencies` block because this depends on nothing. It is constants.
@@ -11,12 +12,12 @@
 // This is the block a *consumer* writes to reach this package:
 //
 //     dependencies {
-//       stm32h747 { git = "github.com/sysl-lang/stm32h747", version = "0.1.0" }
+//       stm32h747 { git = "github.com/sysl-lang/stm32h747", version = "0.1.1" }
 //     }
 
 package {
   name    = "stm32h747"
-  version = "0.1.0"
+  version = "0.1.1"
   sysl    = "0.7.8"
 }
 
