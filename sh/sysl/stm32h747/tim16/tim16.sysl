@@ -1,0 +1,193 @@
+// General-purpose-timers
+
+module sh.sysl.stm32h747.tim16
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40014400
+
+// control register 1
+const CR1_OFFSET: u32 = 0x00000000
+const CR1_CEN_MASK: u32 = 0x00000001
+const CR1_CEN_SHIFT: u32 = 0
+const CR1_UDIS_MASK: u32 = 0x00000002
+const CR1_UDIS_SHIFT: u32 = 1
+const CR1_URS_MASK: u32 = 0x00000004
+const CR1_URS_SHIFT: u32 = 2
+const CR1_OPM_MASK: u32 = 0x00000008
+const CR1_OPM_SHIFT: u32 = 3
+const CR1_ARPE_MASK: u32 = 0x00000080
+const CR1_ARPE_SHIFT: u32 = 7
+const CR1_CKD_MASK: u32 = 0x00000300
+const CR1_CKD_SHIFT: u32 = 8
+const CR1_UIFREMAP_MASK: u32 = 0x00000800
+const CR1_UIFREMAP_SHIFT: u32 = 11
+
+// control register 2
+const CR2_OFFSET: u32 = 0x00000004
+const CR2_OIS1N_MASK: u32 = 0x00000200
+const CR2_OIS1N_SHIFT: u32 = 9
+const CR2_OIS1_MASK: u32 = 0x00000100
+const CR2_OIS1_SHIFT: u32 = 8
+const CR2_CCDS_MASK: u32 = 0x00000008
+const CR2_CCDS_SHIFT: u32 = 3
+const CR2_CCUS_MASK: u32 = 0x00000004
+const CR2_CCUS_SHIFT: u32 = 2
+const CR2_CCPC_MASK: u32 = 0x00000001
+const CR2_CCPC_SHIFT: u32 = 0
+
+// DMA/Interrupt enable register
+const DIER_OFFSET: u32 = 0x0000000c
+const DIER_UIE_MASK: u32 = 0x00000001
+const DIER_UIE_SHIFT: u32 = 0
+const DIER_CC1IE_MASK: u32 = 0x00000002
+const DIER_CC1IE_SHIFT: u32 = 1
+const DIER_COMIE_MASK: u32 = 0x00000020
+const DIER_COMIE_SHIFT: u32 = 5
+const DIER_BIE_MASK: u32 = 0x00000080
+const DIER_BIE_SHIFT: u32 = 7
+const DIER_UDE_MASK: u32 = 0x00000100
+const DIER_UDE_SHIFT: u32 = 8
+const DIER_CC1DE_MASK: u32 = 0x00000200
+const DIER_CC1DE_SHIFT: u32 = 9
+const DIER_COMDE_MASK: u32 = 0x00002000
+const DIER_COMDE_SHIFT: u32 = 13
+
+// status register
+const SR_OFFSET: u32 = 0x00000010
+const SR_CC1OF_MASK: u32 = 0x00000200
+const SR_CC1OF_SHIFT: u32 = 9
+const SR_BIF_MASK: u32 = 0x00000080
+const SR_BIF_SHIFT: u32 = 7
+const SR_COMIF_MASK: u32 = 0x00000020
+const SR_COMIF_SHIFT: u32 = 5
+const SR_CC1IF_MASK: u32 = 0x00000002
+const SR_CC1IF_SHIFT: u32 = 1
+const SR_UIF_MASK: u32 = 0x00000001
+const SR_UIF_SHIFT: u32 = 0
+
+// event generation register
+const EGR_OFFSET: u32 = 0x00000014
+const EGR_BG_MASK: u32 = 0x00000080
+const EGR_BG_SHIFT: u32 = 7
+const EGR_COMG_MASK: u32 = 0x00000020
+const EGR_COMG_SHIFT: u32 = 5
+const EGR_CC1G_MASK: u32 = 0x00000002
+const EGR_CC1G_SHIFT: u32 = 1
+const EGR_UG_MASK: u32 = 0x00000001
+const EGR_UG_SHIFT: u32 = 0
+
+// capture/compare mode register (output mode)
+const CCMR1_Output_OFFSET: u32 = 0x00000018
+const CCMR1_Output_CC1S_MASK: u32 = 0x00000003
+const CCMR1_Output_CC1S_SHIFT: u32 = 0
+const CCMR1_Output_OC1FE_MASK: u32 = 0x00000004
+const CCMR1_Output_OC1FE_SHIFT: u32 = 2
+const CCMR1_Output_OC1PE_MASK: u32 = 0x00000008
+const CCMR1_Output_OC1PE_SHIFT: u32 = 3
+const CCMR1_Output_OC1M_MASK: u32 = 0x00000070
+const CCMR1_Output_OC1M_SHIFT: u32 = 4
+const CCMR1_Output_OC1M_3_MASK: u32 = 0x00010000
+const CCMR1_Output_OC1M_3_SHIFT: u32 = 16
+
+// capture/compare mode register 1 (input mode)
+// The SVD declares this an alternate reading of CCMR1_Output.
+const CCMR1_Input_OFFSET: u32 = 0x00000018
+const CCMR1_Input_IC1F_MASK: u32 = 0x000000f0
+const CCMR1_Input_IC1F_SHIFT: u32 = 4
+const CCMR1_Input_IC1PSC_MASK: u32 = 0x0000000c
+const CCMR1_Input_IC1PSC_SHIFT: u32 = 2
+const CCMR1_Input_CC1S_MASK: u32 = 0x00000003
+const CCMR1_Input_CC1S_SHIFT: u32 = 0
+
+// capture/compare enable register
+const CCER_OFFSET: u32 = 0x00000020
+const CCER_CC1NP_MASK: u32 = 0x00000008
+const CCER_CC1NP_SHIFT: u32 = 3
+const CCER_CC1NE_MASK: u32 = 0x00000004
+const CCER_CC1NE_SHIFT: u32 = 2
+const CCER_CC1P_MASK: u32 = 0x00000002
+const CCER_CC1P_SHIFT: u32 = 1
+const CCER_CC1E_MASK: u32 = 0x00000001
+const CCER_CC1E_SHIFT: u32 = 0
+
+// counter
+const CNT_OFFSET: u32 = 0x00000024
+const CNT_CNT_MASK: u32 = 0x0000ffff
+const CNT_CNT_SHIFT: u32 = 0
+const CNT_UIFCPY_MASK: u32 = 0x80000000
+const CNT_UIFCPY_SHIFT: u32 = 31
+
+// prescaler
+const PSC_OFFSET: u32 = 0x00000028
+const PSC_PSC_MASK: u32 = 0x0000ffff
+const PSC_PSC_SHIFT: u32 = 0
+
+// auto-reload register
+const ARR_OFFSET: u32 = 0x0000002c
+const ARR_ARR_MASK: u32 = 0x0000ffff
+const ARR_ARR_SHIFT: u32 = 0
+
+// repetition counter register
+const RCR_OFFSET: u32 = 0x00000030
+const RCR_REP_MASK: u32 = 0x000000ff
+const RCR_REP_SHIFT: u32 = 0
+
+// capture/compare register 1
+const CCR1_OFFSET: u32 = 0x00000034
+const CCR1_CCR1_MASK: u32 = 0x0000ffff
+const CCR1_CCR1_SHIFT: u32 = 0
+
+// break and dead-time register
+const BDTR_OFFSET: u32 = 0x00000044
+const BDTR_DTG_MASK: u32 = 0x000000ff
+const BDTR_DTG_SHIFT: u32 = 0
+const BDTR_LOCK_MASK: u32 = 0x00000300
+const BDTR_LOCK_SHIFT: u32 = 8
+const BDTR_OSSI_MASK: u32 = 0x00000400
+const BDTR_OSSI_SHIFT: u32 = 10
+const BDTR_OSSR_MASK: u32 = 0x00000800
+const BDTR_OSSR_SHIFT: u32 = 11
+const BDTR_BKE_MASK: u32 = 0x00001000
+const BDTR_BKE_SHIFT: u32 = 12
+const BDTR_BKP_MASK: u32 = 0x00002000
+const BDTR_BKP_SHIFT: u32 = 13
+const BDTR_AOE_MASK: u32 = 0x00004000
+const BDTR_AOE_SHIFT: u32 = 14
+const BDTR_MOE_MASK: u32 = 0x00008000
+const BDTR_MOE_SHIFT: u32 = 15
+const BDTR_BKF_MASK: u32 = 0x000f0000
+const BDTR_BKF_SHIFT: u32 = 16
+
+// DMA control register
+const DCR_OFFSET: u32 = 0x00000048
+const DCR_DBL_MASK: u32 = 0x00001f00
+const DCR_DBL_SHIFT: u32 = 8
+const DCR_DBA_MASK: u32 = 0x0000001f
+const DCR_DBA_SHIFT: u32 = 0
+
+// DMA address for full transfer
+const DMAR_OFFSET: u32 = 0x0000004c
+const DMAR_DMAB_MASK: u32 = 0x0000ffff
+const DMAR_DMAB_SHIFT: u32 = 0
+
+// TIM16 alternate function register 1
+const TIM16_AF1_OFFSET: u32 = 0x00000060
+const TIM16_AF1_BKINE_MASK: u32 = 0x00000001
+const TIM16_AF1_BKINE_SHIFT: u32 = 0
+const TIM16_AF1_BKCMP1E_MASK: u32 = 0x00000002
+const TIM16_AF1_BKCMP1E_SHIFT: u32 = 1
+const TIM16_AF1_BKCMP2E_MASK: u32 = 0x00000004
+const TIM16_AF1_BKCMP2E_SHIFT: u32 = 2
+const TIM16_AF1_BKDFBK1E_MASK: u32 = 0x00000100
+const TIM16_AF1_BKDFBK1E_SHIFT: u32 = 8
+const TIM16_AF1_BKINP_MASK: u32 = 0x00000200
+const TIM16_AF1_BKINP_SHIFT: u32 = 9
+const TIM16_AF1_BKCMP1P_MASK: u32 = 0x00000400
+const TIM16_AF1_BKCMP1P_SHIFT: u32 = 10
+const TIM16_AF1_BKCMP2P_MASK: u32 = 0x00000800
+const TIM16_AF1_BKCMP2P_SHIFT: u32 = 11
+
+// TIM16 input selection register
+const TIM16_TISEL_OFFSET: u32 = 0x00000068
+const TIM16_TISEL_TI1SEL_MASK: u32 = 0x0000000f
+const TIM16_TISEL_TI1SEL_SHIFT: u32 = 0

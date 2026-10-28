@@ -1,0 +1,60 @@
+// Basic timers
+
+module sh.sysl.stm32h747.tim6
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40001000
+
+// control register 1
+const CR1_OFFSET: u32 = 0x00000000
+const CR1_UIFREMAP_MASK: u32 = 0x00000800
+const CR1_UIFREMAP_SHIFT: u32 = 11
+const CR1_ARPE_MASK: u32 = 0x00000080
+const CR1_ARPE_SHIFT: u32 = 7
+const CR1_OPM_MASK: u32 = 0x00000008
+const CR1_OPM_SHIFT: u32 = 3
+const CR1_URS_MASK: u32 = 0x00000004
+const CR1_URS_SHIFT: u32 = 2
+const CR1_UDIS_MASK: u32 = 0x00000002
+const CR1_UDIS_SHIFT: u32 = 1
+const CR1_CEN_MASK: u32 = 0x00000001
+const CR1_CEN_SHIFT: u32 = 0
+
+// control register 2
+const CR2_OFFSET: u32 = 0x00000004
+const CR2_MMS_MASK: u32 = 0x00000070
+const CR2_MMS_SHIFT: u32 = 4
+
+// DMA/Interrupt enable register
+const DIER_OFFSET: u32 = 0x0000000c
+const DIER_UDE_MASK: u32 = 0x00000100
+const DIER_UDE_SHIFT: u32 = 8
+const DIER_UIE_MASK: u32 = 0x00000001
+const DIER_UIE_SHIFT: u32 = 0
+
+// status register
+const SR_OFFSET: u32 = 0x00000010
+const SR_UIF_MASK: u32 = 0x00000001
+const SR_UIF_SHIFT: u32 = 0
+
+// event generation register
+const EGR_OFFSET: u32 = 0x00000014
+const EGR_UG_MASK: u32 = 0x00000001
+const EGR_UG_SHIFT: u32 = 0
+
+// counter
+const CNT_OFFSET: u32 = 0x00000024
+const CNT_CNT_MASK: u32 = 0x0000ffff
+const CNT_CNT_SHIFT: u32 = 0
+const CNT_UIFCPY_MASK: u32 = 0x80000000
+const CNT_UIFCPY_SHIFT: u32 = 31
+
+// prescaler
+const PSC_OFFSET: u32 = 0x00000028
+const PSC_PSC_MASK: u32 = 0x0000ffff
+const PSC_PSC_SHIFT: u32 = 0
+
+// auto-reload register
+const ARR_OFFSET: u32 = 0x0000002c
+const ARR_ARR_MASK: u32 = 0x0000ffff
+const ARR_ARR_SHIFT: u32 = 0

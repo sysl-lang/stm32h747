@@ -1,0 +1,387 @@
+// Analog to Digital Converter
+
+module sh.sysl.stm32h747.adc3
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58026000
+
+// ADC interrupt and status register
+const ISR_OFFSET: u32 = 0x00000000
+const ISR_JQOVF_MASK: u32 = 0x00000400
+const ISR_JQOVF_SHIFT: u32 = 10
+const ISR_AWD3_MASK: u32 = 0x00000200
+const ISR_AWD3_SHIFT: u32 = 9
+const ISR_AWD2_MASK: u32 = 0x00000100
+const ISR_AWD2_SHIFT: u32 = 8
+const ISR_AWD1_MASK: u32 = 0x00000080
+const ISR_AWD1_SHIFT: u32 = 7
+const ISR_JEOS_MASK: u32 = 0x00000040
+const ISR_JEOS_SHIFT: u32 = 6
+const ISR_JEOC_MASK: u32 = 0x00000020
+const ISR_JEOC_SHIFT: u32 = 5
+const ISR_OVR_MASK: u32 = 0x00000010
+const ISR_OVR_SHIFT: u32 = 4
+const ISR_EOS_MASK: u32 = 0x00000008
+const ISR_EOS_SHIFT: u32 = 3
+const ISR_EOC_MASK: u32 = 0x00000004
+const ISR_EOC_SHIFT: u32 = 2
+const ISR_EOSMP_MASK: u32 = 0x00000002
+const ISR_EOSMP_SHIFT: u32 = 1
+const ISR_ADRDY_MASK: u32 = 0x00000001
+const ISR_ADRDY_SHIFT: u32 = 0
+
+// ADC interrupt enable register
+const IER_OFFSET: u32 = 0x00000004
+const IER_JQOVFIE_MASK: u32 = 0x00000400
+const IER_JQOVFIE_SHIFT: u32 = 10
+const IER_AWD3IE_MASK: u32 = 0x00000200
+const IER_AWD3IE_SHIFT: u32 = 9
+const IER_AWD2IE_MASK: u32 = 0x00000100
+const IER_AWD2IE_SHIFT: u32 = 8
+const IER_AWD1IE_MASK: u32 = 0x00000080
+const IER_AWD1IE_SHIFT: u32 = 7
+const IER_JEOSIE_MASK: u32 = 0x00000040
+const IER_JEOSIE_SHIFT: u32 = 6
+const IER_JEOCIE_MASK: u32 = 0x00000020
+const IER_JEOCIE_SHIFT: u32 = 5
+const IER_OVRIE_MASK: u32 = 0x00000010
+const IER_OVRIE_SHIFT: u32 = 4
+const IER_EOSIE_MASK: u32 = 0x00000008
+const IER_EOSIE_SHIFT: u32 = 3
+const IER_EOCIE_MASK: u32 = 0x00000004
+const IER_EOCIE_SHIFT: u32 = 2
+const IER_EOSMPIE_MASK: u32 = 0x00000002
+const IER_EOSMPIE_SHIFT: u32 = 1
+const IER_ADRDYIE_MASK: u32 = 0x00000001
+const IER_ADRDYIE_SHIFT: u32 = 0
+
+// ADC control register
+const CR_OFFSET: u32 = 0x00000008
+const CR_ADCAL_MASK: u32 = 0x80000000
+const CR_ADCAL_SHIFT: u32 = 31
+const CR_ADCALDIF_MASK: u32 = 0x40000000
+const CR_ADCALDIF_SHIFT: u32 = 30
+const CR_DEEPPWD_MASK: u32 = 0x20000000
+const CR_DEEPPWD_SHIFT: u32 = 29
+const CR_ADVREGEN_MASK: u32 = 0x10000000
+const CR_ADVREGEN_SHIFT: u32 = 28
+const CR_LINCALRDYW6_MASK: u32 = 0x08000000
+const CR_LINCALRDYW6_SHIFT: u32 = 27
+const CR_LINCALRDYW5_MASK: u32 = 0x04000000
+const CR_LINCALRDYW5_SHIFT: u32 = 26
+const CR_LINCALRDYW4_MASK: u32 = 0x02000000
+const CR_LINCALRDYW4_SHIFT: u32 = 25
+const CR_LINCALRDYW3_MASK: u32 = 0x01000000
+const CR_LINCALRDYW3_SHIFT: u32 = 24
+const CR_LINCALRDYW2_MASK: u32 = 0x00800000
+const CR_LINCALRDYW2_SHIFT: u32 = 23
+const CR_LINCALRDYW1_MASK: u32 = 0x00400000
+const CR_LINCALRDYW1_SHIFT: u32 = 22
+const CR_ADCALLIN_MASK: u32 = 0x00010000
+const CR_ADCALLIN_SHIFT: u32 = 16
+const CR_BOOST_MASK: u32 = 0x00000300
+const CR_BOOST_SHIFT: u32 = 8
+const CR_JADSTP_MASK: u32 = 0x00000020
+const CR_JADSTP_SHIFT: u32 = 5
+const CR_ADSTP_MASK: u32 = 0x00000010
+const CR_ADSTP_SHIFT: u32 = 4
+const CR_JADSTART_MASK: u32 = 0x00000008
+const CR_JADSTART_SHIFT: u32 = 3
+const CR_ADSTART_MASK: u32 = 0x00000004
+const CR_ADSTART_SHIFT: u32 = 2
+const CR_ADDIS_MASK: u32 = 0x00000002
+const CR_ADDIS_SHIFT: u32 = 1
+const CR_ADEN_MASK: u32 = 0x00000001
+const CR_ADEN_SHIFT: u32 = 0
+
+// ADC configuration register 1
+const CFGR_OFFSET: u32 = 0x0000000c
+const CFGR_JQDIS_MASK: u32 = 0x80000000
+const CFGR_JQDIS_SHIFT: u32 = 31
+const CFGR_AWDCH1CH_MASK: u32 = 0x7c000000
+const CFGR_AWDCH1CH_SHIFT: u32 = 26
+const CFGR_JAUTO_MASK: u32 = 0x02000000
+const CFGR_JAUTO_SHIFT: u32 = 25
+const CFGR_JAWD1EN_MASK: u32 = 0x01000000
+const CFGR_JAWD1EN_SHIFT: u32 = 24
+const CFGR_AWD1EN_MASK: u32 = 0x00800000
+const CFGR_AWD1EN_SHIFT: u32 = 23
+const CFGR_AWD1SGL_MASK: u32 = 0x00400000
+const CFGR_AWD1SGL_SHIFT: u32 = 22
+const CFGR_JQM_MASK: u32 = 0x00200000
+const CFGR_JQM_SHIFT: u32 = 21
+const CFGR_JDISCEN_MASK: u32 = 0x00100000
+const CFGR_JDISCEN_SHIFT: u32 = 20
+const CFGR_DISCNUM_MASK: u32 = 0x000e0000
+const CFGR_DISCNUM_SHIFT: u32 = 17
+const CFGR_DISCEN_MASK: u32 = 0x00010000
+const CFGR_DISCEN_SHIFT: u32 = 16
+const CFGR_AUTDLY_MASK: u32 = 0x00004000
+const CFGR_AUTDLY_SHIFT: u32 = 14
+const CFGR_CONT_MASK: u32 = 0x00002000
+const CFGR_CONT_SHIFT: u32 = 13
+const CFGR_OVRMOD_MASK: u32 = 0x00001000
+const CFGR_OVRMOD_SHIFT: u32 = 12
+const CFGR_EXTEN_MASK: u32 = 0x00000c00
+const CFGR_EXTEN_SHIFT: u32 = 10
+const CFGR_EXTSEL_MASK: u32 = 0x000003e0
+const CFGR_EXTSEL_SHIFT: u32 = 5
+const CFGR_RES_MASK: u32 = 0x0000001c
+const CFGR_RES_SHIFT: u32 = 2
+const CFGR_DMNGT_MASK: u32 = 0x00000003
+const CFGR_DMNGT_SHIFT: u32 = 0
+
+// ADC configuration register 2
+const CFGR2_OFFSET: u32 = 0x00000010
+const CFGR2_ROVSE_MASK: u32 = 0x00000001
+const CFGR2_ROVSE_SHIFT: u32 = 0
+const CFGR2_JOVSE_MASK: u32 = 0x00000002
+const CFGR2_JOVSE_SHIFT: u32 = 1
+const CFGR2_OVSS_MASK: u32 = 0x000001e0
+const CFGR2_OVSS_SHIFT: u32 = 5
+const CFGR2_TROVS_MASK: u32 = 0x00000200
+const CFGR2_TROVS_SHIFT: u32 = 9
+const CFGR2_ROVSM_MASK: u32 = 0x00000400
+const CFGR2_ROVSM_SHIFT: u32 = 10
+const CFGR2_RSHIFT1_MASK: u32 = 0x00000800
+const CFGR2_RSHIFT1_SHIFT: u32 = 11
+const CFGR2_RSHIFT2_MASK: u32 = 0x00001000
+const CFGR2_RSHIFT2_SHIFT: u32 = 12
+const CFGR2_RSHIFT3_MASK: u32 = 0x00002000
+const CFGR2_RSHIFT3_SHIFT: u32 = 13
+const CFGR2_RSHIFT4_MASK: u32 = 0x00004000
+const CFGR2_RSHIFT4_SHIFT: u32 = 14
+const CFGR2_OSR_MASK: u32 = 0x03ff0000
+const CFGR2_OSR_SHIFT: u32 = 16
+const CFGR2_LSHIFT_MASK: u32 = 0xf0000000
+const CFGR2_LSHIFT_SHIFT: u32 = 28
+
+// ADC sampling time register 1
+const SMPR1_OFFSET: u32 = 0x00000014
+const SMPR1_SMP9_MASK: u32 = 0x38000000
+const SMPR1_SMP9_SHIFT: u32 = 27
+const SMPR1_SMP8_MASK: u32 = 0x07000000
+const SMPR1_SMP8_SHIFT: u32 = 24
+const SMPR1_SMP7_MASK: u32 = 0x00e00000
+const SMPR1_SMP7_SHIFT: u32 = 21
+const SMPR1_SMP6_MASK: u32 = 0x001c0000
+const SMPR1_SMP6_SHIFT: u32 = 18
+const SMPR1_SMP5_MASK: u32 = 0x00038000
+const SMPR1_SMP5_SHIFT: u32 = 15
+const SMPR1_SMP4_MASK: u32 = 0x00007000
+const SMPR1_SMP4_SHIFT: u32 = 12
+const SMPR1_SMP3_MASK: u32 = 0x00000e00
+const SMPR1_SMP3_SHIFT: u32 = 9
+const SMPR1_SMP2_MASK: u32 = 0x000001c0
+const SMPR1_SMP2_SHIFT: u32 = 6
+const SMPR1_SMP1_MASK: u32 = 0x00000038
+const SMPR1_SMP1_SHIFT: u32 = 3
+
+// ADC sampling time register 2
+const SMPR2_OFFSET: u32 = 0x00000018
+const SMPR2_SMP19_MASK: u32 = 0x38000000
+const SMPR2_SMP19_SHIFT: u32 = 27
+const SMPR2_SMP18_MASK: u32 = 0x07000000
+const SMPR2_SMP18_SHIFT: u32 = 24
+const SMPR2_SMP17_MASK: u32 = 0x00e00000
+const SMPR2_SMP17_SHIFT: u32 = 21
+const SMPR2_SMP16_MASK: u32 = 0x001c0000
+const SMPR2_SMP16_SHIFT: u32 = 18
+const SMPR2_SMP15_MASK: u32 = 0x00038000
+const SMPR2_SMP15_SHIFT: u32 = 15
+const SMPR2_SMP14_MASK: u32 = 0x00007000
+const SMPR2_SMP14_SHIFT: u32 = 12
+const SMPR2_SMP13_MASK: u32 = 0x00000e00
+const SMPR2_SMP13_SHIFT: u32 = 9
+const SMPR2_SMP12_MASK: u32 = 0x000001c0
+const SMPR2_SMP12_SHIFT: u32 = 6
+const SMPR2_SMP11_MASK: u32 = 0x00000038
+const SMPR2_SMP11_SHIFT: u32 = 3
+const SMPR2_SMP10_MASK: u32 = 0x00000007
+const SMPR2_SMP10_SHIFT: u32 = 0
+
+// ADC analog watchdog 1 threshold register
+const LTR1_OFFSET: u32 = 0x00000020
+const LTR1_LTR1_MASK: u32 = 0x03ffffff
+const LTR1_LTR1_SHIFT: u32 = 0
+
+// ADC analog watchdog 2 threshold register
+const LHTR1_OFFSET: u32 = 0x00000024
+const LHTR1_LHTR1_MASK: u32 = 0x03ffffff
+const LHTR1_LHTR1_SHIFT: u32 = 0
+
+// ADC group regular sequencer ranks register 1
+const SQR1_OFFSET: u32 = 0x00000030
+const SQR1_SQ4_MASK: u32 = 0x1f000000
+const SQR1_SQ4_SHIFT: u32 = 24
+const SQR1_SQ3_MASK: u32 = 0x007c0000
+const SQR1_SQ3_SHIFT: u32 = 18
+const SQR1_SQ2_MASK: u32 = 0x0001f000
+const SQR1_SQ2_SHIFT: u32 = 12
+const SQR1_SQ1_MASK: u32 = 0x000007c0
+const SQR1_SQ1_SHIFT: u32 = 6
+const SQR1_L3_MASK: u32 = 0x0000000f
+const SQR1_L3_SHIFT: u32 = 0
+
+// ADC group regular sequencer ranks register 2
+const SQR2_OFFSET: u32 = 0x00000034
+const SQR2_SQ9_MASK: u32 = 0x1f000000
+const SQR2_SQ9_SHIFT: u32 = 24
+const SQR2_SQ8_MASK: u32 = 0x007c0000
+const SQR2_SQ8_SHIFT: u32 = 18
+const SQR2_SQ7_MASK: u32 = 0x0001f000
+const SQR2_SQ7_SHIFT: u32 = 12
+const SQR2_SQ6_MASK: u32 = 0x000007c0
+const SQR2_SQ6_SHIFT: u32 = 6
+const SQR2_SQ5_MASK: u32 = 0x0000001f
+const SQR2_SQ5_SHIFT: u32 = 0
+
+// ADC group regular sequencer ranks register 3
+const SQR3_OFFSET: u32 = 0x00000038
+const SQR3_SQ14_MASK: u32 = 0x1f000000
+const SQR3_SQ14_SHIFT: u32 = 24
+const SQR3_SQ13_MASK: u32 = 0x007c0000
+const SQR3_SQ13_SHIFT: u32 = 18
+const SQR3_SQ12_MASK: u32 = 0x0001f000
+const SQR3_SQ12_SHIFT: u32 = 12
+const SQR3_SQ11_MASK: u32 = 0x000007c0
+const SQR3_SQ11_SHIFT: u32 = 6
+const SQR3_SQ10_MASK: u32 = 0x0000001f
+const SQR3_SQ10_SHIFT: u32 = 0
+
+// ADC group regular sequencer ranks register 4
+const SQR4_OFFSET: u32 = 0x0000003c
+const SQR4_SQ16_MASK: u32 = 0x000007c0
+const SQR4_SQ16_SHIFT: u32 = 6
+const SQR4_SQ15_MASK: u32 = 0x0000001f
+const SQR4_SQ15_SHIFT: u32 = 0
+
+// ADC group regular conversion data register
+const DR_OFFSET: u32 = 0x00000040
+const DR_RDATA_MASK: u32 = 0x0000ffff
+const DR_RDATA_SHIFT: u32 = 0
+
+// ADC group injected sequencer register
+const JSQR_OFFSET: u32 = 0x0000004c
+const JSQR_JSQ4_MASK: u32 = 0xf8000000
+const JSQR_JSQ4_SHIFT: u32 = 27
+const JSQR_JSQ3_MASK: u32 = 0x03e00000
+const JSQR_JSQ3_SHIFT: u32 = 21
+const JSQR_JSQ2_MASK: u32 = 0x000f8000
+const JSQR_JSQ2_SHIFT: u32 = 15
+const JSQR_JSQ1_MASK: u32 = 0x00003e00
+const JSQR_JSQ1_SHIFT: u32 = 9
+const JSQR_JEXTEN_MASK: u32 = 0x00000180
+const JSQR_JEXTEN_SHIFT: u32 = 7
+const JSQR_JEXTSEL_MASK: u32 = 0x0000007c
+const JSQR_JEXTSEL_SHIFT: u32 = 2
+const JSQR_JL_MASK: u32 = 0x00000003
+const JSQR_JL_SHIFT: u32 = 0
+
+// ADC offset number 1 register
+const OFR1_OFFSET: u32 = 0x00000060
+const OFR1_SSATE_MASK: u32 = 0x80000000
+const OFR1_SSATE_SHIFT: u32 = 31
+const OFR1_OFFSET1_CH_MASK: u32 = 0x7c000000
+const OFR1_OFFSET1_CH_SHIFT: u32 = 26
+const OFR1_OFFSET1_MASK: u32 = 0x03ffffff
+const OFR1_OFFSET1_SHIFT: u32 = 0
+
+// ADC offset number 2 register
+const OFR2_OFFSET: u32 = 0x00000064
+const OFR2_SSATE_MASK: u32 = 0x80000000
+const OFR2_SSATE_SHIFT: u32 = 31
+const OFR2_OFFSET1_CH_MASK: u32 = 0x7c000000
+const OFR2_OFFSET1_CH_SHIFT: u32 = 26
+const OFR2_OFFSET1_MASK: u32 = 0x03ffffff
+const OFR2_OFFSET1_SHIFT: u32 = 0
+
+// ADC offset number 3 register
+const OFR3_OFFSET: u32 = 0x00000068
+const OFR3_SSATE_MASK: u32 = 0x80000000
+const OFR3_SSATE_SHIFT: u32 = 31
+const OFR3_OFFSET1_CH_MASK: u32 = 0x7c000000
+const OFR3_OFFSET1_CH_SHIFT: u32 = 26
+const OFR3_OFFSET1_MASK: u32 = 0x03ffffff
+const OFR3_OFFSET1_SHIFT: u32 = 0
+
+// ADC offset number 4 register
+const OFR4_OFFSET: u32 = 0x0000006c
+const OFR4_SSATE_MASK: u32 = 0x80000000
+const OFR4_SSATE_SHIFT: u32 = 31
+const OFR4_OFFSET1_CH_MASK: u32 = 0x7c000000
+const OFR4_OFFSET1_CH_SHIFT: u32 = 26
+const OFR4_OFFSET1_MASK: u32 = 0x03ffffff
+const OFR4_OFFSET1_SHIFT: u32 = 0
+
+// ADC group injected sequencer rank 1 register
+const JDR1_OFFSET: u32 = 0x00000080
+const JDR1_JDATA1_MASK: u32 = 0xffffffff
+const JDR1_JDATA1_SHIFT: u32 = 0
+
+// ADC group injected sequencer rank 2 register
+const JDR2_OFFSET: u32 = 0x00000084
+const JDR2_JDATA2_MASK: u32 = 0xffffffff
+const JDR2_JDATA2_SHIFT: u32 = 0
+
+// ADC group injected sequencer rank 3 register
+const JDR3_OFFSET: u32 = 0x00000088
+const JDR3_JDATA3_MASK: u32 = 0xffffffff
+const JDR3_JDATA3_SHIFT: u32 = 0
+
+// ADC group injected sequencer rank 4 register
+const JDR4_OFFSET: u32 = 0x0000008c
+const JDR4_JDATA4_MASK: u32 = 0xffffffff
+const JDR4_JDATA4_SHIFT: u32 = 0
+
+// ADC analog watchdog 2 configuration register
+const AWD2CR_OFFSET: u32 = 0x000000a0
+const AWD2CR_AWD2CH_MASK: u32 = 0x000fffff
+const AWD2CR_AWD2CH_SHIFT: u32 = 0
+
+// ADC analog watchdog 3 configuration register
+const AWD3CR_OFFSET: u32 = 0x000000a4
+const AWD3CR_AWD3CH_MASK: u32 = 0x001ffffe
+const AWD3CR_AWD3CH_SHIFT: u32 = 1
+
+// ADC channel differential or single-ended mode selection register
+const DIFSEL_OFFSET: u32 = 0x000000c0
+const DIFSEL_DIFSEL_MASK: u32 = 0x000fffff
+const DIFSEL_DIFSEL_SHIFT: u32 = 0
+
+// ADC calibration factors register
+const CALFACT_OFFSET: u32 = 0x000000c4
+const CALFACT_CALFACT_D_MASK: u32 = 0x07ff0000
+const CALFACT_CALFACT_D_SHIFT: u32 = 16
+const CALFACT_CALFACT_S_MASK: u32 = 0x000007ff
+const CALFACT_CALFACT_S_SHIFT: u32 = 0
+
+// ADC pre channel selection register
+const PCSEL_OFFSET: u32 = 0x0000001c
+const PCSEL_PCSEL_MASK: u32 = 0x000fffff
+const PCSEL_PCSEL_SHIFT: u32 = 0
+
+// ADC watchdog lower threshold register 2
+const LTR2_OFFSET: u32 = 0x000000b0
+const LTR2_LTR2_MASK: u32 = 0x03ffffff
+const LTR2_LTR2_SHIFT: u32 = 0
+
+// ADC watchdog higher threshold register 2
+const HTR2_OFFSET: u32 = 0x000000b4
+const HTR2_HTR2_MASK: u32 = 0x03ffffff
+const HTR2_HTR2_SHIFT: u32 = 0
+
+// ADC watchdog lower threshold register 3
+const LTR3_OFFSET: u32 = 0x000000b8
+const LTR3_LTR3_MASK: u32 = 0x03ffffff
+const LTR3_LTR3_SHIFT: u32 = 0
+
+// ADC watchdog higher threshold register 3
+const HTR3_OFFSET: u32 = 0x000000bc
+const HTR3_HTR3_MASK: u32 = 0x03ffffff
+const HTR3_HTR3_SHIFT: u32 = 0
+
+// ADC Calibration Factor register 2
+const CALFACT2_OFFSET: u32 = 0x000000c8
+const CALFACT2_LINCALFACT_MASK: u32 = 0x3fffffff
+const CALFACT2_LINCALFACT_SHIFT: u32 = 0

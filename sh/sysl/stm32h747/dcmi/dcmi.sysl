@@ -1,0 +1,147 @@
+// Digital camera interface
+
+module sh.sysl.stm32h747.dcmi
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x48020000
+
+// control register 1
+const CR_OFFSET: u32 = 0x00000000
+const CR_OELS_MASK: u32 = 0x00100000
+const CR_OELS_SHIFT: u32 = 20
+const CR_LSM_MASK: u32 = 0x00080000
+const CR_LSM_SHIFT: u32 = 19
+const CR_OEBS_MASK: u32 = 0x00040000
+const CR_OEBS_SHIFT: u32 = 18
+const CR_BSM_MASK: u32 = 0x00030000
+const CR_BSM_SHIFT: u32 = 16
+const CR_ENABLE_MASK: u32 = 0x00004000
+const CR_ENABLE_SHIFT: u32 = 14
+const CR_EDM_MASK: u32 = 0x00000c00
+const CR_EDM_SHIFT: u32 = 10
+const CR_FCRC_MASK: u32 = 0x00000300
+const CR_FCRC_SHIFT: u32 = 8
+const CR_VSPOL_MASK: u32 = 0x00000080
+const CR_VSPOL_SHIFT: u32 = 7
+const CR_HSPOL_MASK: u32 = 0x00000040
+const CR_HSPOL_SHIFT: u32 = 6
+const CR_PCKPOL_MASK: u32 = 0x00000020
+const CR_PCKPOL_SHIFT: u32 = 5
+const CR_ESS_MASK: u32 = 0x00000010
+const CR_ESS_SHIFT: u32 = 4
+const CR_JPEG_MASK: u32 = 0x00000008
+const CR_JPEG_SHIFT: u32 = 3
+const CR_CROP_MASK: u32 = 0x00000004
+const CR_CROP_SHIFT: u32 = 2
+const CR_CM_MASK: u32 = 0x00000002
+const CR_CM_SHIFT: u32 = 1
+const CR_CAPTURE_MASK: u32 = 0x00000001
+const CR_CAPTURE_SHIFT: u32 = 0
+
+// status register
+const SR_OFFSET: u32 = 0x00000004
+const SR_FNE_MASK: u32 = 0x00000004
+const SR_FNE_SHIFT: u32 = 2
+const SR_VSYNC_MASK: u32 = 0x00000002
+const SR_VSYNC_SHIFT: u32 = 1
+const SR_HSYNC_MASK: u32 = 0x00000001
+const SR_HSYNC_SHIFT: u32 = 0
+
+// raw interrupt status register
+const RIS_OFFSET: u32 = 0x00000008
+const RIS_LINE_RIS_MASK: u32 = 0x00000010
+const RIS_LINE_RIS_SHIFT: u32 = 4
+const RIS_VSYNC_RIS_MASK: u32 = 0x00000008
+const RIS_VSYNC_RIS_SHIFT: u32 = 3
+const RIS_ERR_RIS_MASK: u32 = 0x00000004
+const RIS_ERR_RIS_SHIFT: u32 = 2
+const RIS_OVR_RIS_MASK: u32 = 0x00000002
+const RIS_OVR_RIS_SHIFT: u32 = 1
+const RIS_FRAME_RIS_MASK: u32 = 0x00000001
+const RIS_FRAME_RIS_SHIFT: u32 = 0
+
+// interrupt enable register
+const IER_OFFSET: u32 = 0x0000000c
+const IER_LINE_IE_MASK: u32 = 0x00000010
+const IER_LINE_IE_SHIFT: u32 = 4
+const IER_VSYNC_IE_MASK: u32 = 0x00000008
+const IER_VSYNC_IE_SHIFT: u32 = 3
+const IER_ERR_IE_MASK: u32 = 0x00000004
+const IER_ERR_IE_SHIFT: u32 = 2
+const IER_OVR_IE_MASK: u32 = 0x00000002
+const IER_OVR_IE_SHIFT: u32 = 1
+const IER_FRAME_IE_MASK: u32 = 0x00000001
+const IER_FRAME_IE_SHIFT: u32 = 0
+
+// masked interrupt status register
+const MIS_OFFSET: u32 = 0x00000010
+const MIS_LINE_MIS_MASK: u32 = 0x00000010
+const MIS_LINE_MIS_SHIFT: u32 = 4
+const MIS_VSYNC_MIS_MASK: u32 = 0x00000008
+const MIS_VSYNC_MIS_SHIFT: u32 = 3
+const MIS_ERR_MIS_MASK: u32 = 0x00000004
+const MIS_ERR_MIS_SHIFT: u32 = 2
+const MIS_OVR_MIS_MASK: u32 = 0x00000002
+const MIS_OVR_MIS_SHIFT: u32 = 1
+const MIS_FRAME_MIS_MASK: u32 = 0x00000001
+const MIS_FRAME_MIS_SHIFT: u32 = 0
+
+// interrupt clear register
+const ICR_OFFSET: u32 = 0x00000014
+const ICR_LINE_ISC_MASK: u32 = 0x00000010
+const ICR_LINE_ISC_SHIFT: u32 = 4
+const ICR_VSYNC_ISC_MASK: u32 = 0x00000008
+const ICR_VSYNC_ISC_SHIFT: u32 = 3
+const ICR_ERR_ISC_MASK: u32 = 0x00000004
+const ICR_ERR_ISC_SHIFT: u32 = 2
+const ICR_OVR_ISC_MASK: u32 = 0x00000002
+const ICR_OVR_ISC_SHIFT: u32 = 1
+const ICR_FRAME_ISC_MASK: u32 = 0x00000001
+const ICR_FRAME_ISC_SHIFT: u32 = 0
+
+// embedded synchronization code register
+const ESCR_OFFSET: u32 = 0x00000018
+const ESCR_FEC_MASK: u32 = 0xff000000
+const ESCR_FEC_SHIFT: u32 = 24
+const ESCR_LEC_MASK: u32 = 0x00ff0000
+const ESCR_LEC_SHIFT: u32 = 16
+const ESCR_LSC_MASK: u32 = 0x0000ff00
+const ESCR_LSC_SHIFT: u32 = 8
+const ESCR_FSC_MASK: u32 = 0x000000ff
+const ESCR_FSC_SHIFT: u32 = 0
+
+// embedded synchronization unmask register
+const ESUR_OFFSET: u32 = 0x0000001c
+const ESUR_FEU_MASK: u32 = 0xff000000
+const ESUR_FEU_SHIFT: u32 = 24
+const ESUR_LEU_MASK: u32 = 0x00ff0000
+const ESUR_LEU_SHIFT: u32 = 16
+const ESUR_LSU_MASK: u32 = 0x0000ff00
+const ESUR_LSU_SHIFT: u32 = 8
+const ESUR_FSU_MASK: u32 = 0x000000ff
+const ESUR_FSU_SHIFT: u32 = 0
+
+// crop window start
+const CWSTRT_OFFSET: u32 = 0x00000020
+const CWSTRT_VST_MASK: u32 = 0x1fff0000
+const CWSTRT_VST_SHIFT: u32 = 16
+const CWSTRT_HOFFCNT_MASK: u32 = 0x00003fff
+const CWSTRT_HOFFCNT_SHIFT: u32 = 0
+
+// crop window size
+const CWSIZE_OFFSET: u32 = 0x00000024
+const CWSIZE_VLINE_MASK: u32 = 0x3fff0000
+const CWSIZE_VLINE_SHIFT: u32 = 16
+const CWSIZE_CAPCNT_MASK: u32 = 0x00003fff
+const CWSIZE_CAPCNT_SHIFT: u32 = 0
+
+// data register
+const DR_OFFSET: u32 = 0x00000028
+const DR_Byte3_MASK: u32 = 0xff000000
+const DR_Byte3_SHIFT: u32 = 24
+const DR_Byte2_MASK: u32 = 0x00ff0000
+const DR_Byte2_SHIFT: u32 = 16
+const DR_Byte1_MASK: u32 = 0x0000ff00
+const DR_Byte1_SHIFT: u32 = 8
+const DR_Byte0_MASK: u32 = 0x000000ff
+const DR_Byte0_SHIFT: u32 = 0

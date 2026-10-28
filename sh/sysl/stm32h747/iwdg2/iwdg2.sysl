@@ -1,0 +1,33 @@
+module sh.sysl.stm32h747.iwdg2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58004c00
+
+// Key register
+const KR_OFFSET: u32 = 0x00000000
+const KR_KEY_MASK: u32 = 0x0000ffff
+const KR_KEY_SHIFT: u32 = 0
+
+// Prescaler register
+const PR_OFFSET: u32 = 0x00000004
+const PR_PR_MASK: u32 = 0x00000007
+const PR_PR_SHIFT: u32 = 0
+
+// Reload register
+const RLR_OFFSET: u32 = 0x00000008
+const RLR_RL_MASK: u32 = 0x00000fff
+const RLR_RL_SHIFT: u32 = 0
+
+// Status register
+const SR_OFFSET: u32 = 0x0000000c
+const SR_PVU_MASK: u32 = 0x00000001
+const SR_PVU_SHIFT: u32 = 0
+const SR_RVU_MASK: u32 = 0x00000002
+const SR_RVU_SHIFT: u32 = 1
+const SR_WVU_MASK: u32 = 0x00000004
+const SR_WVU_SHIFT: u32 = 2
+
+// Window register
+const WINR_OFFSET: u32 = 0x00000010
+const WINR_WIN_MASK: u32 = 0x00000fff
+const WINR_WIN_SHIFT: u32 = 0

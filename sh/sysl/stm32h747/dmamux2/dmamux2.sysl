@@ -1,0 +1,318 @@
+// DMAMUX
+
+module sh.sysl.stm32h747.dmamux2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58025800
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C0CR_OFFSET: u32 = 0x00000000
+const C0CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C0CR_DMAREQ_ID_SHIFT: u32 = 0
+const C0CR_SOIE_MASK: u32 = 0x00000100
+const C0CR_SOIE_SHIFT: u32 = 8
+const C0CR_EGE_MASK: u32 = 0x00000200
+const C0CR_EGE_SHIFT: u32 = 9
+const C0CR_SE_MASK: u32 = 0x00010000
+const C0CR_SE_SHIFT: u32 = 16
+const C0CR_SPOL_MASK: u32 = 0x00060000
+const C0CR_SPOL_SHIFT: u32 = 17
+const C0CR_NBREQ_MASK: u32 = 0x00f80000
+const C0CR_NBREQ_SHIFT: u32 = 19
+const C0CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C0CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C1CR_OFFSET: u32 = 0x00000004
+const C1CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C1CR_DMAREQ_ID_SHIFT: u32 = 0
+const C1CR_SOIE_MASK: u32 = 0x00000100
+const C1CR_SOIE_SHIFT: u32 = 8
+const C1CR_EGE_MASK: u32 = 0x00000200
+const C1CR_EGE_SHIFT: u32 = 9
+const C1CR_SE_MASK: u32 = 0x00010000
+const C1CR_SE_SHIFT: u32 = 16
+const C1CR_SPOL_MASK: u32 = 0x00060000
+const C1CR_SPOL_SHIFT: u32 = 17
+const C1CR_NBREQ_MASK: u32 = 0x00f80000
+const C1CR_NBREQ_SHIFT: u32 = 19
+const C1CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C1CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C2CR_OFFSET: u32 = 0x00000008
+const C2CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C2CR_DMAREQ_ID_SHIFT: u32 = 0
+const C2CR_SOIE_MASK: u32 = 0x00000100
+const C2CR_SOIE_SHIFT: u32 = 8
+const C2CR_EGE_MASK: u32 = 0x00000200
+const C2CR_EGE_SHIFT: u32 = 9
+const C2CR_SE_MASK: u32 = 0x00010000
+const C2CR_SE_SHIFT: u32 = 16
+const C2CR_SPOL_MASK: u32 = 0x00060000
+const C2CR_SPOL_SHIFT: u32 = 17
+const C2CR_NBREQ_MASK: u32 = 0x00f80000
+const C2CR_NBREQ_SHIFT: u32 = 19
+const C2CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C2CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C3CR_OFFSET: u32 = 0x0000000c
+const C3CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C3CR_DMAREQ_ID_SHIFT: u32 = 0
+const C3CR_SOIE_MASK: u32 = 0x00000100
+const C3CR_SOIE_SHIFT: u32 = 8
+const C3CR_EGE_MASK: u32 = 0x00000200
+const C3CR_EGE_SHIFT: u32 = 9
+const C3CR_SE_MASK: u32 = 0x00010000
+const C3CR_SE_SHIFT: u32 = 16
+const C3CR_SPOL_MASK: u32 = 0x00060000
+const C3CR_SPOL_SHIFT: u32 = 17
+const C3CR_NBREQ_MASK: u32 = 0x00f80000
+const C3CR_NBREQ_SHIFT: u32 = 19
+const C3CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C3CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C4CR_OFFSET: u32 = 0x00000010
+const C4CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C4CR_DMAREQ_ID_SHIFT: u32 = 0
+const C4CR_SOIE_MASK: u32 = 0x00000100
+const C4CR_SOIE_SHIFT: u32 = 8
+const C4CR_EGE_MASK: u32 = 0x00000200
+const C4CR_EGE_SHIFT: u32 = 9
+const C4CR_SE_MASK: u32 = 0x00010000
+const C4CR_SE_SHIFT: u32 = 16
+const C4CR_SPOL_MASK: u32 = 0x00060000
+const C4CR_SPOL_SHIFT: u32 = 17
+const C4CR_NBREQ_MASK: u32 = 0x00f80000
+const C4CR_NBREQ_SHIFT: u32 = 19
+const C4CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C4CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C5CR_OFFSET: u32 = 0x00000014
+const C5CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C5CR_DMAREQ_ID_SHIFT: u32 = 0
+const C5CR_SOIE_MASK: u32 = 0x00000100
+const C5CR_SOIE_SHIFT: u32 = 8
+const C5CR_EGE_MASK: u32 = 0x00000200
+const C5CR_EGE_SHIFT: u32 = 9
+const C5CR_SE_MASK: u32 = 0x00010000
+const C5CR_SE_SHIFT: u32 = 16
+const C5CR_SPOL_MASK: u32 = 0x00060000
+const C5CR_SPOL_SHIFT: u32 = 17
+const C5CR_NBREQ_MASK: u32 = 0x00f80000
+const C5CR_NBREQ_SHIFT: u32 = 19
+const C5CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C5CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C6CR_OFFSET: u32 = 0x00000018
+const C6CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C6CR_DMAREQ_ID_SHIFT: u32 = 0
+const C6CR_SOIE_MASK: u32 = 0x00000100
+const C6CR_SOIE_SHIFT: u32 = 8
+const C6CR_EGE_MASK: u32 = 0x00000200
+const C6CR_EGE_SHIFT: u32 = 9
+const C6CR_SE_MASK: u32 = 0x00010000
+const C6CR_SE_SHIFT: u32 = 16
+const C6CR_SPOL_MASK: u32 = 0x00060000
+const C6CR_SPOL_SHIFT: u32 = 17
+const C6CR_NBREQ_MASK: u32 = 0x00f80000
+const C6CR_NBREQ_SHIFT: u32 = 19
+const C6CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C6CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request line multiplexer channel x control register
+const C7CR_OFFSET: u32 = 0x0000001c
+const C7CR_DMAREQ_ID_MASK: u32 = 0x0000001f
+const C7CR_DMAREQ_ID_SHIFT: u32 = 0
+const C7CR_SOIE_MASK: u32 = 0x00000100
+const C7CR_SOIE_SHIFT: u32 = 8
+const C7CR_EGE_MASK: u32 = 0x00000200
+const C7CR_EGE_SHIFT: u32 = 9
+const C7CR_SE_MASK: u32 = 0x00010000
+const C7CR_SE_SHIFT: u32 = 16
+const C7CR_SPOL_MASK: u32 = 0x00060000
+const C7CR_SPOL_SHIFT: u32 = 17
+const C7CR_NBREQ_MASK: u32 = 0x00f80000
+const C7CR_NBREQ_SHIFT: u32 = 19
+const C7CR_SYNC_ID_MASK: u32 = 0x1f000000
+const C7CR_SYNC_ID_SHIFT: u32 = 24
+
+// DMAMux - DMA request generator channel x control register
+const RG0CR_OFFSET: u32 = 0x00000100
+const RG0CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG0CR_SIG_ID_SHIFT: u32 = 0
+const RG0CR_OIE_MASK: u32 = 0x00000100
+const RG0CR_OIE_SHIFT: u32 = 8
+const RG0CR_GE_MASK: u32 = 0x00010000
+const RG0CR_GE_SHIFT: u32 = 16
+const RG0CR_GPOL_MASK: u32 = 0x00060000
+const RG0CR_GPOL_SHIFT: u32 = 17
+const RG0CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG0CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG1CR_OFFSET: u32 = 0x00000104
+const RG1CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG1CR_SIG_ID_SHIFT: u32 = 0
+const RG1CR_OIE_MASK: u32 = 0x00000100
+const RG1CR_OIE_SHIFT: u32 = 8
+const RG1CR_GE_MASK: u32 = 0x00010000
+const RG1CR_GE_SHIFT: u32 = 16
+const RG1CR_GPOL_MASK: u32 = 0x00060000
+const RG1CR_GPOL_SHIFT: u32 = 17
+const RG1CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG1CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG2CR_OFFSET: u32 = 0x00000108
+const RG2CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG2CR_SIG_ID_SHIFT: u32 = 0
+const RG2CR_OIE_MASK: u32 = 0x00000100
+const RG2CR_OIE_SHIFT: u32 = 8
+const RG2CR_GE_MASK: u32 = 0x00010000
+const RG2CR_GE_SHIFT: u32 = 16
+const RG2CR_GPOL_MASK: u32 = 0x00060000
+const RG2CR_GPOL_SHIFT: u32 = 17
+const RG2CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG2CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG3CR_OFFSET: u32 = 0x0000010c
+const RG3CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG3CR_SIG_ID_SHIFT: u32 = 0
+const RG3CR_OIE_MASK: u32 = 0x00000100
+const RG3CR_OIE_SHIFT: u32 = 8
+const RG3CR_GE_MASK: u32 = 0x00010000
+const RG3CR_GE_SHIFT: u32 = 16
+const RG3CR_GPOL_MASK: u32 = 0x00060000
+const RG3CR_GPOL_SHIFT: u32 = 17
+const RG3CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG3CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG4CR_OFFSET: u32 = 0x00000110
+const RG4CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG4CR_SIG_ID_SHIFT: u32 = 0
+const RG4CR_OIE_MASK: u32 = 0x00000100
+const RG4CR_OIE_SHIFT: u32 = 8
+const RG4CR_GE_MASK: u32 = 0x00010000
+const RG4CR_GE_SHIFT: u32 = 16
+const RG4CR_GPOL_MASK: u32 = 0x00060000
+const RG4CR_GPOL_SHIFT: u32 = 17
+const RG4CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG4CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG5CR_OFFSET: u32 = 0x00000114
+const RG5CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG5CR_SIG_ID_SHIFT: u32 = 0
+const RG5CR_OIE_MASK: u32 = 0x00000100
+const RG5CR_OIE_SHIFT: u32 = 8
+const RG5CR_GE_MASK: u32 = 0x00010000
+const RG5CR_GE_SHIFT: u32 = 16
+const RG5CR_GPOL_MASK: u32 = 0x00060000
+const RG5CR_GPOL_SHIFT: u32 = 17
+const RG5CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG5CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG6CR_OFFSET: u32 = 0x00000118
+const RG6CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG6CR_SIG_ID_SHIFT: u32 = 0
+const RG6CR_OIE_MASK: u32 = 0x00000100
+const RG6CR_OIE_SHIFT: u32 = 8
+const RG6CR_GE_MASK: u32 = 0x00010000
+const RG6CR_GE_SHIFT: u32 = 16
+const RG6CR_GPOL_MASK: u32 = 0x00060000
+const RG6CR_GPOL_SHIFT: u32 = 17
+const RG6CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG6CR_GNBREQ_SHIFT: u32 = 19
+
+// DMAMux - DMA request generator channel x control register
+const RG7CR_OFFSET: u32 = 0x0000011c
+const RG7CR_SIG_ID_MASK: u32 = 0x0000001f
+const RG7CR_SIG_ID_SHIFT: u32 = 0
+const RG7CR_OIE_MASK: u32 = 0x00000100
+const RG7CR_OIE_SHIFT: u32 = 8
+const RG7CR_GE_MASK: u32 = 0x00010000
+const RG7CR_GE_SHIFT: u32 = 16
+const RG7CR_GPOL_MASK: u32 = 0x00060000
+const RG7CR_GPOL_SHIFT: u32 = 17
+const RG7CR_GNBREQ_MASK: u32 = 0x00f80000
+const RG7CR_GNBREQ_SHIFT: u32 = 19
+
+const RGSR_OFFSET: u32 = 0x00000140
+const RGSR_OF0_MASK: u32 = 0x00000001
+const RGSR_OF0_SHIFT: u32 = 0
+const RGSR_OF1_MASK: u32 = 0x00000002
+const RGSR_OF1_SHIFT: u32 = 1
+const RGSR_OF2_MASK: u32 = 0x00000004
+const RGSR_OF2_SHIFT: u32 = 2
+const RGSR_OF3_MASK: u32 = 0x00000008
+const RGSR_OF3_SHIFT: u32 = 3
+const RGSR_OF4_MASK: u32 = 0x00000010
+const RGSR_OF4_SHIFT: u32 = 4
+const RGSR_OF5_MASK: u32 = 0x00000020
+const RGSR_OF5_SHIFT: u32 = 5
+const RGSR_OF6_MASK: u32 = 0x00000040
+const RGSR_OF6_SHIFT: u32 = 6
+const RGSR_OF7_MASK: u32 = 0x00000080
+const RGSR_OF7_SHIFT: u32 = 7
+
+const RGCFR_OFFSET: u32 = 0x00000144
+const RGCFR_COF0_MASK: u32 = 0x00000001
+const RGCFR_COF0_SHIFT: u32 = 0
+const RGCFR_COF1_MASK: u32 = 0x00000002
+const RGCFR_COF1_SHIFT: u32 = 1
+const RGCFR_COF2_MASK: u32 = 0x00000004
+const RGCFR_COF2_SHIFT: u32 = 2
+const RGCFR_COF3_MASK: u32 = 0x00000008
+const RGCFR_COF3_SHIFT: u32 = 3
+const RGCFR_COF4_MASK: u32 = 0x00000010
+const RGCFR_COF4_SHIFT: u32 = 4
+const RGCFR_COF5_MASK: u32 = 0x00000020
+const RGCFR_COF5_SHIFT: u32 = 5
+const RGCFR_COF6_MASK: u32 = 0x00000040
+const RGCFR_COF6_SHIFT: u32 = 6
+const RGCFR_COF7_MASK: u32 = 0x00000080
+const RGCFR_COF7_SHIFT: u32 = 7
+
+const CSR_OFFSET: u32 = 0x00000080
+const CSR_SOF0_MASK: u32 = 0x00000001
+const CSR_SOF0_SHIFT: u32 = 0
+const CSR_SOF1_MASK: u32 = 0x00000002
+const CSR_SOF1_SHIFT: u32 = 1
+const CSR_SOF2_MASK: u32 = 0x00000004
+const CSR_SOF2_SHIFT: u32 = 2
+const CSR_SOF3_MASK: u32 = 0x00000008
+const CSR_SOF3_SHIFT: u32 = 3
+const CSR_SOF4_MASK: u32 = 0x00000010
+const CSR_SOF4_SHIFT: u32 = 4
+const CSR_SOF5_MASK: u32 = 0x00000020
+const CSR_SOF5_SHIFT: u32 = 5
+const CSR_SOF6_MASK: u32 = 0x00000040
+const CSR_SOF6_SHIFT: u32 = 6
+const CSR_SOF7_MASK: u32 = 0x00000080
+const CSR_SOF7_SHIFT: u32 = 7
+
+const CFR_OFFSET: u32 = 0x00000084
+const CFR_CSOF0_MASK: u32 = 0x00000001
+const CFR_CSOF0_SHIFT: u32 = 0
+const CFR_CSOF1_MASK: u32 = 0x00000002
+const CFR_CSOF1_SHIFT: u32 = 1
+const CFR_CSOF2_MASK: u32 = 0x00000004
+const CFR_CSOF2_SHIFT: u32 = 2
+const CFR_CSOF3_MASK: u32 = 0x00000008
+const CFR_CSOF3_SHIFT: u32 = 3
+const CFR_CSOF4_MASK: u32 = 0x00000010
+const CFR_CSOF4_SHIFT: u32 = 4
+const CFR_CSOF5_MASK: u32 = 0x00000020
+const CFR_CSOF5_SHIFT: u32 = 5
+const CFR_CSOF6_MASK: u32 = 0x00000040
+const CFR_CSOF6_SHIFT: u32 = 6
+const CFR_CSOF7_MASK: u32 = 0x00000080
+const CFR_CSOF7_SHIFT: u32 = 7

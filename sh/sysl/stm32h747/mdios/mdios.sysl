@@ -1,0 +1,379 @@
+// Management data input/output slave
+
+module sh.sysl.stm32h747.mdios
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40009400
+
+// MDIOS configuration register
+const MDIOS_CR_OFFSET: u32 = 0x00000000
+const MDIOS_CR_EN_MASK: u32 = 0x00000001
+const MDIOS_CR_EN_SHIFT: u32 = 0
+const MDIOS_CR_WRIE_MASK: u32 = 0x00000002
+const MDIOS_CR_WRIE_SHIFT: u32 = 1
+const MDIOS_CR_RDIE_MASK: u32 = 0x00000004
+const MDIOS_CR_RDIE_SHIFT: u32 = 2
+const MDIOS_CR_EIE_MASK: u32 = 0x00000008
+const MDIOS_CR_EIE_SHIFT: u32 = 3
+const MDIOS_CR_DPC_MASK: u32 = 0x00000080
+const MDIOS_CR_DPC_SHIFT: u32 = 7
+const MDIOS_CR_PORT_ADDRESS_MASK: u32 = 0x00001f00
+const MDIOS_CR_PORT_ADDRESS_SHIFT: u32 = 8
+
+// MDIOS write flag register
+const MDIOS_WRFR_OFFSET: u32 = 0x00000004
+const MDIOS_WRFR_WRF_MASK: u32 = 0xffffffff
+const MDIOS_WRFR_WRF_SHIFT: u32 = 0
+
+// MDIOS clear write flag register
+const MDIOS_CWRFR_OFFSET: u32 = 0x00000008
+const MDIOS_CWRFR_CWRF_MASK: u32 = 0xffffffff
+const MDIOS_CWRFR_CWRF_SHIFT: u32 = 0
+
+// MDIOS read flag register
+const MDIOS_RDFR_OFFSET: u32 = 0x0000000c
+const MDIOS_RDFR_RDF_MASK: u32 = 0xffffffff
+const MDIOS_RDFR_RDF_SHIFT: u32 = 0
+
+// MDIOS clear read flag register
+const MDIOS_CRDFR_OFFSET: u32 = 0x00000010
+const MDIOS_CRDFR_CRDF_MASK: u32 = 0xffffffff
+const MDIOS_CRDFR_CRDF_SHIFT: u32 = 0
+
+// MDIOS status register
+const MDIOS_SR_OFFSET: u32 = 0x00000014
+const MDIOS_SR_PERF_MASK: u32 = 0x00000001
+const MDIOS_SR_PERF_SHIFT: u32 = 0
+const MDIOS_SR_SERF_MASK: u32 = 0x00000002
+const MDIOS_SR_SERF_SHIFT: u32 = 1
+const MDIOS_SR_TERF_MASK: u32 = 0x00000004
+const MDIOS_SR_TERF_SHIFT: u32 = 2
+
+// MDIOS clear flag register
+const MDIOS_CLRFR_OFFSET: u32 = 0x00000018
+const MDIOS_CLRFR_CPERF_MASK: u32 = 0x00000001
+const MDIOS_CLRFR_CPERF_SHIFT: u32 = 0
+const MDIOS_CLRFR_CSERF_MASK: u32 = 0x00000002
+const MDIOS_CLRFR_CSERF_SHIFT: u32 = 1
+const MDIOS_CLRFR_CTERF_MASK: u32 = 0x00000004
+const MDIOS_CLRFR_CTERF_SHIFT: u32 = 2
+
+// MDIOS input data register 0
+const MDIOS_DINR0_OFFSET: u32 = 0x0000001c
+const MDIOS_DINR0_DIN0_MASK: u32 = 0x0000ffff
+const MDIOS_DINR0_DIN0_SHIFT: u32 = 0
+
+// MDIOS input data register 1
+const MDIOS_DINR1_OFFSET: u32 = 0x00000020
+const MDIOS_DINR1_DIN1_MASK: u32 = 0x0000ffff
+const MDIOS_DINR1_DIN1_SHIFT: u32 = 0
+
+// MDIOS input data register 2
+const MDIOS_DINR2_OFFSET: u32 = 0x00000024
+const MDIOS_DINR2_DIN2_MASK: u32 = 0x0000ffff
+const MDIOS_DINR2_DIN2_SHIFT: u32 = 0
+
+// MDIOS input data register 3
+const MDIOS_DINR3_OFFSET: u32 = 0x00000028
+const MDIOS_DINR3_DIN3_MASK: u32 = 0x0000ffff
+const MDIOS_DINR3_DIN3_SHIFT: u32 = 0
+
+// MDIOS input data register 4
+const MDIOS_DINR4_OFFSET: u32 = 0x0000002c
+const MDIOS_DINR4_DIN4_MASK: u32 = 0x0000ffff
+const MDIOS_DINR4_DIN4_SHIFT: u32 = 0
+
+// MDIOS input data register 5
+const MDIOS_DINR5_OFFSET: u32 = 0x00000030
+const MDIOS_DINR5_DIN5_MASK: u32 = 0x0000ffff
+const MDIOS_DINR5_DIN5_SHIFT: u32 = 0
+
+// MDIOS input data register 6
+const MDIOS_DINR6_OFFSET: u32 = 0x00000034
+const MDIOS_DINR6_DIN6_MASK: u32 = 0x0000ffff
+const MDIOS_DINR6_DIN6_SHIFT: u32 = 0
+
+// MDIOS input data register 7
+const MDIOS_DINR7_OFFSET: u32 = 0x00000038
+const MDIOS_DINR7_DIN7_MASK: u32 = 0x0000ffff
+const MDIOS_DINR7_DIN7_SHIFT: u32 = 0
+
+// MDIOS input data register 8
+const MDIOS_DINR8_OFFSET: u32 = 0x0000003c
+const MDIOS_DINR8_DIN8_MASK: u32 = 0x0000ffff
+const MDIOS_DINR8_DIN8_SHIFT: u32 = 0
+
+// MDIOS input data register 9
+const MDIOS_DINR9_OFFSET: u32 = 0x00000040
+const MDIOS_DINR9_DIN9_MASK: u32 = 0x0000ffff
+const MDIOS_DINR9_DIN9_SHIFT: u32 = 0
+
+// MDIOS input data register 10
+const MDIOS_DINR10_OFFSET: u32 = 0x00000044
+const MDIOS_DINR10_DIN10_MASK: u32 = 0x0000ffff
+const MDIOS_DINR10_DIN10_SHIFT: u32 = 0
+
+// MDIOS input data register 11
+const MDIOS_DINR11_OFFSET: u32 = 0x00000048
+const MDIOS_DINR11_DIN11_MASK: u32 = 0x0000ffff
+const MDIOS_DINR11_DIN11_SHIFT: u32 = 0
+
+// MDIOS input data register 12
+const MDIOS_DINR12_OFFSET: u32 = 0x0000004c
+const MDIOS_DINR12_DIN12_MASK: u32 = 0x0000ffff
+const MDIOS_DINR12_DIN12_SHIFT: u32 = 0
+
+// MDIOS input data register 13
+const MDIOS_DINR13_OFFSET: u32 = 0x00000050
+const MDIOS_DINR13_DIN13_MASK: u32 = 0x0000ffff
+const MDIOS_DINR13_DIN13_SHIFT: u32 = 0
+
+// MDIOS input data register 14
+const MDIOS_DINR14_OFFSET: u32 = 0x00000054
+const MDIOS_DINR14_DIN14_MASK: u32 = 0x0000ffff
+const MDIOS_DINR14_DIN14_SHIFT: u32 = 0
+
+// MDIOS input data register 15
+const MDIOS_DINR15_OFFSET: u32 = 0x00000058
+const MDIOS_DINR15_DIN15_MASK: u32 = 0x0000ffff
+const MDIOS_DINR15_DIN15_SHIFT: u32 = 0
+
+// MDIOS input data register 16
+const MDIOS_DINR16_OFFSET: u32 = 0x0000005c
+const MDIOS_DINR16_DIN16_MASK: u32 = 0x0000ffff
+const MDIOS_DINR16_DIN16_SHIFT: u32 = 0
+
+// MDIOS input data register 17
+const MDIOS_DINR17_OFFSET: u32 = 0x00000060
+const MDIOS_DINR17_DIN17_MASK: u32 = 0x0000ffff
+const MDIOS_DINR17_DIN17_SHIFT: u32 = 0
+
+// MDIOS input data register 18
+const MDIOS_DINR18_OFFSET: u32 = 0x00000064
+const MDIOS_DINR18_DIN18_MASK: u32 = 0x0000ffff
+const MDIOS_DINR18_DIN18_SHIFT: u32 = 0
+
+// MDIOS input data register 19
+const MDIOS_DINR19_OFFSET: u32 = 0x00000068
+const MDIOS_DINR19_DIN19_MASK: u32 = 0x0000ffff
+const MDIOS_DINR19_DIN19_SHIFT: u32 = 0
+
+// MDIOS input data register 20
+const MDIOS_DINR20_OFFSET: u32 = 0x0000006c
+const MDIOS_DINR20_DIN20_MASK: u32 = 0x0000ffff
+const MDIOS_DINR20_DIN20_SHIFT: u32 = 0
+
+// MDIOS input data register 21
+const MDIOS_DINR21_OFFSET: u32 = 0x00000070
+const MDIOS_DINR21_DIN21_MASK: u32 = 0x0000ffff
+const MDIOS_DINR21_DIN21_SHIFT: u32 = 0
+
+// MDIOS input data register 22
+const MDIOS_DINR22_OFFSET: u32 = 0x00000074
+const MDIOS_DINR22_DIN22_MASK: u32 = 0x0000ffff
+const MDIOS_DINR22_DIN22_SHIFT: u32 = 0
+
+// MDIOS input data register 23
+const MDIOS_DINR23_OFFSET: u32 = 0x00000078
+const MDIOS_DINR23_DIN23_MASK: u32 = 0x0000ffff
+const MDIOS_DINR23_DIN23_SHIFT: u32 = 0
+
+// MDIOS input data register 24
+const MDIOS_DINR24_OFFSET: u32 = 0x0000007c
+const MDIOS_DINR24_DIN24_MASK: u32 = 0x0000ffff
+const MDIOS_DINR24_DIN24_SHIFT: u32 = 0
+
+// MDIOS input data register 25
+const MDIOS_DINR25_OFFSET: u32 = 0x00000080
+const MDIOS_DINR25_DIN25_MASK: u32 = 0x0000ffff
+const MDIOS_DINR25_DIN25_SHIFT: u32 = 0
+
+// MDIOS input data register 26
+const MDIOS_DINR26_OFFSET: u32 = 0x00000084
+const MDIOS_DINR26_DIN26_MASK: u32 = 0x0000ffff
+const MDIOS_DINR26_DIN26_SHIFT: u32 = 0
+
+// MDIOS input data register 27
+const MDIOS_DINR27_OFFSET: u32 = 0x00000088
+const MDIOS_DINR27_DIN27_MASK: u32 = 0x0000ffff
+const MDIOS_DINR27_DIN27_SHIFT: u32 = 0
+
+// MDIOS input data register 28
+const MDIOS_DINR28_OFFSET: u32 = 0x0000008c
+const MDIOS_DINR28_DIN28_MASK: u32 = 0x0000ffff
+const MDIOS_DINR28_DIN28_SHIFT: u32 = 0
+
+// MDIOS input data register 29
+const MDIOS_DINR29_OFFSET: u32 = 0x00000090
+const MDIOS_DINR29_DIN29_MASK: u32 = 0x0000ffff
+const MDIOS_DINR29_DIN29_SHIFT: u32 = 0
+
+// MDIOS input data register 30
+const MDIOS_DINR30_OFFSET: u32 = 0x00000094
+const MDIOS_DINR30_DIN30_MASK: u32 = 0x0000ffff
+const MDIOS_DINR30_DIN30_SHIFT: u32 = 0
+
+// MDIOS input data register 31
+const MDIOS_DINR31_OFFSET: u32 = 0x00000098
+const MDIOS_DINR31_DIN31_MASK: u32 = 0x0000ffff
+const MDIOS_DINR31_DIN31_SHIFT: u32 = 0
+
+// MDIOS output data register 0
+const MDIOS_DOUTR0_OFFSET: u32 = 0x0000009c
+const MDIOS_DOUTR0_DOUT0_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR0_DOUT0_SHIFT: u32 = 0
+
+// MDIOS output data register 1
+const MDIOS_DOUTR1_OFFSET: u32 = 0x000000a0
+const MDIOS_DOUTR1_DOUT1_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR1_DOUT1_SHIFT: u32 = 0
+
+// MDIOS output data register 2
+const MDIOS_DOUTR2_OFFSET: u32 = 0x000000a4
+const MDIOS_DOUTR2_DOUT2_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR2_DOUT2_SHIFT: u32 = 0
+
+// MDIOS output data register 3
+const MDIOS_DOUTR3_OFFSET: u32 = 0x000000a8
+const MDIOS_DOUTR3_DOUT3_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR3_DOUT3_SHIFT: u32 = 0
+
+// MDIOS output data register 4
+const MDIOS_DOUTR4_OFFSET: u32 = 0x000000ac
+const MDIOS_DOUTR4_DOUT4_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR4_DOUT4_SHIFT: u32 = 0
+
+// MDIOS output data register 5
+const MDIOS_DOUTR5_OFFSET: u32 = 0x000000b0
+const MDIOS_DOUTR5_DOUT5_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR5_DOUT5_SHIFT: u32 = 0
+
+// MDIOS output data register 6
+const MDIOS_DOUTR6_OFFSET: u32 = 0x000000b4
+const MDIOS_DOUTR6_DOUT6_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR6_DOUT6_SHIFT: u32 = 0
+
+// MDIOS output data register 7
+const MDIOS_DOUTR7_OFFSET: u32 = 0x000000b8
+const MDIOS_DOUTR7_DOUT7_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR7_DOUT7_SHIFT: u32 = 0
+
+// MDIOS output data register 8
+const MDIOS_DOUTR8_OFFSET: u32 = 0x000000bc
+const MDIOS_DOUTR8_DOUT8_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR8_DOUT8_SHIFT: u32 = 0
+
+// MDIOS output data register 9
+const MDIOS_DOUTR9_OFFSET: u32 = 0x000000c0
+const MDIOS_DOUTR9_DOUT9_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR9_DOUT9_SHIFT: u32 = 0
+
+// MDIOS output data register 10
+const MDIOS_DOUTR10_OFFSET: u32 = 0x000000c4
+const MDIOS_DOUTR10_DOUT10_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR10_DOUT10_SHIFT: u32 = 0
+
+// MDIOS output data register 11
+const MDIOS_DOUTR11_OFFSET: u32 = 0x000000c8
+const MDIOS_DOUTR11_DOUT11_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR11_DOUT11_SHIFT: u32 = 0
+
+// MDIOS output data register 12
+const MDIOS_DOUTR12_OFFSET: u32 = 0x000000cc
+const MDIOS_DOUTR12_DOUT12_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR12_DOUT12_SHIFT: u32 = 0
+
+// MDIOS output data register 13
+const MDIOS_DOUTR13_OFFSET: u32 = 0x000000d0
+const MDIOS_DOUTR13_DOUT13_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR13_DOUT13_SHIFT: u32 = 0
+
+// MDIOS output data register 14
+const MDIOS_DOUTR14_OFFSET: u32 = 0x000000d4
+const MDIOS_DOUTR14_DOUT14_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR14_DOUT14_SHIFT: u32 = 0
+
+// MDIOS output data register 15
+const MDIOS_DOUTR15_OFFSET: u32 = 0x000000d8
+const MDIOS_DOUTR15_DOUT15_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR15_DOUT15_SHIFT: u32 = 0
+
+// MDIOS output data register 16
+const MDIOS_DOUTR16_OFFSET: u32 = 0x000000dc
+const MDIOS_DOUTR16_DOUT16_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR16_DOUT16_SHIFT: u32 = 0
+
+// MDIOS output data register 17
+const MDIOS_DOUTR17_OFFSET: u32 = 0x000000e0
+const MDIOS_DOUTR17_DOUT17_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR17_DOUT17_SHIFT: u32 = 0
+
+// MDIOS output data register 18
+const MDIOS_DOUTR18_OFFSET: u32 = 0x000000e4
+const MDIOS_DOUTR18_DOUT18_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR18_DOUT18_SHIFT: u32 = 0
+
+// MDIOS output data register 19
+const MDIOS_DOUTR19_OFFSET: u32 = 0x000000e8
+const MDIOS_DOUTR19_DOUT19_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR19_DOUT19_SHIFT: u32 = 0
+
+// MDIOS output data register 20
+const MDIOS_DOUTR20_OFFSET: u32 = 0x000000ec
+const MDIOS_DOUTR20_DOUT20_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR20_DOUT20_SHIFT: u32 = 0
+
+// MDIOS output data register 21
+const MDIOS_DOUTR21_OFFSET: u32 = 0x000000f0
+const MDIOS_DOUTR21_DOUT21_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR21_DOUT21_SHIFT: u32 = 0
+
+// MDIOS output data register 22
+const MDIOS_DOUTR22_OFFSET: u32 = 0x000000f4
+const MDIOS_DOUTR22_DOUT22_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR22_DOUT22_SHIFT: u32 = 0
+
+// MDIOS output data register 23
+const MDIOS_DOUTR23_OFFSET: u32 = 0x000000f8
+const MDIOS_DOUTR23_DOUT23_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR23_DOUT23_SHIFT: u32 = 0
+
+// MDIOS output data register 24
+const MDIOS_DOUTR24_OFFSET: u32 = 0x000000fc
+const MDIOS_DOUTR24_DOUT24_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR24_DOUT24_SHIFT: u32 = 0
+
+// MDIOS output data register 25
+const MDIOS_DOUTR25_OFFSET: u32 = 0x00000100
+const MDIOS_DOUTR25_DOUT25_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR25_DOUT25_SHIFT: u32 = 0
+
+// MDIOS output data register 26
+const MDIOS_DOUTR26_OFFSET: u32 = 0x00000104
+const MDIOS_DOUTR26_DOUT26_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR26_DOUT26_SHIFT: u32 = 0
+
+// MDIOS output data register 27
+const MDIOS_DOUTR27_OFFSET: u32 = 0x00000108
+const MDIOS_DOUTR27_DOUT27_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR27_DOUT27_SHIFT: u32 = 0
+
+// MDIOS output data register 28
+const MDIOS_DOUTR28_OFFSET: u32 = 0x0000010c
+const MDIOS_DOUTR28_DOUT28_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR28_DOUT28_SHIFT: u32 = 0
+
+// MDIOS output data register 29
+const MDIOS_DOUTR29_OFFSET: u32 = 0x00000110
+const MDIOS_DOUTR29_DOUT29_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR29_DOUT29_SHIFT: u32 = 0
+
+// MDIOS output data register 30
+const MDIOS_DOUTR30_OFFSET: u32 = 0x00000114
+const MDIOS_DOUTR30_DOUT30_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR30_DOUT30_SHIFT: u32 = 0
+
+// MDIOS output data register 31
+const MDIOS_DOUTR31_OFFSET: u32 = 0x00000118
+const MDIOS_DOUTR31_DOUT31_MASK: u32 = 0x0000ffff
+const MDIOS_DOUTR31_DOUT31_SHIFT: u32 = 0

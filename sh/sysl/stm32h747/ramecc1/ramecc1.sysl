@@ -1,0 +1,218 @@
+// ECC controller is associated to each RAM area
+
+module sh.sysl.stm32h747.ramecc1
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x52009000
+
+// RAMECC interrupt enable register
+const IER_OFFSET: u32 = 0x00000000
+const IER_GIE_MASK: u32 = 0x00000001
+const IER_GIE_SHIFT: u32 = 0
+const IER_GECCSEIE__MASK: u32 = 0x00000002
+const IER_GECCSEIE__SHIFT: u32 = 1
+const IER_GECCDEIE_MASK: u32 = 0x00000004
+const IER_GECCDEIE_SHIFT: u32 = 2
+const IER_GECCDEBWIE_MASK: u32 = 0x00000008
+const IER_GECCDEBWIE_SHIFT: u32 = 3
+
+// RAMECC monitor x configuration register
+const M1CR_OFFSET: u32 = 0x00000020
+const M1CR_ECCSEIE_MASK: u32 = 0x00000004
+const M1CR_ECCSEIE_SHIFT: u32 = 2
+const M1CR_ECCDEIE_MASK: u32 = 0x00000008
+const M1CR_ECCDEIE_SHIFT: u32 = 3
+const M1CR_ECCDEBWIE_MASK: u32 = 0x00000010
+const M1CR_ECCDEBWIE_SHIFT: u32 = 4
+const M1CR_ECCELEN_MASK: u32 = 0x00000020
+const M1CR_ECCELEN_SHIFT: u32 = 5
+
+// RAMECC monitor x status register
+const M1SR_OFFSET: u32 = 0x00000024
+const M1SR_ECCSEIE_MASK: u32 = 0x00000004
+const M1SR_ECCSEIE_SHIFT: u32 = 2
+const M1SR_ECCDEIE_MASK: u32 = 0x00000008
+const M1SR_ECCDEIE_SHIFT: u32 = 3
+const M1SR_ECCDEBWIE_MASK: u32 = 0x00000010
+const M1SR_ECCDEBWIE_SHIFT: u32 = 4
+const M1SR_ECCELEN_MASK: u32 = 0x00000020
+const M1SR_ECCELEN_SHIFT: u32 = 5
+
+// RAMECC monitor x failing address register
+const M1FAR_OFFSET: u32 = 0x00000028
+const M1FAR_ECCSEIE_MASK: u32 = 0x00000004
+const M1FAR_ECCSEIE_SHIFT: u32 = 2
+const M1FAR_ECCDEIE_MASK: u32 = 0x00000008
+const M1FAR_ECCDEIE_SHIFT: u32 = 3
+const M1FAR_ECCDEBWIE_MASK: u32 = 0x00000010
+const M1FAR_ECCDEBWIE_SHIFT: u32 = 4
+const M1FAR_ECCELEN_MASK: u32 = 0x00000020
+const M1FAR_ECCELEN_SHIFT: u32 = 5
+
+// RAMECC monitor x failing data low register
+const M1FDRL_OFFSET: u32 = 0x0000002c
+const M1FDRL_ECCSEIE_MASK: u32 = 0x00000004
+const M1FDRL_ECCSEIE_SHIFT: u32 = 2
+const M1FDRL_ECCDEIE_MASK: u32 = 0x00000008
+const M1FDRL_ECCDEIE_SHIFT: u32 = 3
+const M1FDRL_ECCDEBWIE_MASK: u32 = 0x00000010
+const M1FDRL_ECCDEBWIE_SHIFT: u32 = 4
+const M1FDRL_ECCELEN_MASK: u32 = 0x00000020
+const M1FDRL_ECCELEN_SHIFT: u32 = 5
+
+// RAMECC monitor x failing data high register
+const M1FDRH_OFFSET: u32 = 0x00000030
+const M1FDRH_ECCSEIE_MASK: u32 = 0x00000004
+const M1FDRH_ECCSEIE_SHIFT: u32 = 2
+const M1FDRH_ECCDEIE_MASK: u32 = 0x00000008
+const M1FDRH_ECCDEIE_SHIFT: u32 = 3
+const M1FDRH_ECCDEBWIE_MASK: u32 = 0x00000010
+const M1FDRH_ECCDEBWIE_SHIFT: u32 = 4
+const M1FDRH_ECCELEN_MASK: u32 = 0x00000020
+const M1FDRH_ECCELEN_SHIFT: u32 = 5
+
+// RAMECC monitor x failing ECC error code register
+const M1FECR_OFFSET: u32 = 0x00000034
+const M1FECR_SEDCF_MASK: u32 = 0x00000001
+const M1FECR_SEDCF_SHIFT: u32 = 0
+const M1FECR_DEDF_MASK: u32 = 0x00000002
+const M1FECR_DEDF_SHIFT: u32 = 1
+const M1FECR_DEBWDF_MASK: u32 = 0x00000004
+const M1FECR_DEBWDF_SHIFT: u32 = 2
+
+// RAMECC monitor x configuration register
+const M2CR_OFFSET: u32 = 0x00000040
+const M2CR_SEDCF_MASK: u32 = 0x00000001
+const M2CR_SEDCF_SHIFT: u32 = 0
+const M2CR_DEDF_MASK: u32 = 0x00000002
+const M2CR_DEDF_SHIFT: u32 = 1
+const M2CR_DEBWDF_MASK: u32 = 0x00000004
+const M2CR_DEBWDF_SHIFT: u32 = 2
+
+// RAMECC monitor x status register
+const M2SR_OFFSET: u32 = 0x00000044
+const M2SR_SEDCF_MASK: u32 = 0x00000001
+const M2SR_SEDCF_SHIFT: u32 = 0
+const M2SR_DEDF_MASK: u32 = 0x00000002
+const M2SR_DEDF_SHIFT: u32 = 1
+const M2SR_DEBWDF_MASK: u32 = 0x00000004
+const M2SR_DEBWDF_SHIFT: u32 = 2
+
+// RAMECC monitor x failing address register
+const M2FAR_OFFSET: u32 = 0x00000048
+const M2FAR_SEDCF_MASK: u32 = 0x00000001
+const M2FAR_SEDCF_SHIFT: u32 = 0
+const M2FAR_DEDF_MASK: u32 = 0x00000002
+const M2FAR_DEDF_SHIFT: u32 = 1
+const M2FAR_DEBWDF_MASK: u32 = 0x00000004
+const M2FAR_DEBWDF_SHIFT: u32 = 2
+
+// RAMECC monitor x failing data low register
+const M2FDRL_OFFSET: u32 = 0x0000004c
+const M2FDRL_SEDCF_MASK: u32 = 0x00000001
+const M2FDRL_SEDCF_SHIFT: u32 = 0
+const M2FDRL_DEDF_MASK: u32 = 0x00000002
+const M2FDRL_DEDF_SHIFT: u32 = 1
+const M2FDRL_DEBWDF_MASK: u32 = 0x00000004
+const M2FDRL_DEBWDF_SHIFT: u32 = 2
+
+// RAMECC monitor x failing data high register
+const M2FDRH_OFFSET: u32 = 0x00000050
+const M2FDRH_FADD_MASK: u32 = 0xffffffff
+const M2FDRH_FADD_SHIFT: u32 = 0
+
+// RAMECC monitor x failing ECC error code register
+const M2FECR_OFFSET: u32 = 0x00000058
+const M2FECR_FADD_MASK: u32 = 0xffffffff
+const M2FECR_FADD_SHIFT: u32 = 0
+
+// RAMECC monitor x configuration register
+const M3CR_OFFSET: u32 = 0x00000060
+const M3CR_FADD_MASK: u32 = 0xffffffff
+const M3CR_FADD_SHIFT: u32 = 0
+
+// RAMECC monitor x status register
+const M3SR_OFFSET: u32 = 0x00000064
+const M3SR_FADD_MASK: u32 = 0xffffffff
+const M3SR_FADD_SHIFT: u32 = 0
+
+// RAMECC monitor x failing address register
+const M3FAR_OFFSET: u32 = 0x00000068
+const M3FAR_FADD_MASK: u32 = 0xffffffff
+const M3FAR_FADD_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data low register
+const M3FDRL_OFFSET: u32 = 0x0000006c
+const M3FDRL_FDATAL_MASK: u32 = 0xffffffff
+const M3FDRL_FDATAL_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data high register
+const M3FDRH_OFFSET: u32 = 0x00000070
+const M3FDRH_FDATAL_MASK: u32 = 0xffffffff
+const M3FDRH_FDATAL_SHIFT: u32 = 0
+
+// RAMECC monitor x failing ECC error code register
+const M3FECR_OFFSET: u32 = 0x0000007c
+const M3FECR_FDATAL_MASK: u32 = 0xffffffff
+const M3FECR_FDATAL_SHIFT: u32 = 0
+
+// RAMECC monitor x configuration register
+const M4CR_OFFSET: u32 = 0x00000080
+const M4CR_FDATAL_MASK: u32 = 0xffffffff
+const M4CR_FDATAL_SHIFT: u32 = 0
+
+// RAMECC monitor x status register
+const M4SR_OFFSET: u32 = 0x00000084
+const M4SR_FDATAL_MASK: u32 = 0xffffffff
+const M4SR_FDATAL_SHIFT: u32 = 0
+
+// RAMECC monitor x failing address register
+const M4FAR_OFFSET: u32 = 0x00000088
+const M4FAR_FDATAH_MASK: u32 = 0xffffffff
+const M4FAR_FDATAH_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data low register
+const M4FDRL_OFFSET: u32 = 0x0000008c
+const M4FDRL_FDATAH_MASK: u32 = 0xffffffff
+const M4FDRL_FDATAH_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data high register
+const M4FDRH_OFFSET: u32 = 0x00000090
+const M4FDRH_FDATAH_MASK: u32 = 0xffffffff
+const M4FDRH_FDATAH_SHIFT: u32 = 0
+
+// RAMECC monitor x failing ECC error code register
+// The SVD declares this an alternate reading of M4FDRH.
+const M4FECR_OFFSET: u32 = 0x00000090
+const M4FECR_FDATAH_MASK: u32 = 0xffffffff
+const M4FECR_FDATAH_SHIFT: u32 = 0
+
+// RAMECC monitor x configuration register
+const M5CR_OFFSET: u32 = 0x000000a0
+const M5CR_FEC_MASK: u32 = 0xffffffff
+const M5CR_FEC_SHIFT: u32 = 0
+
+// RAMECC monitor x status register
+const M5SR_OFFSET: u32 = 0x000000a4
+const M5SR_FEC_MASK: u32 = 0xffffffff
+const M5SR_FEC_SHIFT: u32 = 0
+
+// RAMECC monitor x failing address register
+const M5FAR_OFFSET: u32 = 0x000000a8
+const M5FAR_FEC_MASK: u32 = 0xffffffff
+const M5FAR_FEC_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data low register
+const M5FDRL_OFFSET: u32 = 0x000000ac
+const M5FDRL_FEC_MASK: u32 = 0xffffffff
+const M5FDRL_FEC_SHIFT: u32 = 0
+
+// RAMECC monitor x failing data high register
+const M5FDRH_OFFSET: u32 = 0x000000b0
+const M5FDRH_FEC_MASK: u32 = 0xffffffff
+const M5FDRH_FEC_SHIFT: u32 = 0
+
+// RAMECC monitor x failing ECC error code register
+const M5FECR_OFFSET: u32 = 0x000000b4
+const M5FECR_FEC_MASK: u32 = 0xffffffff
+const M5FECR_FEC_SHIFT: u32 = 0

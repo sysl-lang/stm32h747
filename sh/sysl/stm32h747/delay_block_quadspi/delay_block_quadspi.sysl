@@ -1,0 +1,22 @@
+module sh.sysl.stm32h747.delay_block_quadspi
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x52006000
+
+// DLYB control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_DEN_MASK: u32 = 0x00000001
+const CR_DEN_SHIFT: u32 = 0
+const CR_SEN_MASK: u32 = 0x00000002
+const CR_SEN_SHIFT: u32 = 1
+
+// DLYB configuration register
+const CFGR_OFFSET: u32 = 0x00000004
+const CFGR_SEL_MASK: u32 = 0x0000000f
+const CFGR_SEL_SHIFT: u32 = 0
+const CFGR_UNIT_MASK: u32 = 0x00007f00
+const CFGR_UNIT_SHIFT: u32 = 8
+const CFGR_LNG_MASK: u32 = 0x0fff0000
+const CFGR_LNG_SHIFT: u32 = 16
+const CFGR_LNGF_MASK: u32 = 0x80000000
+const CFGR_LNGF_SHIFT: u32 = 31

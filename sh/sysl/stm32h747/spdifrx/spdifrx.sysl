@@ -1,0 +1,162 @@
+// Receiver Interface
+
+module sh.sysl.stm32h747.spdifrx
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40004000
+
+// Control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_SPDIFRXEN_MASK: u32 = 0x00000003
+const CR_SPDIFRXEN_SHIFT: u32 = 0
+const CR_RXDMAEN_MASK: u32 = 0x00000004
+const CR_RXDMAEN_SHIFT: u32 = 2
+const CR_RXSTEO_MASK: u32 = 0x00000008
+const CR_RXSTEO_SHIFT: u32 = 3
+const CR_DRFMT_MASK: u32 = 0x00000030
+const CR_DRFMT_SHIFT: u32 = 4
+const CR_PMSK_MASK: u32 = 0x00000040
+const CR_PMSK_SHIFT: u32 = 6
+const CR_VMSK_MASK: u32 = 0x00000080
+const CR_VMSK_SHIFT: u32 = 7
+const CR_CUMSK_MASK: u32 = 0x00000100
+const CR_CUMSK_SHIFT: u32 = 8
+const CR_PTMSK_MASK: u32 = 0x00000200
+const CR_PTMSK_SHIFT: u32 = 9
+const CR_CBDMAEN_MASK: u32 = 0x00000400
+const CR_CBDMAEN_SHIFT: u32 = 10
+const CR_CHSEL_MASK: u32 = 0x00000800
+const CR_CHSEL_SHIFT: u32 = 11
+const CR_NBTR_MASK: u32 = 0x00003000
+const CR_NBTR_SHIFT: u32 = 12
+const CR_WFA_MASK: u32 = 0x00004000
+const CR_WFA_SHIFT: u32 = 14
+const CR_INSEL_MASK: u32 = 0x00070000
+const CR_INSEL_SHIFT: u32 = 16
+const CR_CKSEN_MASK: u32 = 0x00100000
+const CR_CKSEN_SHIFT: u32 = 20
+const CR_CKSBKPEN_MASK: u32 = 0x00200000
+const CR_CKSBKPEN_SHIFT: u32 = 21
+
+// Interrupt mask register
+const IMR_OFFSET: u32 = 0x00000004
+const IMR_RXNEIE_MASK: u32 = 0x00000001
+const IMR_RXNEIE_SHIFT: u32 = 0
+const IMR_CSRNEIE_MASK: u32 = 0x00000002
+const IMR_CSRNEIE_SHIFT: u32 = 1
+const IMR_PERRIE_MASK: u32 = 0x00000004
+const IMR_PERRIE_SHIFT: u32 = 2
+const IMR_OVRIE_MASK: u32 = 0x00000008
+const IMR_OVRIE_SHIFT: u32 = 3
+const IMR_SBLKIE_MASK: u32 = 0x00000010
+const IMR_SBLKIE_SHIFT: u32 = 4
+const IMR_SYNCDIE_MASK: u32 = 0x00000020
+const IMR_SYNCDIE_SHIFT: u32 = 5
+const IMR_IFEIE_MASK: u32 = 0x00000040
+const IMR_IFEIE_SHIFT: u32 = 6
+
+// Status register
+const SR_OFFSET: u32 = 0x00000008
+const SR_RXNE_MASK: u32 = 0x00000001
+const SR_RXNE_SHIFT: u32 = 0
+const SR_CSRNE_MASK: u32 = 0x00000002
+const SR_CSRNE_SHIFT: u32 = 1
+const SR_PERR_MASK: u32 = 0x00000004
+const SR_PERR_SHIFT: u32 = 2
+const SR_OVR_MASK: u32 = 0x00000008
+const SR_OVR_SHIFT: u32 = 3
+const SR_SBD_MASK: u32 = 0x00000010
+const SR_SBD_SHIFT: u32 = 4
+const SR_SYNCD_MASK: u32 = 0x00000020
+const SR_SYNCD_SHIFT: u32 = 5
+const SR_FERR_MASK: u32 = 0x00000040
+const SR_FERR_SHIFT: u32 = 6
+const SR_SERR_MASK: u32 = 0x00000080
+const SR_SERR_SHIFT: u32 = 7
+const SR_TERR_MASK: u32 = 0x00000100
+const SR_TERR_SHIFT: u32 = 8
+const SR_WIDTH5_MASK: u32 = 0x7fff0000
+const SR_WIDTH5_SHIFT: u32 = 16
+
+// Interrupt Flag Clear register
+const IFCR_OFFSET: u32 = 0x0000000c
+const IFCR_PERRCF_MASK: u32 = 0x00000004
+const IFCR_PERRCF_SHIFT: u32 = 2
+const IFCR_OVRCF_MASK: u32 = 0x00000008
+const IFCR_OVRCF_SHIFT: u32 = 3
+const IFCR_SBDCF_MASK: u32 = 0x00000010
+const IFCR_SBDCF_SHIFT: u32 = 4
+const IFCR_SYNCDCF_MASK: u32 = 0x00000020
+const IFCR_SYNCDCF_SHIFT: u32 = 5
+
+// Data input register
+const DR_00_OFFSET: u32 = 0x00000010
+const DR_00_DR_MASK: u32 = 0x00ffffff
+const DR_00_DR_SHIFT: u32 = 0
+const DR_00_PE_MASK: u32 = 0x01000000
+const DR_00_PE_SHIFT: u32 = 24
+const DR_00_V_MASK: u32 = 0x02000000
+const DR_00_V_SHIFT: u32 = 25
+const DR_00_U_MASK: u32 = 0x04000000
+const DR_00_U_SHIFT: u32 = 26
+const DR_00_C_MASK: u32 = 0x08000000
+const DR_00_C_SHIFT: u32 = 27
+const DR_00_PT_MASK: u32 = 0x30000000
+const DR_00_PT_SHIFT: u32 = 28
+
+// Channel Status register
+const CSR_OFFSET: u32 = 0x00000014
+const CSR_USR_MASK: u32 = 0x0000ffff
+const CSR_USR_SHIFT: u32 = 0
+const CSR_CS_MASK: u32 = 0x00ff0000
+const CSR_CS_SHIFT: u32 = 16
+const CSR_SOB_MASK: u32 = 0x01000000
+const CSR_SOB_SHIFT: u32 = 24
+
+// Debug Information register
+const DIR_OFFSET: u32 = 0x00000018
+const DIR_THI_MASK: u32 = 0x00001fff
+const DIR_THI_SHIFT: u32 = 0
+const DIR_TLO_MASK: u32 = 0x1fff0000
+const DIR_TLO_SHIFT: u32 = 16
+
+// SPDIFRX version register
+const VERR_OFFSET: u32 = 0x000003f4
+const VERR_MINREV_MASK: u32 = 0x0000000f
+const VERR_MINREV_SHIFT: u32 = 0
+const VERR_MAJREV_MASK: u32 = 0x000000f0
+const VERR_MAJREV_SHIFT: u32 = 4
+
+// SPDIFRX identification register
+const IDR_OFFSET: u32 = 0x000003f8
+const IDR_ID_MASK: u32 = 0xffffffff
+const IDR_ID_SHIFT: u32 = 0
+
+// SPDIFRX size identification register
+const SIDR_OFFSET: u32 = 0x000003fc
+const SIDR_SID_MASK: u32 = 0xffffffff
+const SIDR_SID_SHIFT: u32 = 0
+
+// Data input register
+// The SVD declares this an alternate reading of DR_00.
+const DR_01_OFFSET: u32 = 0x00000010
+const DR_01_PE_MASK: u32 = 0x00000001
+const DR_01_PE_SHIFT: u32 = 0
+const DR_01_V_MASK: u32 = 0x00000002
+const DR_01_V_SHIFT: u32 = 1
+const DR_01_U_MASK: u32 = 0x00000004
+const DR_01_U_SHIFT: u32 = 2
+const DR_01_C_MASK: u32 = 0x00000008
+const DR_01_C_SHIFT: u32 = 3
+const DR_01_PT_MASK: u32 = 0x00000030
+const DR_01_PT_SHIFT: u32 = 4
+const DR_01_DR_MASK: u32 = 0xffffff00
+const DR_01_DR_SHIFT: u32 = 8
+
+// Data input register
+// The SVD declares this an alternate reading of DR_00.
+const DR_10_OFFSET: u32 = 0x00000010
+const DR_10_DRNL1_MASK: u32 = 0x0000ffff
+const DR_10_DRNL1_SHIFT: u32 = 0
+const DR_10_DRNL2_MASK: u32 = 0xffff0000
+const DR_10_DRNL2_SHIFT: u32 = 16

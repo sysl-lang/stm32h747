@@ -1,0 +1,315 @@
+// The one hand-written file in this package, and the only one that may be edited.
+//
+// Everything beside it is generated from ST's `STM32H747_CM7.svd` and is replaced wholesale when the
+// chip is regenerated. This is the guard on that regeneration: addresses and field positions read out
+// of ST's reference manual **RM0399** (STM32H745/755 and STM32H747/757) rather than out of the SVD, so
+// that a generator change, a newer SVD, or a filter left switched on has something independent to
+// fail against. Each test names the RM0399 chapter and register it was read from; chapter numbers
+// move between revisions of the manual, so the citation is the chapter's title and the register's
+// name, which do not.
+//
+// It is deliberately small: a handful from each peripheral benchtop models. The ignored tests at the
+// end are the places ST's SVD and RM0399 disagree, written with the manual's values; each waits for
+// a corrected SVD from ST.
+
+module sh.sysl.stm32h747
+@tests
+
+import sh.sysl.stm32h747.rcc
+import sh.sysl.stm32h747.pwr
+import sh.sysl.stm32h747.gpioa
+import sh.sysl.stm32h747.gpiok
+import sh.sysl.stm32h747.exti
+import sh.sysl.stm32h747.hsem
+import sh.sysl.stm32h747.ltdc
+import sh.sysl.stm32h747.dsihost
+import sh.sysl.stm32h747.dma2d
+import sh.sysl.stm32h747.sai1
+import sh.sysl.stm32h747.sai4
+import sh.sysl.stm32h747.sdmmc1
+import sh.sysl.stm32h747.sdmmc2
+import sh.sysl.stm32h747.adc1
+import sh.sysl.stm32h747.adc2
+import sh.sysl.stm32h747.adc3
+import sh.sysl.stm32h747.dac
+import sh.sysl.stm32h747.tim1
+import sh.sysl.stm32h747.tim2
+import sh.sysl.stm32h747.usart1
+import sh.sysl.stm32h747.usart3
+import sh.sysl.stm32h747.dma1
+import sh.sysl.stm32h747.dmamux1
+
+// ## Base addresses — RM0399, "Memory and bus architecture", the register boundary addresses table
+
+@test("the D3 domain's peripherals sit where RM0399's memory map puts them")
+d3_peripherals_sit_where_the_manual_says()
+    assert_eq(exti.BASE, 0x58000000)
+    assert_eq(gpioa.BASE, 0x58020000)
+    assert_eq(gpiok.BASE, 0x58022800)
+    assert_eq(rcc.BASE, 0x58024400)
+    assert_eq(pwr.BASE, 0x58024800)
+    assert_eq(adc3.BASE, 0x58026000)
+    assert_eq(hsem.BASE, 0x58026400)
+    assert_eq(sai4.BASE, 0x58005400)
+end d3_peripherals_sit_where_the_manual_says
+
+@test("the D1 domain's display and memory peripherals sit where RM0399's memory map puts them")
+d1_peripherals_sit_where_the_manual_says()
+    assert_eq(dsihost.BASE, 0x50000000)
+    assert_eq(ltdc.BASE, 0x50001000)
+    assert_eq(dma2d.BASE, 0x52001000)
+    assert_eq(sdmmc1.BASE, 0x52007000)
+end d1_peripherals_sit_where_the_manual_says
+
+@test("the D2 domain's peripherals sit where RM0399's memory map puts them")
+d2_peripherals_sit_where_the_manual_says()
+    assert_eq(tim2.BASE, 0x40000000)
+    assert_eq(usart3.BASE, 0x40004800)
+    assert_eq(dac.BASE, 0x40007400)
+    assert_eq(tim1.BASE, 0x40010000)
+    assert_eq(usart1.BASE, 0x40011000)
+    assert_eq(sai1.BASE, 0x40015800)
+    assert_eq(dma1.BASE, 0x40020000)
+    assert_eq(adc1.BASE, 0x40022000)
+    assert_eq(adc2.BASE, 0x40022100)
+    assert_eq(sdmmc2.BASE, 0x48022400)
+end d2_peripherals_sit_where_the_manual_says
+
+// ## A derived peripheral has its parent's registers at its own address
+//
+// ST's SVD declares GPIOK as a GPIOA elsewhere, and SAI1 as a SAI4 elsewhere, so the offsets must be
+// identical and the bases must not be.
+
+@test("a derived peripheral has its parent's offsets at its own base")
+a_derived_peripheral_keeps_its_own_address()
+    assert_eq(gpiok.MODER_OFFSET, gpioa.MODER_OFFSET)
+    assert_eq(gpiok.BSRR_OFFSET, gpioa.BSRR_OFFSET)
+    assert_eq(sai1.SAI_BCR1_OFFSET, sai4.SAI_BCR1_OFFSET)
+    assert_eq(usart3.ISR_OFFSET, usart1.ISR_OFFSET)
+    assert(gpiok.BASE != gpioa.BASE, "GPIOK has its own base")
+end a_derived_peripheral_keeps_its_own_address
+
+// ## RCC — RM0399, "Reset and clock control (RCC)", register descriptions
+
+@test("RCC_CR: HSEON is bit 16 and PLL1RDY is bit 25")
+rcc_cr_holds_the_oscillator_and_pll_bits()
+    assert_eq(rcc.CR_HSEON_MASK, 0x00010000)
+    assert_eq(rcc.CR_HSEON_SHIFT, 16)
+    assert_eq(rcc.CR_PLL1RDY_MASK, 0x02000000)
+end rcc_cr_holds_the_oscillator_and_pll_bits
+
+@test("RCC_PLLCKSELR is at 0x028, with PLLSRC in bits 1:0 and DIVM1 in bits 9:4")
+rcc_pllckselr_selects_the_pll_source()
+    assert_eq(rcc.PLLCKSELR_OFFSET, 0x028)
+    assert_eq(rcc.PLLCKSELR_PLLSRC_MASK, 0x00000003)
+    assert_eq(rcc.PLLCKSELR_DIVM1_MASK, 0x000003f0)
+    assert_eq(rcc.PLLCKSELR_DIVM1_SHIFT, 4)
+end rcc_pllckselr_selects_the_pll_source
+
+@test("the clock enables: AHB4ENR at 0x0E0, APB3ENR at 0x0E4, and CPU1's own copy at 0x140")
+rcc_enable_registers_sit_where_the_manual_says()
+    assert_eq(rcc.AHB4ENR_OFFSET, 0x0e0)
+    assert_eq(rcc.AHB4ENR_GPIOAEN_MASK, 0x00000001)
+    assert_eq(rcc.AHB4ENR_HSEMEN_MASK, 0x02000000)
+    assert_eq(rcc.APB3ENR_OFFSET, 0x0e4)
+    assert_eq(rcc.APB3ENR_LTDCEN_MASK, 0x00000008)
+    assert_eq(rcc.C1_AHB4ENR_OFFSET, 0x140)
+end rcc_enable_registers_sit_where_the_manual_says
+
+// ## GPIO — RM0399, "General-purpose I/Os (GPIO)", GPIO register map
+
+@test("the GPIO registers are at the offsets of the GPIO register map")
+gpio_registers_sit_where_the_manual_says()
+    assert_eq(gpioa.MODER_OFFSET, 0x00)
+    assert_eq(gpioa.IDR_OFFSET, 0x10)
+    assert_eq(gpioa.ODR_OFFSET, 0x14)
+    assert_eq(gpioa.BSRR_OFFSET, 0x18)
+    assert_eq(gpioa.AFRL_OFFSET, 0x20)
+    assert_eq(gpioa.AFRH_OFFSET, 0x24)
+end gpio_registers_sit_where_the_manual_says
+
+@test("a pin's mode is two bits and its alternate function four, at the pin's own position")
+gpio_fields_sit_at_the_pins_position()
+    assert_eq(gpioa.MODER_MODE1_MASK, 0x0000000c)
+    assert_eq(gpioa.MODER_MODE1_SHIFT, 2)
+    // AFRH holds pins 8 to 15, so pin 8's function is its low nibble.
+    assert_eq(gpioa.AFRH_AFSEL8_MASK, 0x0000000f)
+    assert_eq(gpioa.AFRL_AFSEL7_MASK, 0xf0000000)
+end gpio_fields_sit_at_the_pins_position
+
+// ## LTDC — RM0399, "LCD-TFT display controller (LTDC)", LTDC register map
+
+@test("LTDC: global control at 0x18, reload at 0x24, layer 1 at 0x84 and layer 2 at 0x104")
+ltdc_registers_sit_where_the_manual_says()
+    assert_eq(ltdc.GCR_OFFSET, 0x18)
+    assert_eq(ltdc.GCR_LTDCEN_MASK, 0x00000001)
+    assert_eq(ltdc.SRCR_OFFSET, 0x24)
+    assert_eq(ltdc.SRCR_IMR_MASK, 0x00000001)
+    assert_eq(ltdc.L1CR_OFFSET, 0x84)
+    assert_eq(ltdc.L1CFBAR_OFFSET, 0xac)
+    assert_eq(ltdc.L2CR_OFFSET, 0x104)
+    assert_eq(ltdc.SSCR_VSH_MASK, 0x000007ff)
+end ltdc_registers_sit_where_the_manual_says
+
+// ## DSI host — RM0399, "DSI Host (DSI)", DSI wrapper registers
+
+@test("the DSI wrapper: WCR at 0x404 with DSIEN at bit 3, WRPCR at 0x430 holding the PLL")
+dsi_wrapper_registers_sit_where_the_manual_says()
+    assert_eq(dsihost.DSI_WCR_OFFSET, 0x404)
+    assert_eq(dsihost.DSI_WCR_DSIEN_MASK, 0x00000008)
+    assert_eq(dsihost.DSI_WRPCR_OFFSET, 0x430)
+    assert_eq(dsihost.DSI_WRPCR_PLLEN_MASK, 0x00000001)
+    assert_eq(dsihost.DSI_WRPCR_NDIV_MASK, 0x000001fc)
+    assert_eq(dsihost.DSI_WRPCR_IDF_MASK, 0x00007800)
+    assert_eq(dsihost.DSI_WRPCR_ODF_MASK, 0x00030000)
+    assert_eq(dsihost.DSI_WRPCR_REGEN_MASK, 0x01000000)
+end dsi_wrapper_registers_sit_where_the_manual_says
+
+// ## DMA2D — RM0399, "Chrom-ART Accelerator controller (DMA2D)", DMA2D register map
+
+@test("DMA2D: START is bit 0 of CR, the output address at 0x3C, and NLR's line count and width")
+dma2d_registers_sit_where_the_manual_says()
+    assert_eq(dma2d.CR_OFFSET, 0x00)
+    assert_eq(dma2d.CR_START_MASK, 0x00000001)
+    assert_eq(dma2d.OMAR_OFFSET, 0x3c)
+    assert_eq(dma2d.NLR_OFFSET, 0x44)
+    assert_eq(dma2d.NLR_NL_MASK, 0x0000ffff)
+    assert_eq(dma2d.NLR_PL_MASK, 0x3fff0000)
+end dma2d_registers_sit_where_the_manual_says
+
+// ## SAI — RM0399, "Serial audio interface (SAI)", SAI register map
+
+@test("SAI: block A's configuration at 0x04 and data at 0x20, block B's at 0x24 and 0x40")
+sai_registers_sit_where_the_manual_says()
+    assert_eq(sai1.SAI_ACR1_OFFSET, 0x04)
+    assert_eq(sai1.SAI_ADR_OFFSET, 0x20)
+    assert_eq(sai1.SAI_BCR1_OFFSET, 0x24)
+    assert_eq(sai1.SAI_BDR_OFFSET, 0x40)
+    // SAIEN, which ST's SVD spells SAIXEN, is bit 16; DMAEN is bit 17; DS is bits 7:5.
+    assert_eq(sai1.SAI_ACR1_SAIXEN_MASK, 0x00010000)
+    assert_eq(sai1.SAI_ACR1_DMAEN_MASK, 0x00020000)
+    assert_eq(sai1.SAI_ACR1_DS_MASK, 0x000000e0)
+end sai_registers_sit_where_the_manual_says
+
+// ## SDMMC — RM0399, "SD/SDIO/MMC card host interface (SDMMC)", SDMMC register map
+
+@test("SDMMC: CLKCR's divider is ten bits and the bus width two, at bit 14")
+sdmmc_registers_sit_where_the_manual_says()
+    assert_eq(sdmmc1.CLKCR_OFFSET, 0x04)
+    assert_eq(sdmmc1.CLKCR_CLKDIV_MASK, 0x000003ff)
+    assert_eq(sdmmc1.CLKCR_WIDBUS_MASK, 0x0000c000)
+    assert_eq(sdmmc1.IDMACTRLR_OFFSET, 0x50)
+    assert_eq(sdmmc1.FIFOR_OFFSET, 0x80)
+end sdmmc_registers_sit_where_the_manual_says
+
+// ## ADC — RM0399, "Analog-to-digital converters (ADC)", ADC register map
+
+@test("ADC_CR: ADEN bit 0, ADSTART bit 2, ADVREGEN 28, DEEPPWD 29, ADCAL 31")
+adc_cr_holds_the_power_and_calibration_bits()
+    assert_eq(adc1.CR_OFFSET, 0x08)
+    assert_eq(adc1.CR_ADEN_MASK, 0x00000001)
+    assert_eq(adc1.CR_ADSTART_MASK, 0x00000004)
+    assert_eq(adc1.CR_ADVREGEN_MASK, 0x10000000)
+    assert_eq(adc1.CR_DEEPPWD_MASK, 0x20000000)
+    assert_eq(adc1.CR_ADCAL_MASK, 0x80000000)
+    assert_eq(adc1.DR_OFFSET, 0x40)
+end adc_cr_holds_the_power_and_calibration_bits
+
+// ## DAC — RM0399, "Digital-to-analog converter (DAC)", DAC register map
+
+@test("DAC: channel 2's enable is channel 1's sixteen bits up")
+dac_channels_sit_sixteen_bits_apart()
+    assert_eq(dac.CR_EN1_MASK, 0x00000001)
+    assert_eq(dac.CR_EN2_MASK, 0x00010000)
+    assert_eq(dac.DHR12R1_OFFSET, 0x08)
+    assert_eq(dac.DOR1_OFFSET, 0x2c)
+end dac_channels_sit_sixteen_bits_apart
+
+// ## TIM — RM0399, "Advanced-control timers (TIM1/TIM8)", TIM1 register map
+//
+// CCMR1 is one word with two layouts, input capture and output compare. ST's SVD declares both, the
+// second as an alternate of the first, and both must arrive with their own fields at one offset.
+
+@test("TIM1's CCMR1 arrives in both its layouts, at one offset")
+tim_ccmr1_has_both_layouts_at_one_offset()
+    assert_eq(tim1.CCMR1_Output_OFFSET, 0x18)
+    assert_eq(tim1.CCMR1_Input_OFFSET, 0x18)
+    // OC1M is bits 6:4 with its fourth bit far away at 16.
+    assert_eq(tim1.CCMR1_Output_OC1M_MASK, 0x00000070)
+    assert_eq(tim1.CCMR1_Output_OC1M_3_MASK, 0x00010000)
+    assert_eq(tim1.CCMR1_Input_IC1F_MASK, 0x000000f0)
+    assert_eq(tim1.ARR_OFFSET, 0x2c)
+    assert_eq(tim1.BDTR_OFFSET, 0x44)
+end tim_ccmr1_has_both_layouts_at_one_offset
+
+// ## USART — RM0399, "Universal synchronous/asynchronous receiver transmitter (USART/UART)"
+
+@test("USART: ISR at 0x1C, RDR at 0x24, TDR at 0x28, and TXE at bit 7")
+usart_registers_sit_where_the_manual_says()
+    assert_eq(usart1.BRR_OFFSET, 0x0c)
+    assert_eq(usart1.ISR_OFFSET, 0x1c)
+    assert_eq(usart1.RDR_OFFSET, 0x24)
+    assert_eq(usart1.TDR_OFFSET, 0x28)
+    assert_eq(usart1.ISR_TXE_MASK, 0x00000080)
+    assert_eq(usart1.CR1_UE_MASK, 0x00000001)
+    assert_eq(usart1.CR1_TE_MASK, 0x00000008)
+end usart_registers_sit_where_the_manual_says
+
+// ## HSEM — RM0399, "Hardware semaphore (HSEM)", HSEM register map
+//
+// The two cores' interrupt blocks are sixteen bytes apart, which is the whole of how a CM7 and a CM4
+// each get their own view of the same semaphores.
+
+@test("HSEM: 32 semaphores, their read-locks, and an interrupt block per core")
+hsem_registers_sit_where_the_manual_says()
+    assert_eq(hsem.HSEM_R0_OFFSET, 0x000)
+    assert_eq(hsem.HSEM_R31_OFFSET, 0x07c)
+    assert_eq(hsem.HSEM_RLR0_OFFSET, 0x080)
+    assert_eq(hsem.HSEM_R0_LOCK_MASK, 0x80000000)
+    assert_eq(hsem.HSEM_C1IER_OFFSET, 0x100)
+    assert_eq(hsem.HSEM_C2IER_OFFSET, 0x110)
+    assert_eq(hsem.HSEM_CR_OFFSET, 0x140)
+    assert_eq(hsem.HSEM_KEYR_OFFSET, 0x144)
+end hsem_registers_sit_where_the_manual_says
+
+// ## EXTI — RM0399, "Extended interrupt and event controller (EXTI)", EXTI register map
+//
+// RM0399 calls the block at 0x80 C1IMR1, C1EMR1, C1PR1 — CPU1's. ST's SVD names it CPUIMR1 and so on,
+// and declares no copy at 0xC0 for CPU2; see the README.
+
+@test("EXTI: the trigger registers at 0x00, and CPU1's mask and pending at 0x80 and 0x88")
+exti_registers_sit_where_the_manual_says()
+    assert_eq(exti.RTSR1_OFFSET, 0x00)
+    assert_eq(exti.FTSR1_OFFSET, 0x04)
+    assert_eq(exti.CPUIMR1_OFFSET, 0x80)
+    assert_eq(exti.CPUPR1_OFFSET, 0x88)
+end exti_registers_sit_where_the_manual_says
+
+// ## The vocabulary a field's values come with
+//
+// ST's SVD names few values, and names them by number: DMAMUX's are the only ones on this chip. They
+// are upper-cased by the generator, as every enumerated value is.
+
+@test("a field carries the SVD's own names for its values")
+a_field_carries_the_svds_names_for_its_values()
+    assert_eq(dmamux1.DMAMUX1_C0CR_SOIE_B_0X0, 0)
+    assert_eq(dmamux1.DMAMUX1_C0CR_SOIE_B_0X1, 1)
+end a_field_carries_the_svds_names_for_its_values
+
+// ## Where ST's SVD and RM0399 disagree
+//
+// Each of these is written with the manual's value, and ST's own CMSIS header `stm32h747xx.h` agrees
+// with the manual in every case. They wait on ST, not on this package: the generated files are never
+// edited by hand.
+
+@test("SAI_ACR1.MCKDIV is six bits, 25:20", ignore: "ST's STM32H747_CM7.svd 1.9 gives MCKDIV four bits (0x00F00000)")
+sai_mckdiv_is_six_bits()
+    assert_eq(sai1.SAI_ACR1_MCKDIV_MASK, 0x03f00000)
+
+@test("LTDC_SSCR.HSW is twelve bits, 27:16", ignore: "ST's STM32H747_CM7.svd 1.9 gives HSW ten bits (0x03FF0000)")
+ltdc_hsw_is_twelve_bits()
+    assert_eq(ltdc.SSCR_HSW_MASK, 0x0fff0000)
+
+@test("DMA2D_CR.MODE is three bits, 18:16", ignore: "ST's STM32H747_CM7.svd 1.9 gives MODE two bits (0x00030000)")
+dma2d_mode_is_three_bits()
+    assert_eq(dma2d.CR_MODE_MASK, 0x00070000)

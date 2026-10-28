@@ -1,0 +1,121 @@
+// Single Wire Protocol Master Interface
+
+module sh.sysl.stm32h747.swpmi
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40008800
+
+// SWPMI Configuration/Control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_RXDMA_MASK: u32 = 0x00000001
+const CR_RXDMA_SHIFT: u32 = 0
+const CR_TXDMA_MASK: u32 = 0x00000002
+const CR_TXDMA_SHIFT: u32 = 1
+const CR_RXMODE_MASK: u32 = 0x00000004
+const CR_RXMODE_SHIFT: u32 = 2
+const CR_TXMODE_MASK: u32 = 0x00000008
+const CR_TXMODE_SHIFT: u32 = 3
+const CR_LPBK_MASK: u32 = 0x00000010
+const CR_LPBK_SHIFT: u32 = 4
+const CR_SWPACT_MASK: u32 = 0x00000020
+const CR_SWPACT_SHIFT: u32 = 5
+const CR_DEACT_MASK: u32 = 0x00000400
+const CR_DEACT_SHIFT: u32 = 10
+const CR_SWPTEN_MASK: u32 = 0x00000800
+const CR_SWPTEN_SHIFT: u32 = 11
+
+// SWPMI Bitrate register
+const BRR_OFFSET: u32 = 0x00000004
+const BRR_BR_MASK: u32 = 0x000000ff
+const BRR_BR_SHIFT: u32 = 0
+
+// SWPMI Interrupt and Status register
+const ISR_OFFSET: u32 = 0x0000000c
+const ISR_RXBFF_MASK: u32 = 0x00000001
+const ISR_RXBFF_SHIFT: u32 = 0
+const ISR_TXBEF_MASK: u32 = 0x00000002
+const ISR_TXBEF_SHIFT: u32 = 1
+const ISR_RXBERF_MASK: u32 = 0x00000004
+const ISR_RXBERF_SHIFT: u32 = 2
+const ISR_RXOVRF_MASK: u32 = 0x00000008
+const ISR_RXOVRF_SHIFT: u32 = 3
+const ISR_TXUNRF_MASK: u32 = 0x00000010
+const ISR_TXUNRF_SHIFT: u32 = 4
+const ISR_RXNE_MASK: u32 = 0x00000020
+const ISR_RXNE_SHIFT: u32 = 5
+const ISR_TXE_MASK: u32 = 0x00000040
+const ISR_TXE_SHIFT: u32 = 6
+const ISR_TCF_MASK: u32 = 0x00000080
+const ISR_TCF_SHIFT: u32 = 7
+const ISR_SRF_MASK: u32 = 0x00000100
+const ISR_SRF_SHIFT: u32 = 8
+const ISR_SUSP_MASK: u32 = 0x00000200
+const ISR_SUSP_SHIFT: u32 = 9
+const ISR_DEACTF_MASK: u32 = 0x00000400
+const ISR_DEACTF_SHIFT: u32 = 10
+const ISR_RDYF_MASK: u32 = 0x00000800
+const ISR_RDYF_SHIFT: u32 = 11
+
+// SWPMI Interrupt Flag Clear register
+const ICR_OFFSET: u32 = 0x00000010
+const ICR_CRXBFF_MASK: u32 = 0x00000001
+const ICR_CRXBFF_SHIFT: u32 = 0
+const ICR_CTXBEF_MASK: u32 = 0x00000002
+const ICR_CTXBEF_SHIFT: u32 = 1
+const ICR_CRXBERF_MASK: u32 = 0x00000004
+const ICR_CRXBERF_SHIFT: u32 = 2
+const ICR_CRXOVRF_MASK: u32 = 0x00000008
+const ICR_CRXOVRF_SHIFT: u32 = 3
+const ICR_CTXUNRF_MASK: u32 = 0x00000010
+const ICR_CTXUNRF_SHIFT: u32 = 4
+const ICR_CTCF_MASK: u32 = 0x00000080
+const ICR_CTCF_SHIFT: u32 = 7
+const ICR_CSRF_MASK: u32 = 0x00000100
+const ICR_CSRF_SHIFT: u32 = 8
+const ICR_CRDYF_MASK: u32 = 0x00000800
+const ICR_CRDYF_SHIFT: u32 = 11
+
+// SWPMI Interrupt Enable register
+const IER_OFFSET: u32 = 0x00000014
+const IER_RXBFIE_MASK: u32 = 0x00000001
+const IER_RXBFIE_SHIFT: u32 = 0
+const IER_TXBEIE_MASK: u32 = 0x00000002
+const IER_TXBEIE_SHIFT: u32 = 1
+const IER_RXBERIE_MASK: u32 = 0x00000004
+const IER_RXBERIE_SHIFT: u32 = 2
+const IER_RXOVRIE_MASK: u32 = 0x00000008
+const IER_RXOVRIE_SHIFT: u32 = 3
+const IER_TXUNRIE_MASK: u32 = 0x00000010
+const IER_TXUNRIE_SHIFT: u32 = 4
+const IER_RIE_MASK: u32 = 0x00000020
+const IER_RIE_SHIFT: u32 = 5
+const IER_TIE_MASK: u32 = 0x00000040
+const IER_TIE_SHIFT: u32 = 6
+const IER_TCIE_MASK: u32 = 0x00000080
+const IER_TCIE_SHIFT: u32 = 7
+const IER_SRIE_MASK: u32 = 0x00000100
+const IER_SRIE_SHIFT: u32 = 8
+const IER_RDYIE_MASK: u32 = 0x00000800
+const IER_RDYIE_SHIFT: u32 = 11
+
+// SWPMI Receive Frame Length register
+const RFL_OFFSET: u32 = 0x00000018
+const RFL_RFL_MASK: u32 = 0x0000001f
+const RFL_RFL_SHIFT: u32 = 0
+
+// SWPMI Transmit data register
+const TDR_OFFSET: u32 = 0x0000001c
+const TDR_TD_MASK: u32 = 0xffffffff
+const TDR_TD_SHIFT: u32 = 0
+
+// SWPMI Receive data register
+const RDR_OFFSET: u32 = 0x00000020
+const RDR_RD_MASK: u32 = 0xffffffff
+const RDR_RD_SHIFT: u32 = 0
+
+// SWPMI Option register
+const OR_OFFSET: u32 = 0x00000024
+const OR_SWP_TBYP_MASK: u32 = 0x00000001
+const OR_SWP_TBYP_SHIFT: u32 = 0
+const OR_SWP_CLASS_MASK: u32 = 0x00000002
+const OR_SWP_CLASS_SHIFT: u32 = 1

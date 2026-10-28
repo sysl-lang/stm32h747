@@ -1,0 +1,303 @@
+// LCD-TFT Controller
+
+module sh.sysl.stm32h747.ltdc
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x50001000
+
+// Synchronization Size Configuration Register
+const SSCR_OFFSET: u32 = 0x00000008
+const SSCR_HSW_MASK: u32 = 0x03ff0000
+const SSCR_HSW_SHIFT: u32 = 16
+const SSCR_VSH_MASK: u32 = 0x000007ff
+const SSCR_VSH_SHIFT: u32 = 0
+
+// Back Porch Configuration Register
+const BPCR_OFFSET: u32 = 0x0000000c
+const BPCR_AHBP_MASK: u32 = 0x0fff0000
+const BPCR_AHBP_SHIFT: u32 = 16
+const BPCR_AVBP_MASK: u32 = 0x000007ff
+const BPCR_AVBP_SHIFT: u32 = 0
+
+// Active Width Configuration Register
+const AWCR_OFFSET: u32 = 0x00000010
+const AWCR_AAV_MASK: u32 = 0x0fff0000
+const AWCR_AAV_SHIFT: u32 = 16
+const AWCR_AAH_MASK: u32 = 0x000007ff
+const AWCR_AAH_SHIFT: u32 = 0
+
+// Total Width Configuration Register
+const TWCR_OFFSET: u32 = 0x00000014
+const TWCR_TOTALW_MASK: u32 = 0x0fff0000
+const TWCR_TOTALW_SHIFT: u32 = 16
+const TWCR_TOTALH_MASK: u32 = 0x000007ff
+const TWCR_TOTALH_SHIFT: u32 = 0
+
+// Global Control Register
+const GCR_OFFSET: u32 = 0x00000018
+const GCR_HSPOL_MASK: u32 = 0x80000000
+const GCR_HSPOL_SHIFT: u32 = 31
+const GCR_VSPOL_MASK: u32 = 0x40000000
+const GCR_VSPOL_SHIFT: u32 = 30
+const GCR_DEPOL_MASK: u32 = 0x20000000
+const GCR_DEPOL_SHIFT: u32 = 29
+const GCR_PCPOL_MASK: u32 = 0x10000000
+const GCR_PCPOL_SHIFT: u32 = 28
+const GCR_DEN_MASK: u32 = 0x00010000
+const GCR_DEN_SHIFT: u32 = 16
+const GCR_DRW_MASK: u32 = 0x00007000
+const GCR_DRW_SHIFT: u32 = 12
+const GCR_DGW_MASK: u32 = 0x00000700
+const GCR_DGW_SHIFT: u32 = 8
+const GCR_DBW_MASK: u32 = 0x00000070
+const GCR_DBW_SHIFT: u32 = 4
+const GCR_LTDCEN_MASK: u32 = 0x00000001
+const GCR_LTDCEN_SHIFT: u32 = 0
+
+// Shadow Reload Configuration Register
+const SRCR_OFFSET: u32 = 0x00000024
+const SRCR_VBR_MASK: u32 = 0x00000002
+const SRCR_VBR_SHIFT: u32 = 1
+const SRCR_IMR_MASK: u32 = 0x00000001
+const SRCR_IMR_SHIFT: u32 = 0
+
+// Background Color Configuration Register
+const BCCR_OFFSET: u32 = 0x0000002c
+const BCCR_BCBLUE_MASK: u32 = 0x000000ff
+const BCCR_BCBLUE_SHIFT: u32 = 0
+const BCCR_BCGREEN_MASK: u32 = 0x0000ff00
+const BCCR_BCGREEN_SHIFT: u32 = 8
+const BCCR_BCRED_MASK: u32 = 0x00ff0000
+const BCCR_BCRED_SHIFT: u32 = 16
+
+// Interrupt Enable Register
+const IER_OFFSET: u32 = 0x00000034
+const IER_RRIE_MASK: u32 = 0x00000008
+const IER_RRIE_SHIFT: u32 = 3
+const IER_TERRIE_MASK: u32 = 0x00000004
+const IER_TERRIE_SHIFT: u32 = 2
+const IER_FUIE_MASK: u32 = 0x00000002
+const IER_FUIE_SHIFT: u32 = 1
+const IER_LIE_MASK: u32 = 0x00000001
+const IER_LIE_SHIFT: u32 = 0
+
+// Interrupt Status Register
+const ISR_OFFSET: u32 = 0x00000038
+const ISR_RRIF_MASK: u32 = 0x00000008
+const ISR_RRIF_SHIFT: u32 = 3
+const ISR_TERRIF_MASK: u32 = 0x00000004
+const ISR_TERRIF_SHIFT: u32 = 2
+const ISR_FUIF_MASK: u32 = 0x00000002
+const ISR_FUIF_SHIFT: u32 = 1
+const ISR_LIF_MASK: u32 = 0x00000001
+const ISR_LIF_SHIFT: u32 = 0
+
+// Interrupt Clear Register
+const ICR_OFFSET: u32 = 0x0000003c
+const ICR_CRRIF_MASK: u32 = 0x00000008
+const ICR_CRRIF_SHIFT: u32 = 3
+const ICR_CTERRIF_MASK: u32 = 0x00000004
+const ICR_CTERRIF_SHIFT: u32 = 2
+const ICR_CFUIF_MASK: u32 = 0x00000002
+const ICR_CFUIF_SHIFT: u32 = 1
+const ICR_CLIF_MASK: u32 = 0x00000001
+const ICR_CLIF_SHIFT: u32 = 0
+
+// Line Interrupt Position Configuration Register
+const LIPCR_OFFSET: u32 = 0x00000040
+const LIPCR_LIPOS_MASK: u32 = 0x000007ff
+const LIPCR_LIPOS_SHIFT: u32 = 0
+
+// Current Position Status Register
+const CPSR_OFFSET: u32 = 0x00000044
+const CPSR_CXPOS_MASK: u32 = 0xffff0000
+const CPSR_CXPOS_SHIFT: u32 = 16
+const CPSR_CYPOS_MASK: u32 = 0x0000ffff
+const CPSR_CYPOS_SHIFT: u32 = 0
+
+// Current Display Status Register
+const CDSR_OFFSET: u32 = 0x00000048
+const CDSR_HSYNCS_MASK: u32 = 0x00000008
+const CDSR_HSYNCS_SHIFT: u32 = 3
+const CDSR_VSYNCS_MASK: u32 = 0x00000004
+const CDSR_VSYNCS_SHIFT: u32 = 2
+const CDSR_HDES_MASK: u32 = 0x00000002
+const CDSR_HDES_SHIFT: u32 = 1
+const CDSR_VDES_MASK: u32 = 0x00000001
+const CDSR_VDES_SHIFT: u32 = 0
+
+// Layerx Control Register
+const L1CR_OFFSET: u32 = 0x00000084
+const L1CR_CLUTEN_MASK: u32 = 0x00000010
+const L1CR_CLUTEN_SHIFT: u32 = 4
+const L1CR_COLKEN_MASK: u32 = 0x00000002
+const L1CR_COLKEN_SHIFT: u32 = 1
+const L1CR_LEN_MASK: u32 = 0x00000001
+const L1CR_LEN_SHIFT: u32 = 0
+
+// Layerx Window Horizontal Position Configuration Register
+const L1WHPCR_OFFSET: u32 = 0x00000088
+const L1WHPCR_WHSPPOS_MASK: u32 = 0x0fff0000
+const L1WHPCR_WHSPPOS_SHIFT: u32 = 16
+const L1WHPCR_WHSTPOS_MASK: u32 = 0x00000fff
+const L1WHPCR_WHSTPOS_SHIFT: u32 = 0
+
+// Layerx Window Vertical Position Configuration Register
+const L1WVPCR_OFFSET: u32 = 0x0000008c
+const L1WVPCR_WVSPPOS_MASK: u32 = 0x07ff0000
+const L1WVPCR_WVSPPOS_SHIFT: u32 = 16
+const L1WVPCR_WVSTPOS_MASK: u32 = 0x000007ff
+const L1WVPCR_WVSTPOS_SHIFT: u32 = 0
+
+// Layerx Color Keying Configuration Register
+const L1CKCR_OFFSET: u32 = 0x00000090
+const L1CKCR_CKRED_MASK: u32 = 0x00ff0000
+const L1CKCR_CKRED_SHIFT: u32 = 16
+const L1CKCR_CKGREEN_MASK: u32 = 0x0000ff00
+const L1CKCR_CKGREEN_SHIFT: u32 = 8
+const L1CKCR_CKBLUE_MASK: u32 = 0x000000ff
+const L1CKCR_CKBLUE_SHIFT: u32 = 0
+
+// Layerx Pixel Format Configuration Register
+const L1PFCR_OFFSET: u32 = 0x00000094
+const L1PFCR_PF_MASK: u32 = 0x00000007
+const L1PFCR_PF_SHIFT: u32 = 0
+
+// Layerx Constant Alpha Configuration Register
+const L1CACR_OFFSET: u32 = 0x00000098
+const L1CACR_CONSTA_MASK: u32 = 0x000000ff
+const L1CACR_CONSTA_SHIFT: u32 = 0
+
+// Layerx Default Color Configuration Register
+const L1DCCR_OFFSET: u32 = 0x0000009c
+const L1DCCR_DCALPHA_MASK: u32 = 0xff000000
+const L1DCCR_DCALPHA_SHIFT: u32 = 24
+const L1DCCR_DCRED_MASK: u32 = 0x00ff0000
+const L1DCCR_DCRED_SHIFT: u32 = 16
+const L1DCCR_DCGREEN_MASK: u32 = 0x0000ff00
+const L1DCCR_DCGREEN_SHIFT: u32 = 8
+const L1DCCR_DCBLUE_MASK: u32 = 0x000000ff
+const L1DCCR_DCBLUE_SHIFT: u32 = 0
+
+// Layerx Blending Factors Configuration Register
+const L1BFCR_OFFSET: u32 = 0x000000a0
+const L1BFCR_BF1_MASK: u32 = 0x00000700
+const L1BFCR_BF1_SHIFT: u32 = 8
+const L1BFCR_BF2_MASK: u32 = 0x00000007
+const L1BFCR_BF2_SHIFT: u32 = 0
+
+// Layerx Color Frame Buffer Address Register
+const L1CFBAR_OFFSET: u32 = 0x000000ac
+const L1CFBAR_CFBADD_MASK: u32 = 0xffffffff
+const L1CFBAR_CFBADD_SHIFT: u32 = 0
+
+// Layerx Color Frame Buffer Length Register
+const L1CFBLR_OFFSET: u32 = 0x000000b0
+const L1CFBLR_CFBP_MASK: u32 = 0x1fff0000
+const L1CFBLR_CFBP_SHIFT: u32 = 16
+const L1CFBLR_CFBLL_MASK: u32 = 0x00001fff
+const L1CFBLR_CFBLL_SHIFT: u32 = 0
+
+// Layerx ColorFrame Buffer Line Number Register
+const L1CFBLNR_OFFSET: u32 = 0x000000b4
+const L1CFBLNR_CFBLNBR_MASK: u32 = 0x000007ff
+const L1CFBLNR_CFBLNBR_SHIFT: u32 = 0
+
+// Layerx CLUT Write Register
+const L1CLUTWR_OFFSET: u32 = 0x000000c4
+const L1CLUTWR_CLUTADD_MASK: u32 = 0xff000000
+const L1CLUTWR_CLUTADD_SHIFT: u32 = 24
+const L1CLUTWR_RED_MASK: u32 = 0x00ff0000
+const L1CLUTWR_RED_SHIFT: u32 = 16
+const L1CLUTWR_GREEN_MASK: u32 = 0x0000ff00
+const L1CLUTWR_GREEN_SHIFT: u32 = 8
+const L1CLUTWR_BLUE_MASK: u32 = 0x000000ff
+const L1CLUTWR_BLUE_SHIFT: u32 = 0
+
+// Layerx Control Register
+const L2CR_OFFSET: u32 = 0x00000104
+const L2CR_CLUTEN_MASK: u32 = 0x00000010
+const L2CR_CLUTEN_SHIFT: u32 = 4
+const L2CR_COLKEN_MASK: u32 = 0x00000002
+const L2CR_COLKEN_SHIFT: u32 = 1
+const L2CR_LEN_MASK: u32 = 0x00000001
+const L2CR_LEN_SHIFT: u32 = 0
+
+// Layerx Window Horizontal Position Configuration Register
+const L2WHPCR_OFFSET: u32 = 0x00000108
+const L2WHPCR_WHSPPOS_MASK: u32 = 0x0fff0000
+const L2WHPCR_WHSPPOS_SHIFT: u32 = 16
+const L2WHPCR_WHSTPOS_MASK: u32 = 0x00000fff
+const L2WHPCR_WHSTPOS_SHIFT: u32 = 0
+
+// Layerx Window Vertical Position Configuration Register
+const L2WVPCR_OFFSET: u32 = 0x0000010c
+const L2WVPCR_WVSPPOS_MASK: u32 = 0x07ff0000
+const L2WVPCR_WVSPPOS_SHIFT: u32 = 16
+const L2WVPCR_WVSTPOS_MASK: u32 = 0x000007ff
+const L2WVPCR_WVSTPOS_SHIFT: u32 = 0
+
+// Layerx Color Keying Configuration Register
+const L2CKCR_OFFSET: u32 = 0x00000110
+const L2CKCR_CKRED_MASK: u32 = 0x00ff0000
+const L2CKCR_CKRED_SHIFT: u32 = 16
+const L2CKCR_CKGREEN_MASK: u32 = 0x0000ff00
+const L2CKCR_CKGREEN_SHIFT: u32 = 8
+const L2CKCR_CKBLUE_MASK: u32 = 0x000000ff
+const L2CKCR_CKBLUE_SHIFT: u32 = 0
+
+// Layerx Pixel Format Configuration Register
+const L2PFCR_OFFSET: u32 = 0x00000114
+const L2PFCR_PF_MASK: u32 = 0x00000007
+const L2PFCR_PF_SHIFT: u32 = 0
+
+// Layerx Constant Alpha Configuration Register
+const L2CACR_OFFSET: u32 = 0x00000118
+const L2CACR_CONSTA_MASK: u32 = 0x000000ff
+const L2CACR_CONSTA_SHIFT: u32 = 0
+
+// Layerx Default Color Configuration Register
+const L2DCCR_OFFSET: u32 = 0x0000011c
+const L2DCCR_DCALPHA_MASK: u32 = 0xff000000
+const L2DCCR_DCALPHA_SHIFT: u32 = 24
+const L2DCCR_DCRED_MASK: u32 = 0x00ff0000
+const L2DCCR_DCRED_SHIFT: u32 = 16
+const L2DCCR_DCGREEN_MASK: u32 = 0x0000ff00
+const L2DCCR_DCGREEN_SHIFT: u32 = 8
+const L2DCCR_DCBLUE_MASK: u32 = 0x000000ff
+const L2DCCR_DCBLUE_SHIFT: u32 = 0
+
+// Layerx Blending Factors Configuration Register
+const L2BFCR_OFFSET: u32 = 0x00000120
+const L2BFCR_BF1_MASK: u32 = 0x00000700
+const L2BFCR_BF1_SHIFT: u32 = 8
+const L2BFCR_BF2_MASK: u32 = 0x00000007
+const L2BFCR_BF2_SHIFT: u32 = 0
+
+// Layerx Color Frame Buffer Address Register
+const L2CFBAR_OFFSET: u32 = 0x0000012c
+const L2CFBAR_CFBADD_MASK: u32 = 0xffffffff
+const L2CFBAR_CFBADD_SHIFT: u32 = 0
+
+// Layerx Color Frame Buffer Length Register
+const L2CFBLR_OFFSET: u32 = 0x00000130
+const L2CFBLR_CFBP_MASK: u32 = 0x1fff0000
+const L2CFBLR_CFBP_SHIFT: u32 = 16
+const L2CFBLR_CFBLL_MASK: u32 = 0x00001fff
+const L2CFBLR_CFBLL_SHIFT: u32 = 0
+
+// Layerx ColorFrame Buffer Line Number Register
+const L2CFBLNR_OFFSET: u32 = 0x00000134
+const L2CFBLNR_CFBLNBR_MASK: u32 = 0x000007ff
+const L2CFBLNR_CFBLNBR_SHIFT: u32 = 0
+
+// Layerx CLUT Write Register
+const L2CLUTWR_OFFSET: u32 = 0x00000144
+const L2CLUTWR_CLUTADD_MASK: u32 = 0xff000000
+const L2CLUTWR_CLUTADD_SHIFT: u32 = 24
+const L2CLUTWR_RED_MASK: u32 = 0x00ff0000
+const L2CLUTWR_RED_SHIFT: u32 = 16
+const L2CLUTWR_GREEN_MASK: u32 = 0x0000ff00
+const L2CLUTWR_GREEN_SHIFT: u32 = 8
+const L2CLUTWR_BLUE_MASK: u32 = 0x000000ff
+const L2CLUTWR_BLUE_SHIFT: u32 = 0

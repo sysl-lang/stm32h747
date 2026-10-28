@@ -1,0 +1,476 @@
+// BDMA
+
+module sh.sysl.stm32h747.bdma
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58025400
+
+// DMA interrupt status register
+const ISR_OFFSET: u32 = 0x00000000
+const ISR_GIF1_MASK: u32 = 0x00000001
+const ISR_GIF1_SHIFT: u32 = 0
+const ISR_TCIF1_MASK: u32 = 0x00000002
+const ISR_TCIF1_SHIFT: u32 = 1
+const ISR_HTIF1_MASK: u32 = 0x00000004
+const ISR_HTIF1_SHIFT: u32 = 2
+const ISR_TEIF1_MASK: u32 = 0x00000008
+const ISR_TEIF1_SHIFT: u32 = 3
+const ISR_GIF2_MASK: u32 = 0x00000010
+const ISR_GIF2_SHIFT: u32 = 4
+const ISR_TCIF2_MASK: u32 = 0x00000020
+const ISR_TCIF2_SHIFT: u32 = 5
+const ISR_HTIF2_MASK: u32 = 0x00000040
+const ISR_HTIF2_SHIFT: u32 = 6
+const ISR_TEIF2_MASK: u32 = 0x00000080
+const ISR_TEIF2_SHIFT: u32 = 7
+const ISR_GIF3_MASK: u32 = 0x00000100
+const ISR_GIF3_SHIFT: u32 = 8
+const ISR_TCIF3_MASK: u32 = 0x00000200
+const ISR_TCIF3_SHIFT: u32 = 9
+const ISR_HTIF3_MASK: u32 = 0x00000400
+const ISR_HTIF3_SHIFT: u32 = 10
+const ISR_TEIF3_MASK: u32 = 0x00000800
+const ISR_TEIF3_SHIFT: u32 = 11
+const ISR_GIF4_MASK: u32 = 0x00001000
+const ISR_GIF4_SHIFT: u32 = 12
+const ISR_TCIF4_MASK: u32 = 0x00002000
+const ISR_TCIF4_SHIFT: u32 = 13
+const ISR_HTIF4_MASK: u32 = 0x00004000
+const ISR_HTIF4_SHIFT: u32 = 14
+const ISR_TEIF4_MASK: u32 = 0x00008000
+const ISR_TEIF4_SHIFT: u32 = 15
+const ISR_GIF5_MASK: u32 = 0x00010000
+const ISR_GIF5_SHIFT: u32 = 16
+const ISR_TCIF5_MASK: u32 = 0x00020000
+const ISR_TCIF5_SHIFT: u32 = 17
+const ISR_HTIF5_MASK: u32 = 0x00040000
+const ISR_HTIF5_SHIFT: u32 = 18
+const ISR_TEIF5_MASK: u32 = 0x00080000
+const ISR_TEIF5_SHIFT: u32 = 19
+const ISR_GIF6_MASK: u32 = 0x00100000
+const ISR_GIF6_SHIFT: u32 = 20
+const ISR_TCIF6_MASK: u32 = 0x00200000
+const ISR_TCIF6_SHIFT: u32 = 21
+const ISR_HTIF6_MASK: u32 = 0x00400000
+const ISR_HTIF6_SHIFT: u32 = 22
+const ISR_TEIF6_MASK: u32 = 0x00800000
+const ISR_TEIF6_SHIFT: u32 = 23
+const ISR_GIF7_MASK: u32 = 0x01000000
+const ISR_GIF7_SHIFT: u32 = 24
+const ISR_TCIF7_MASK: u32 = 0x02000000
+const ISR_TCIF7_SHIFT: u32 = 25
+const ISR_HTIF7_MASK: u32 = 0x04000000
+const ISR_HTIF7_SHIFT: u32 = 26
+const ISR_TEIF7_MASK: u32 = 0x08000000
+const ISR_TEIF7_SHIFT: u32 = 27
+const ISR_GIF8_MASK: u32 = 0x10000000
+const ISR_GIF8_SHIFT: u32 = 28
+const ISR_TCIF8_MASK: u32 = 0x20000000
+const ISR_TCIF8_SHIFT: u32 = 29
+const ISR_HTIF8_MASK: u32 = 0x40000000
+const ISR_HTIF8_SHIFT: u32 = 30
+const ISR_TEIF8_MASK: u32 = 0x80000000
+const ISR_TEIF8_SHIFT: u32 = 31
+
+// DMA interrupt flag clear register
+const IFCR_OFFSET: u32 = 0x00000004
+const IFCR_CGIF1_MASK: u32 = 0x00000001
+const IFCR_CGIF1_SHIFT: u32 = 0
+const IFCR_CTCIF1_MASK: u32 = 0x00000002
+const IFCR_CTCIF1_SHIFT: u32 = 1
+const IFCR_CHTIF1_MASK: u32 = 0x00000004
+const IFCR_CHTIF1_SHIFT: u32 = 2
+const IFCR_CTEIF1_MASK: u32 = 0x00000008
+const IFCR_CTEIF1_SHIFT: u32 = 3
+const IFCR_CGIF2_MASK: u32 = 0x00000010
+const IFCR_CGIF2_SHIFT: u32 = 4
+const IFCR_CTCIF2_MASK: u32 = 0x00000020
+const IFCR_CTCIF2_SHIFT: u32 = 5
+const IFCR_CHTIF2_MASK: u32 = 0x00000040
+const IFCR_CHTIF2_SHIFT: u32 = 6
+const IFCR_CTEIF2_MASK: u32 = 0x00000080
+const IFCR_CTEIF2_SHIFT: u32 = 7
+const IFCR_CGIF3_MASK: u32 = 0x00000100
+const IFCR_CGIF3_SHIFT: u32 = 8
+const IFCR_CTCIF3_MASK: u32 = 0x00000200
+const IFCR_CTCIF3_SHIFT: u32 = 9
+const IFCR_CHTIF3_MASK: u32 = 0x00000400
+const IFCR_CHTIF3_SHIFT: u32 = 10
+const IFCR_CTEIF3_MASK: u32 = 0x00000800
+const IFCR_CTEIF3_SHIFT: u32 = 11
+const IFCR_CGIF4_MASK: u32 = 0x00001000
+const IFCR_CGIF4_SHIFT: u32 = 12
+const IFCR_CTCIF4_MASK: u32 = 0x00002000
+const IFCR_CTCIF4_SHIFT: u32 = 13
+const IFCR_CHTIF4_MASK: u32 = 0x00004000
+const IFCR_CHTIF4_SHIFT: u32 = 14
+const IFCR_CTEIF4_MASK: u32 = 0x00008000
+const IFCR_CTEIF4_SHIFT: u32 = 15
+const IFCR_CGIF5_MASK: u32 = 0x00010000
+const IFCR_CGIF5_SHIFT: u32 = 16
+const IFCR_CTCIF5_MASK: u32 = 0x00020000
+const IFCR_CTCIF5_SHIFT: u32 = 17
+const IFCR_CHTIF5_MASK: u32 = 0x00040000
+const IFCR_CHTIF5_SHIFT: u32 = 18
+const IFCR_CTEIF5_MASK: u32 = 0x00080000
+const IFCR_CTEIF5_SHIFT: u32 = 19
+const IFCR_CGIF6_MASK: u32 = 0x00100000
+const IFCR_CGIF6_SHIFT: u32 = 20
+const IFCR_CTCIF6_MASK: u32 = 0x00200000
+const IFCR_CTCIF6_SHIFT: u32 = 21
+const IFCR_CHTIF6_MASK: u32 = 0x00400000
+const IFCR_CHTIF6_SHIFT: u32 = 22
+const IFCR_CTEIF6_MASK: u32 = 0x00800000
+const IFCR_CTEIF6_SHIFT: u32 = 23
+const IFCR_CGIF7_MASK: u32 = 0x01000000
+const IFCR_CGIF7_SHIFT: u32 = 24
+const IFCR_CTCIF7_MASK: u32 = 0x02000000
+const IFCR_CTCIF7_SHIFT: u32 = 25
+const IFCR_CHTIF7_MASK: u32 = 0x04000000
+const IFCR_CHTIF7_SHIFT: u32 = 26
+const IFCR_CTEIF7_MASK: u32 = 0x08000000
+const IFCR_CTEIF7_SHIFT: u32 = 27
+const IFCR_CGIF8_MASK: u32 = 0x10000000
+const IFCR_CGIF8_SHIFT: u32 = 28
+const IFCR_CTCIF8_MASK: u32 = 0x20000000
+const IFCR_CTCIF8_SHIFT: u32 = 29
+const IFCR_CHTIF8_MASK: u32 = 0x40000000
+const IFCR_CHTIF8_SHIFT: u32 = 30
+const IFCR_CTEIF8_MASK: u32 = 0x80000000
+const IFCR_CTEIF8_SHIFT: u32 = 31
+
+// DMA channel x configuration register
+const CCR1_OFFSET: u32 = 0x00000008
+const CCR1_EN_MASK: u32 = 0x00000001
+const CCR1_EN_SHIFT: u32 = 0
+const CCR1_TCIE_MASK: u32 = 0x00000002
+const CCR1_TCIE_SHIFT: u32 = 1
+const CCR1_HTIE_MASK: u32 = 0x00000004
+const CCR1_HTIE_SHIFT: u32 = 2
+const CCR1_TEIE_MASK: u32 = 0x00000008
+const CCR1_TEIE_SHIFT: u32 = 3
+const CCR1_DIR_MASK: u32 = 0x00000010
+const CCR1_DIR_SHIFT: u32 = 4
+const CCR1_CIRC_MASK: u32 = 0x00000020
+const CCR1_CIRC_SHIFT: u32 = 5
+const CCR1_PINC_MASK: u32 = 0x00000040
+const CCR1_PINC_SHIFT: u32 = 6
+const CCR1_MINC_MASK: u32 = 0x00000080
+const CCR1_MINC_SHIFT: u32 = 7
+const CCR1_PSIZE_MASK: u32 = 0x00000300
+const CCR1_PSIZE_SHIFT: u32 = 8
+const CCR1_MSIZE_MASK: u32 = 0x00000c00
+const CCR1_MSIZE_SHIFT: u32 = 10
+const CCR1_PL_MASK: u32 = 0x00003000
+const CCR1_PL_SHIFT: u32 = 12
+const CCR1_MEM2MEM_MASK: u32 = 0x00004000
+const CCR1_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR1_OFFSET: u32 = 0x0000000c
+const CNDTR1_NDT_MASK: u32 = 0x0000ffff
+const CNDTR1_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR1_OFFSET: u32 = 0x00000010
+const CPAR1_PA_MASK: u32 = 0xffffffff
+const CPAR1_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR1_OFFSET: u32 = 0x00000014
+const CMAR1_MA_MASK: u32 = 0xffffffff
+const CMAR1_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR2_OFFSET: u32 = 0x0000001c
+const CCR2_EN_MASK: u32 = 0x00000001
+const CCR2_EN_SHIFT: u32 = 0
+const CCR2_TCIE_MASK: u32 = 0x00000002
+const CCR2_TCIE_SHIFT: u32 = 1
+const CCR2_HTIE_MASK: u32 = 0x00000004
+const CCR2_HTIE_SHIFT: u32 = 2
+const CCR2_TEIE_MASK: u32 = 0x00000008
+const CCR2_TEIE_SHIFT: u32 = 3
+const CCR2_DIR_MASK: u32 = 0x00000010
+const CCR2_DIR_SHIFT: u32 = 4
+const CCR2_CIRC_MASK: u32 = 0x00000020
+const CCR2_CIRC_SHIFT: u32 = 5
+const CCR2_PINC_MASK: u32 = 0x00000040
+const CCR2_PINC_SHIFT: u32 = 6
+const CCR2_MINC_MASK: u32 = 0x00000080
+const CCR2_MINC_SHIFT: u32 = 7
+const CCR2_PSIZE_MASK: u32 = 0x00000300
+const CCR2_PSIZE_SHIFT: u32 = 8
+const CCR2_MSIZE_MASK: u32 = 0x00000c00
+const CCR2_MSIZE_SHIFT: u32 = 10
+const CCR2_PL_MASK: u32 = 0x00003000
+const CCR2_PL_SHIFT: u32 = 12
+const CCR2_MEM2MEM_MASK: u32 = 0x00004000
+const CCR2_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR2_OFFSET: u32 = 0x00000020
+const CNDTR2_NDT_MASK: u32 = 0x0000ffff
+const CNDTR2_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR2_OFFSET: u32 = 0x00000024
+const CPAR2_PA_MASK: u32 = 0xffffffff
+const CPAR2_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR2_OFFSET: u32 = 0x00000028
+const CMAR2_MA_MASK: u32 = 0xffffffff
+const CMAR2_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR3_OFFSET: u32 = 0x00000030
+const CCR3_EN_MASK: u32 = 0x00000001
+const CCR3_EN_SHIFT: u32 = 0
+const CCR3_TCIE_MASK: u32 = 0x00000002
+const CCR3_TCIE_SHIFT: u32 = 1
+const CCR3_HTIE_MASK: u32 = 0x00000004
+const CCR3_HTIE_SHIFT: u32 = 2
+const CCR3_TEIE_MASK: u32 = 0x00000008
+const CCR3_TEIE_SHIFT: u32 = 3
+const CCR3_DIR_MASK: u32 = 0x00000010
+const CCR3_DIR_SHIFT: u32 = 4
+const CCR3_CIRC_MASK: u32 = 0x00000020
+const CCR3_CIRC_SHIFT: u32 = 5
+const CCR3_PINC_MASK: u32 = 0x00000040
+const CCR3_PINC_SHIFT: u32 = 6
+const CCR3_MINC_MASK: u32 = 0x00000080
+const CCR3_MINC_SHIFT: u32 = 7
+const CCR3_PSIZE_MASK: u32 = 0x00000300
+const CCR3_PSIZE_SHIFT: u32 = 8
+const CCR3_MSIZE_MASK: u32 = 0x00000c00
+const CCR3_MSIZE_SHIFT: u32 = 10
+const CCR3_PL_MASK: u32 = 0x00003000
+const CCR3_PL_SHIFT: u32 = 12
+const CCR3_MEM2MEM_MASK: u32 = 0x00004000
+const CCR3_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR3_OFFSET: u32 = 0x00000034
+const CNDTR3_NDT_MASK: u32 = 0x0000ffff
+const CNDTR3_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR3_OFFSET: u32 = 0x00000038
+const CPAR3_PA_MASK: u32 = 0xffffffff
+const CPAR3_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR3_OFFSET: u32 = 0x0000003c
+const CMAR3_MA_MASK: u32 = 0xffffffff
+const CMAR3_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR4_OFFSET: u32 = 0x00000044
+const CCR4_EN_MASK: u32 = 0x00000001
+const CCR4_EN_SHIFT: u32 = 0
+const CCR4_TCIE_MASK: u32 = 0x00000002
+const CCR4_TCIE_SHIFT: u32 = 1
+const CCR4_HTIE_MASK: u32 = 0x00000004
+const CCR4_HTIE_SHIFT: u32 = 2
+const CCR4_TEIE_MASK: u32 = 0x00000008
+const CCR4_TEIE_SHIFT: u32 = 3
+const CCR4_DIR_MASK: u32 = 0x00000010
+const CCR4_DIR_SHIFT: u32 = 4
+const CCR4_CIRC_MASK: u32 = 0x00000020
+const CCR4_CIRC_SHIFT: u32 = 5
+const CCR4_PINC_MASK: u32 = 0x00000040
+const CCR4_PINC_SHIFT: u32 = 6
+const CCR4_MINC_MASK: u32 = 0x00000080
+const CCR4_MINC_SHIFT: u32 = 7
+const CCR4_PSIZE_MASK: u32 = 0x00000300
+const CCR4_PSIZE_SHIFT: u32 = 8
+const CCR4_MSIZE_MASK: u32 = 0x00000c00
+const CCR4_MSIZE_SHIFT: u32 = 10
+const CCR4_PL_MASK: u32 = 0x00003000
+const CCR4_PL_SHIFT: u32 = 12
+const CCR4_MEM2MEM_MASK: u32 = 0x00004000
+const CCR4_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR4_OFFSET: u32 = 0x00000048
+const CNDTR4_NDT_MASK: u32 = 0x0000ffff
+const CNDTR4_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR4_OFFSET: u32 = 0x0000004c
+const CPAR4_PA_MASK: u32 = 0xffffffff
+const CPAR4_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR4_OFFSET: u32 = 0x00000050
+const CMAR4_MA_MASK: u32 = 0xffffffff
+const CMAR4_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR5_OFFSET: u32 = 0x00000058
+const CCR5_EN_MASK: u32 = 0x00000001
+const CCR5_EN_SHIFT: u32 = 0
+const CCR5_TCIE_MASK: u32 = 0x00000002
+const CCR5_TCIE_SHIFT: u32 = 1
+const CCR5_HTIE_MASK: u32 = 0x00000004
+const CCR5_HTIE_SHIFT: u32 = 2
+const CCR5_TEIE_MASK: u32 = 0x00000008
+const CCR5_TEIE_SHIFT: u32 = 3
+const CCR5_DIR_MASK: u32 = 0x00000010
+const CCR5_DIR_SHIFT: u32 = 4
+const CCR5_CIRC_MASK: u32 = 0x00000020
+const CCR5_CIRC_SHIFT: u32 = 5
+const CCR5_PINC_MASK: u32 = 0x00000040
+const CCR5_PINC_SHIFT: u32 = 6
+const CCR5_MINC_MASK: u32 = 0x00000080
+const CCR5_MINC_SHIFT: u32 = 7
+const CCR5_PSIZE_MASK: u32 = 0x00000300
+const CCR5_PSIZE_SHIFT: u32 = 8
+const CCR5_MSIZE_MASK: u32 = 0x00000c00
+const CCR5_MSIZE_SHIFT: u32 = 10
+const CCR5_PL_MASK: u32 = 0x00003000
+const CCR5_PL_SHIFT: u32 = 12
+const CCR5_MEM2MEM_MASK: u32 = 0x00004000
+const CCR5_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR5_OFFSET: u32 = 0x0000005c
+const CNDTR5_NDT_MASK: u32 = 0x0000ffff
+const CNDTR5_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR5_OFFSET: u32 = 0x00000060
+const CPAR5_PA_MASK: u32 = 0xffffffff
+const CPAR5_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR5_OFFSET: u32 = 0x00000064
+const CMAR5_MA_MASK: u32 = 0xffffffff
+const CMAR5_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR6_OFFSET: u32 = 0x0000006c
+const CCR6_EN_MASK: u32 = 0x00000001
+const CCR6_EN_SHIFT: u32 = 0
+const CCR6_TCIE_MASK: u32 = 0x00000002
+const CCR6_TCIE_SHIFT: u32 = 1
+const CCR6_HTIE_MASK: u32 = 0x00000004
+const CCR6_HTIE_SHIFT: u32 = 2
+const CCR6_TEIE_MASK: u32 = 0x00000008
+const CCR6_TEIE_SHIFT: u32 = 3
+const CCR6_DIR_MASK: u32 = 0x00000010
+const CCR6_DIR_SHIFT: u32 = 4
+const CCR6_CIRC_MASK: u32 = 0x00000020
+const CCR6_CIRC_SHIFT: u32 = 5
+const CCR6_PINC_MASK: u32 = 0x00000040
+const CCR6_PINC_SHIFT: u32 = 6
+const CCR6_MINC_MASK: u32 = 0x00000080
+const CCR6_MINC_SHIFT: u32 = 7
+const CCR6_PSIZE_MASK: u32 = 0x00000300
+const CCR6_PSIZE_SHIFT: u32 = 8
+const CCR6_MSIZE_MASK: u32 = 0x00000c00
+const CCR6_MSIZE_SHIFT: u32 = 10
+const CCR6_PL_MASK: u32 = 0x00003000
+const CCR6_PL_SHIFT: u32 = 12
+const CCR6_MEM2MEM_MASK: u32 = 0x00004000
+const CCR6_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR6_OFFSET: u32 = 0x00000070
+const CNDTR6_NDT_MASK: u32 = 0x0000ffff
+const CNDTR6_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR6_OFFSET: u32 = 0x00000074
+const CPAR6_PA_MASK: u32 = 0xffffffff
+const CPAR6_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR6_OFFSET: u32 = 0x00000078
+const CMAR6_MA_MASK: u32 = 0xffffffff
+const CMAR6_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR7_OFFSET: u32 = 0x00000080
+const CCR7_EN_MASK: u32 = 0x00000001
+const CCR7_EN_SHIFT: u32 = 0
+const CCR7_TCIE_MASK: u32 = 0x00000002
+const CCR7_TCIE_SHIFT: u32 = 1
+const CCR7_HTIE_MASK: u32 = 0x00000004
+const CCR7_HTIE_SHIFT: u32 = 2
+const CCR7_TEIE_MASK: u32 = 0x00000008
+const CCR7_TEIE_SHIFT: u32 = 3
+const CCR7_DIR_MASK: u32 = 0x00000010
+const CCR7_DIR_SHIFT: u32 = 4
+const CCR7_CIRC_MASK: u32 = 0x00000020
+const CCR7_CIRC_SHIFT: u32 = 5
+const CCR7_PINC_MASK: u32 = 0x00000040
+const CCR7_PINC_SHIFT: u32 = 6
+const CCR7_MINC_MASK: u32 = 0x00000080
+const CCR7_MINC_SHIFT: u32 = 7
+const CCR7_PSIZE_MASK: u32 = 0x00000300
+const CCR7_PSIZE_SHIFT: u32 = 8
+const CCR7_MSIZE_MASK: u32 = 0x00000c00
+const CCR7_MSIZE_SHIFT: u32 = 10
+const CCR7_PL_MASK: u32 = 0x00003000
+const CCR7_PL_SHIFT: u32 = 12
+const CCR7_MEM2MEM_MASK: u32 = 0x00004000
+const CCR7_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR7_OFFSET: u32 = 0x00000084
+const CNDTR7_NDT_MASK: u32 = 0x0000ffff
+const CNDTR7_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR7_OFFSET: u32 = 0x00000088
+const CPAR7_PA_MASK: u32 = 0xffffffff
+const CPAR7_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR7_OFFSET: u32 = 0x0000008c
+const CMAR7_MA_MASK: u32 = 0xffffffff
+const CMAR7_MA_SHIFT: u32 = 0
+
+// DMA channel x configuration register
+const CCR8_OFFSET: u32 = 0x00000094
+const CCR8_EN_MASK: u32 = 0x00000001
+const CCR8_EN_SHIFT: u32 = 0
+const CCR8_TCIE_MASK: u32 = 0x00000002
+const CCR8_TCIE_SHIFT: u32 = 1
+const CCR8_HTIE_MASK: u32 = 0x00000004
+const CCR8_HTIE_SHIFT: u32 = 2
+const CCR8_TEIE_MASK: u32 = 0x00000008
+const CCR8_TEIE_SHIFT: u32 = 3
+const CCR8_DIR_MASK: u32 = 0x00000010
+const CCR8_DIR_SHIFT: u32 = 4
+const CCR8_CIRC_MASK: u32 = 0x00000020
+const CCR8_CIRC_SHIFT: u32 = 5
+const CCR8_PINC_MASK: u32 = 0x00000040
+const CCR8_PINC_SHIFT: u32 = 6
+const CCR8_MINC_MASK: u32 = 0x00000080
+const CCR8_MINC_SHIFT: u32 = 7
+const CCR8_PSIZE_MASK: u32 = 0x00000300
+const CCR8_PSIZE_SHIFT: u32 = 8
+const CCR8_MSIZE_MASK: u32 = 0x00000c00
+const CCR8_MSIZE_SHIFT: u32 = 10
+const CCR8_PL_MASK: u32 = 0x00003000
+const CCR8_PL_SHIFT: u32 = 12
+const CCR8_MEM2MEM_MASK: u32 = 0x00004000
+const CCR8_MEM2MEM_SHIFT: u32 = 14
+
+// DMA channel x number of data register
+const CNDTR8_OFFSET: u32 = 0x00000098
+const CNDTR8_NDT_MASK: u32 = 0x0000ffff
+const CNDTR8_NDT_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CPAR8_OFFSET: u32 = 0x0000009c
+const CPAR8_PA_MASK: u32 = 0xffffffff
+const CPAR8_PA_SHIFT: u32 = 0
+
+// This register must not be written when the channel is enabled.
+const CMAR8_OFFSET: u32 = 0x000000a0
+const CMAR8_MA_MASK: u32 = 0xffffffff
+const CMAR8_MA_SHIFT: u32 = 0

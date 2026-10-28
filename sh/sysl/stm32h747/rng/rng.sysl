@@ -1,0 +1,34 @@
+// RNG
+
+module sh.sysl.stm32h747.rng
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x48021800
+
+// RNG control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_RNGEN_MASK: u32 = 0x00000004
+const CR_RNGEN_SHIFT: u32 = 2
+const CR_IE_MASK: u32 = 0x00000008
+const CR_IE_SHIFT: u32 = 3
+const CR_CED_MASK: u32 = 0x00000020
+const CR_CED_SHIFT: u32 = 5
+
+// RNG status register
+const SR_OFFSET: u32 = 0x00000004
+const SR_DRDY_MASK: u32 = 0x00000001
+const SR_DRDY_SHIFT: u32 = 0
+const SR_CECS_MASK: u32 = 0x00000002
+const SR_CECS_SHIFT: u32 = 1
+const SR_SECS_MASK: u32 = 0x00000004
+const SR_SECS_SHIFT: u32 = 2
+const SR_CEIS_MASK: u32 = 0x00000020
+const SR_CEIS_SHIFT: u32 = 5
+const SR_SEIS_MASK: u32 = 0x00000040
+const SR_SEIS_SHIFT: u32 = 6
+
+// The RNG_DR register is a read-only register that delivers a 32-bit random value when read. The
+// content of this register is valid when DRDY= 1, even if RNGEN=0.
+const DR_OFFSET: u32 = 0x00000008
+const DR_RNDATA_MASK: u32 = 0xffffffff
+const DR_RNDATA_SHIFT: u32 = 0

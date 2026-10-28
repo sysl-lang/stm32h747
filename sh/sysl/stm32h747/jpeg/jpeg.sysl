@@ -1,0 +1,155 @@
+// JPEG
+
+module sh.sysl.stm32h747.jpeg
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x52003000
+
+// JPEG codec control register
+const CONFR0_OFFSET: u32 = 0x00000000
+const CONFR0_START_MASK: u32 = 0x00000001
+const CONFR0_START_SHIFT: u32 = 0
+
+// JPEG codec configuration register 1
+const CONFR1_OFFSET: u32 = 0x00000004
+const CONFR1_NF_MASK: u32 = 0x00000003
+const CONFR1_NF_SHIFT: u32 = 0
+const CONFR1_DE_MASK: u32 = 0x00000008
+const CONFR1_DE_SHIFT: u32 = 3
+const CONFR1_COLORSPACE_MASK: u32 = 0x00000030
+const CONFR1_COLORSPACE_SHIFT: u32 = 4
+const CONFR1_NS_MASK: u32 = 0x000000c0
+const CONFR1_NS_SHIFT: u32 = 6
+const CONFR1_HDR_MASK: u32 = 0x00000100
+const CONFR1_HDR_SHIFT: u32 = 8
+const CONFR1_YSIZE_MASK: u32 = 0xffff0000
+const CONFR1_YSIZE_SHIFT: u32 = 16
+
+// JPEG codec configuration register 2
+const CONFR2_OFFSET: u32 = 0x00000008
+const CONFR2_NMCU_MASK: u32 = 0x03ffffff
+const CONFR2_NMCU_SHIFT: u32 = 0
+
+// JPEG codec configuration register 3
+const CONFR3_OFFSET: u32 = 0x0000000c
+const CONFR3_XSIZE_MASK: u32 = 0xffff0000
+const CONFR3_XSIZE_SHIFT: u32 = 16
+
+// JPEG codec configuration register 4-7
+const CONFRN1_OFFSET: u32 = 0x00000010
+const CONFRN1_HD_MASK: u32 = 0x00000001
+const CONFRN1_HD_SHIFT: u32 = 0
+const CONFRN1_HA_MASK: u32 = 0x00000002
+const CONFRN1_HA_SHIFT: u32 = 1
+const CONFRN1_QT_MASK: u32 = 0x0000000c
+const CONFRN1_QT_SHIFT: u32 = 2
+const CONFRN1_NB_MASK: u32 = 0x000000f0
+const CONFRN1_NB_SHIFT: u32 = 4
+const CONFRN1_VSF_MASK: u32 = 0x00000f00
+const CONFRN1_VSF_SHIFT: u32 = 8
+const CONFRN1_HSF_MASK: u32 = 0x0000f000
+const CONFRN1_HSF_SHIFT: u32 = 12
+
+// JPEG codec configuration register 4-7
+const CONFRN2_OFFSET: u32 = 0x00000014
+const CONFRN2_HD_MASK: u32 = 0x00000001
+const CONFRN2_HD_SHIFT: u32 = 0
+const CONFRN2_HA_MASK: u32 = 0x00000002
+const CONFRN2_HA_SHIFT: u32 = 1
+const CONFRN2_QT_MASK: u32 = 0x0000000c
+const CONFRN2_QT_SHIFT: u32 = 2
+const CONFRN2_NB_MASK: u32 = 0x000000f0
+const CONFRN2_NB_SHIFT: u32 = 4
+const CONFRN2_VSF_MASK: u32 = 0x00000f00
+const CONFRN2_VSF_SHIFT: u32 = 8
+const CONFRN2_HSF_MASK: u32 = 0x0000f000
+const CONFRN2_HSF_SHIFT: u32 = 12
+
+// JPEG codec configuration register 4-7
+const CONFRN3_OFFSET: u32 = 0x00000018
+const CONFRN3_HD_MASK: u32 = 0x00000001
+const CONFRN3_HD_SHIFT: u32 = 0
+const CONFRN3_HA_MASK: u32 = 0x00000002
+const CONFRN3_HA_SHIFT: u32 = 1
+const CONFRN3_QT_MASK: u32 = 0x0000000c
+const CONFRN3_QT_SHIFT: u32 = 2
+const CONFRN3_NB_MASK: u32 = 0x000000f0
+const CONFRN3_NB_SHIFT: u32 = 4
+const CONFRN3_VSF_MASK: u32 = 0x00000f00
+const CONFRN3_VSF_SHIFT: u32 = 8
+const CONFRN3_HSF_MASK: u32 = 0x0000f000
+const CONFRN3_HSF_SHIFT: u32 = 12
+
+// JPEG codec configuration register 4-7
+const CONFRN4_OFFSET: u32 = 0x0000001c
+const CONFRN4_HD_MASK: u32 = 0x00000001
+const CONFRN4_HD_SHIFT: u32 = 0
+const CONFRN4_HA_MASK: u32 = 0x00000002
+const CONFRN4_HA_SHIFT: u32 = 1
+const CONFRN4_QT_MASK: u32 = 0x0000000c
+const CONFRN4_QT_SHIFT: u32 = 2
+const CONFRN4_NB_MASK: u32 = 0x000000f0
+const CONFRN4_NB_SHIFT: u32 = 4
+const CONFRN4_VSF_MASK: u32 = 0x00000f00
+const CONFRN4_VSF_SHIFT: u32 = 8
+const CONFRN4_HSF_MASK: u32 = 0x0000f000
+const CONFRN4_HSF_SHIFT: u32 = 12
+
+// JPEG control register
+const CR_OFFSET: u32 = 0x00000030
+const CR_JCEN_MASK: u32 = 0x00000001
+const CR_JCEN_SHIFT: u32 = 0
+const CR_IFTIE_MASK: u32 = 0x00000002
+const CR_IFTIE_SHIFT: u32 = 1
+const CR_IFNFIE_MASK: u32 = 0x00000004
+const CR_IFNFIE_SHIFT: u32 = 2
+const CR_OFTIE_MASK: u32 = 0x00000008
+const CR_OFTIE_SHIFT: u32 = 3
+const CR_OFNEIE_MASK: u32 = 0x00000010
+const CR_OFNEIE_SHIFT: u32 = 4
+const CR_EOCIE_MASK: u32 = 0x00000020
+const CR_EOCIE_SHIFT: u32 = 5
+const CR_HPDIE_MASK: u32 = 0x00000040
+const CR_HPDIE_SHIFT: u32 = 6
+const CR_IDMAEN_MASK: u32 = 0x00000800
+const CR_IDMAEN_SHIFT: u32 = 11
+const CR_ODMAEN_MASK: u32 = 0x00001000
+const CR_ODMAEN_SHIFT: u32 = 12
+const CR_IFF_MASK: u32 = 0x00002000
+const CR_IFF_SHIFT: u32 = 13
+const CR_OFF_MASK: u32 = 0x00004000
+const CR_OFF_SHIFT: u32 = 14
+
+// JPEG status register
+const SR_OFFSET: u32 = 0x00000034
+const SR_IFTF_MASK: u32 = 0x00000002
+const SR_IFTF_SHIFT: u32 = 1
+const SR_IFNFF_MASK: u32 = 0x00000004
+const SR_IFNFF_SHIFT: u32 = 2
+const SR_OFTF_MASK: u32 = 0x00000008
+const SR_OFTF_SHIFT: u32 = 3
+const SR_OFNEF_MASK: u32 = 0x00000010
+const SR_OFNEF_SHIFT: u32 = 4
+const SR_EOCF_MASK: u32 = 0x00000020
+const SR_EOCF_SHIFT: u32 = 5
+const SR_HPDF_MASK: u32 = 0x00000040
+const SR_HPDF_SHIFT: u32 = 6
+const SR_COF_MASK: u32 = 0x00000080
+const SR_COF_SHIFT: u32 = 7
+
+// JPEG clear flag register
+const CFR_OFFSET: u32 = 0x00000038
+const CFR_CEOCF_MASK: u32 = 0x00000020
+const CFR_CEOCF_SHIFT: u32 = 5
+const CFR_CHPDF_MASK: u32 = 0x00000040
+const CFR_CHPDF_SHIFT: u32 = 6
+
+// JPEG data input register
+const DIR_OFFSET: u32 = 0x00000040
+const DIR_DATAIN_MASK: u32 = 0xffffffff
+const DIR_DATAIN_SHIFT: u32 = 0
+
+// JPEG data output register
+const DOR_OFFSET: u32 = 0x00000044
+const DOR_DATAOUT_MASK: u32 = 0xffffffff
+const DOR_DATAOUT_SHIFT: u32 = 0

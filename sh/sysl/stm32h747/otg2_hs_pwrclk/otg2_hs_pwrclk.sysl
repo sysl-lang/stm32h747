@@ -1,0 +1,13 @@
+module sh.sysl.stm32h747.otg2_hs_pwrclk
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40080e00
+
+// Power and clock gating control register
+const OTG_HS_PCGCR_OFFSET: u32 = 0x00000000
+const OTG_HS_PCGCR_STPPCLK_MASK: u32 = 0x00000001
+const OTG_HS_PCGCR_STPPCLK_SHIFT: u32 = 0
+const OTG_HS_PCGCR_GATEHCLK_MASK: u32 = 0x00000002
+const OTG_HS_PCGCR_GATEHCLK_SHIFT: u32 = 1
+const OTG_HS_PCGCR_PHYSUSP_MASK: u32 = 0x00000010
+const OTG_HS_PCGCR_PHYSUSP_SHIFT: u32 = 4

@@ -1,0 +1,162 @@
+// DAC
+
+module sh.sysl.stm32h747.dac
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40007400
+
+// DAC control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_EN1_MASK: u32 = 0x00000001
+const CR_EN1_SHIFT: u32 = 0
+const CR_TEN1_MASK: u32 = 0x00000002
+const CR_TEN1_SHIFT: u32 = 1
+const CR_TSEL1_MASK: u32 = 0x0000001c
+const CR_TSEL1_SHIFT: u32 = 2
+const CR_WAVE1_MASK: u32 = 0x000000c0
+const CR_WAVE1_SHIFT: u32 = 6
+const CR_MAMP1_MASK: u32 = 0x00000f00
+const CR_MAMP1_SHIFT: u32 = 8
+const CR_DMAEN1_MASK: u32 = 0x00001000
+const CR_DMAEN1_SHIFT: u32 = 12
+const CR_DMAUDRIE1_MASK: u32 = 0x00002000
+const CR_DMAUDRIE1_SHIFT: u32 = 13
+const CR_CEN1_MASK: u32 = 0x00004000
+const CR_CEN1_SHIFT: u32 = 14
+const CR_EN2_MASK: u32 = 0x00010000
+const CR_EN2_SHIFT: u32 = 16
+const CR_TEN2_MASK: u32 = 0x00020000
+const CR_TEN2_SHIFT: u32 = 17
+const CR_TSEL2_MASK: u32 = 0x001c0000
+const CR_TSEL2_SHIFT: u32 = 18
+const CR_WAVE2_MASK: u32 = 0x00c00000
+const CR_WAVE2_SHIFT: u32 = 22
+const CR_MAMP2_MASK: u32 = 0x0f000000
+const CR_MAMP2_SHIFT: u32 = 24
+const CR_DMAEN2_MASK: u32 = 0x10000000
+const CR_DMAEN2_SHIFT: u32 = 28
+const CR_DMAUDRIE2_MASK: u32 = 0x20000000
+const CR_DMAUDRIE2_SHIFT: u32 = 29
+const CR_CEN2_MASK: u32 = 0x40000000
+const CR_CEN2_SHIFT: u32 = 30
+
+// DAC software trigger register
+const SWTRGR_OFFSET: u32 = 0x00000004
+const SWTRGR_SWTRIG1_MASK: u32 = 0x00000001
+const SWTRGR_SWTRIG1_SHIFT: u32 = 0
+const SWTRGR_SWTRIG2_MASK: u32 = 0x00000002
+const SWTRGR_SWTRIG2_SHIFT: u32 = 1
+
+// DAC channel1 12-bit right-aligned data holding register
+const DHR12R1_OFFSET: u32 = 0x00000008
+const DHR12R1_DACC1DHR_MASK: u32 = 0x00000fff
+const DHR12R1_DACC1DHR_SHIFT: u32 = 0
+
+// DAC channel1 12-bit left aligned data holding register
+const DHR12L1_OFFSET: u32 = 0x0000000c
+const DHR12L1_DACC1DHR_MASK: u32 = 0x0000fff0
+const DHR12L1_DACC1DHR_SHIFT: u32 = 4
+
+// DAC channel1 8-bit right aligned data holding register
+const DHR8R1_OFFSET: u32 = 0x00000010
+const DHR8R1_DACC1DHR_MASK: u32 = 0x000000ff
+const DHR8R1_DACC1DHR_SHIFT: u32 = 0
+
+// DAC channel2 12-bit right aligned data holding register
+const DHR12R2_OFFSET: u32 = 0x00000014
+const DHR12R2_DACC2DHR_MASK: u32 = 0x00000fff
+const DHR12R2_DACC2DHR_SHIFT: u32 = 0
+
+// DAC channel2 12-bit left aligned data holding register
+const DHR12L2_OFFSET: u32 = 0x00000018
+const DHR12L2_DACC2DHR_MASK: u32 = 0x0000fff0
+const DHR12L2_DACC2DHR_SHIFT: u32 = 4
+
+// DAC channel2 8-bit right-aligned data holding register
+const DHR8R2_OFFSET: u32 = 0x0000001c
+const DHR8R2_DACC2DHR_MASK: u32 = 0x000000ff
+const DHR8R2_DACC2DHR_SHIFT: u32 = 0
+
+// Dual DAC 12-bit right-aligned data holding register
+const DHR12RD_OFFSET: u32 = 0x00000020
+const DHR12RD_DACC1DHR_MASK: u32 = 0x00000fff
+const DHR12RD_DACC1DHR_SHIFT: u32 = 0
+const DHR12RD_DACC2DHR_MASK: u32 = 0x0fff0000
+const DHR12RD_DACC2DHR_SHIFT: u32 = 16
+
+// DUAL DAC 12-bit left aligned data holding register
+const DHR12LD_OFFSET: u32 = 0x00000024
+const DHR12LD_DACC1DHR_MASK: u32 = 0x0000fff0
+const DHR12LD_DACC1DHR_SHIFT: u32 = 4
+const DHR12LD_DACC2DHR_MASK: u32 = 0xfff00000
+const DHR12LD_DACC2DHR_SHIFT: u32 = 20
+
+// DUAL DAC 8-bit right aligned data holding register
+const DHR8RD_OFFSET: u32 = 0x00000028
+const DHR8RD_DACC1DHR_MASK: u32 = 0x000000ff
+const DHR8RD_DACC1DHR_SHIFT: u32 = 0
+const DHR8RD_DACC2DHR_MASK: u32 = 0x0000ff00
+const DHR8RD_DACC2DHR_SHIFT: u32 = 8
+
+// DAC channel1 data output register
+const DOR1_OFFSET: u32 = 0x0000002c
+const DOR1_DACC1DOR_MASK: u32 = 0x00000fff
+const DOR1_DACC1DOR_SHIFT: u32 = 0
+
+// DAC channel2 data output register
+const DOR2_OFFSET: u32 = 0x00000030
+const DOR2_DACC2DOR_MASK: u32 = 0x00000fff
+const DOR2_DACC2DOR_SHIFT: u32 = 0
+
+// DAC status register
+const SR_OFFSET: u32 = 0x00000034
+const SR_DMAUDR1_MASK: u32 = 0x00002000
+const SR_DMAUDR1_SHIFT: u32 = 13
+const SR_CAL_FLAG1_MASK: u32 = 0x00004000
+const SR_CAL_FLAG1_SHIFT: u32 = 14
+const SR_BWST1_MASK: u32 = 0x00008000
+const SR_BWST1_SHIFT: u32 = 15
+const SR_DMAUDR2_MASK: u32 = 0x20000000
+const SR_DMAUDR2_SHIFT: u32 = 29
+const SR_CAL_FLAG2_MASK: u32 = 0x40000000
+const SR_CAL_FLAG2_SHIFT: u32 = 30
+const SR_BWST2_MASK: u32 = 0x80000000
+const SR_BWST2_SHIFT: u32 = 31
+
+// DAC calibration control register
+const CCR_OFFSET: u32 = 0x00000038
+const CCR_OTRIM1_MASK: u32 = 0x0000001f
+const CCR_OTRIM1_SHIFT: u32 = 0
+const CCR_OTRIM2_MASK: u32 = 0x001f0000
+const CCR_OTRIM2_SHIFT: u32 = 16
+
+// DAC mode control register
+const MCR_OFFSET: u32 = 0x0000003c
+const MCR_MODE1_MASK: u32 = 0x00000007
+const MCR_MODE1_SHIFT: u32 = 0
+const MCR_MODE2_MASK: u32 = 0x00070000
+const MCR_MODE2_SHIFT: u32 = 16
+
+// DAC Sample and Hold sample time register 1
+const SHSR1_OFFSET: u32 = 0x00000040
+const SHSR1_TSAMPLE1_MASK: u32 = 0x000003ff
+const SHSR1_TSAMPLE1_SHIFT: u32 = 0
+
+// DAC Sample and Hold sample time register 2
+const SHSR2_OFFSET: u32 = 0x00000044
+const SHSR2_TSAMPLE2_MASK: u32 = 0x000003ff
+const SHSR2_TSAMPLE2_SHIFT: u32 = 0
+
+// DAC Sample and Hold hold time register
+const SHHR_OFFSET: u32 = 0x00000048
+const SHHR_THOLD1_MASK: u32 = 0x000003ff
+const SHHR_THOLD1_SHIFT: u32 = 0
+const SHHR_THOLD2_MASK: u32 = 0x03ff0000
+const SHHR_THOLD2_SHIFT: u32 = 16
+
+// DAC Sample and Hold refresh time register
+const SHRR_OFFSET: u32 = 0x0000004c
+const SHRR_TREFRESH1_MASK: u32 = 0x000000ff
+const SHRR_TREFRESH1_SHIFT: u32 = 0
+const SHRR_TREFRESH2_MASK: u32 = 0x00ff0000
+const SHRR_TREFRESH2_SHIFT: u32 = 16

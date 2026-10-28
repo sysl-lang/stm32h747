@@ -1,0 +1,217 @@
+module sh.sysl.stm32h747.i2c2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40005800
+
+// Access: No wait states, except if a write access occurs while a write access to this register is
+// ongoing. In this case, wait states are inserted in the second write access until the previous
+// one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK.
+const CR1_OFFSET: u32 = 0x00000000
+const CR1_PE_MASK: u32 = 0x00000001
+const CR1_PE_SHIFT: u32 = 0
+const CR1_TXIE_MASK: u32 = 0x00000002
+const CR1_TXIE_SHIFT: u32 = 1
+const CR1_RXIE_MASK: u32 = 0x00000004
+const CR1_RXIE_SHIFT: u32 = 2
+const CR1_ADDRIE_MASK: u32 = 0x00000008
+const CR1_ADDRIE_SHIFT: u32 = 3
+const CR1_NACKIE_MASK: u32 = 0x00000010
+const CR1_NACKIE_SHIFT: u32 = 4
+const CR1_STOPIE_MASK: u32 = 0x00000020
+const CR1_STOPIE_SHIFT: u32 = 5
+const CR1_TCIE_MASK: u32 = 0x00000040
+const CR1_TCIE_SHIFT: u32 = 6
+const CR1_ERRIE_MASK: u32 = 0x00000080
+const CR1_ERRIE_SHIFT: u32 = 7
+const CR1_DNF_MASK: u32 = 0x00000f00
+const CR1_DNF_SHIFT: u32 = 8
+const CR1_ANFOFF_MASK: u32 = 0x00001000
+const CR1_ANFOFF_SHIFT: u32 = 12
+const CR1_TXDMAEN_MASK: u32 = 0x00004000
+const CR1_TXDMAEN_SHIFT: u32 = 14
+const CR1_RXDMAEN_MASK: u32 = 0x00008000
+const CR1_RXDMAEN_SHIFT: u32 = 15
+const CR1_SBC_MASK: u32 = 0x00010000
+const CR1_SBC_SHIFT: u32 = 16
+const CR1_NOSTRETCH_MASK: u32 = 0x00020000
+const CR1_NOSTRETCH_SHIFT: u32 = 17
+const CR1_WUPEN_MASK: u32 = 0x00040000
+const CR1_WUPEN_SHIFT: u32 = 18
+const CR1_GCEN_MASK: u32 = 0x00080000
+const CR1_GCEN_SHIFT: u32 = 19
+const CR1_SMBHEN_MASK: u32 = 0x00100000
+const CR1_SMBHEN_SHIFT: u32 = 20
+const CR1_SMBDEN_MASK: u32 = 0x00200000
+const CR1_SMBDEN_SHIFT: u32 = 21
+const CR1_ALERTEN_MASK: u32 = 0x00400000
+const CR1_ALERTEN_SHIFT: u32 = 22
+const CR1_PECEN_MASK: u32 = 0x00800000
+const CR1_PECEN_SHIFT: u32 = 23
+
+// Access: No wait states, except if a write access occurs while a write access to this register is
+// ongoing. In this case, wait states are inserted in the second write access until the previous
+// one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK.
+const CR2_OFFSET: u32 = 0x00000004
+const CR2_SADD0_MASK: u32 = 0x00000001
+const CR2_SADD0_SHIFT: u32 = 0
+const CR2_SADD1_MASK: u32 = 0x00000002
+const CR2_SADD1_SHIFT: u32 = 1
+const CR2_SADD2_MASK: u32 = 0x00000004
+const CR2_SADD2_SHIFT: u32 = 2
+const CR2_SADD3_MASK: u32 = 0x00000008
+const CR2_SADD3_SHIFT: u32 = 3
+const CR2_SADD4_MASK: u32 = 0x00000010
+const CR2_SADD4_SHIFT: u32 = 4
+const CR2_SADD5_MASK: u32 = 0x00000020
+const CR2_SADD5_SHIFT: u32 = 5
+const CR2_SADD6_MASK: u32 = 0x00000040
+const CR2_SADD6_SHIFT: u32 = 6
+const CR2_SADD7_MASK: u32 = 0x00000080
+const CR2_SADD7_SHIFT: u32 = 7
+const CR2_SADD8_MASK: u32 = 0x00000100
+const CR2_SADD8_SHIFT: u32 = 8
+const CR2_SADD9_MASK: u32 = 0x00000200
+const CR2_SADD9_SHIFT: u32 = 9
+const CR2_RD_WRN_MASK: u32 = 0x00000400
+const CR2_RD_WRN_SHIFT: u32 = 10
+const CR2_ADD10_MASK: u32 = 0x00000800
+const CR2_ADD10_SHIFT: u32 = 11
+const CR2_HEAD10R_MASK: u32 = 0x00001000
+const CR2_HEAD10R_SHIFT: u32 = 12
+const CR2_START_MASK: u32 = 0x00002000
+const CR2_START_SHIFT: u32 = 13
+const CR2_STOP_MASK: u32 = 0x00004000
+const CR2_STOP_SHIFT: u32 = 14
+const CR2_NACK_MASK: u32 = 0x00008000
+const CR2_NACK_SHIFT: u32 = 15
+const CR2_NBYTES_MASK: u32 = 0x00ff0000
+const CR2_NBYTES_SHIFT: u32 = 16
+const CR2_RELOAD_MASK: u32 = 0x01000000
+const CR2_RELOAD_SHIFT: u32 = 24
+const CR2_AUTOEND_MASK: u32 = 0x02000000
+const CR2_AUTOEND_SHIFT: u32 = 25
+const CR2_PECBYTE_MASK: u32 = 0x04000000
+const CR2_PECBYTE_SHIFT: u32 = 26
+
+// Access: No wait states, except if a write access occurs while a write access to this register is
+// ongoing. In this case, wait states are inserted in the second write access until the previous
+// one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK.
+const OAR1_OFFSET: u32 = 0x00000008
+const OAR1_OA1_MASK: u32 = 0x000003ff
+const OAR1_OA1_SHIFT: u32 = 0
+const OAR1_OA1MODE_MASK: u32 = 0x00000400
+const OAR1_OA1MODE_SHIFT: u32 = 10
+const OAR1_OA1EN_MASK: u32 = 0x00008000
+const OAR1_OA1EN_SHIFT: u32 = 15
+
+// Access: No wait states, except if a write access occurs while a write access to this register is
+// ongoing. In this case, wait states are inserted in the second write access until the previous
+// one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK.
+const OAR2_OFFSET: u32 = 0x0000000c
+const OAR2_OA2_MASK: u32 = 0x000000fe
+const OAR2_OA2_SHIFT: u32 = 1
+const OAR2_OA2MSK_MASK: u32 = 0x00000700
+const OAR2_OA2MSK_SHIFT: u32 = 8
+const OAR2_OA2EN_MASK: u32 = 0x00008000
+const OAR2_OA2EN_SHIFT: u32 = 15
+
+// Access: No wait states
+const TIMINGR_OFFSET: u32 = 0x00000010
+const TIMINGR_SCLL_MASK: u32 = 0x000000ff
+const TIMINGR_SCLL_SHIFT: u32 = 0
+const TIMINGR_SCLH_MASK: u32 = 0x0000ff00
+const TIMINGR_SCLH_SHIFT: u32 = 8
+const TIMINGR_SDADEL_MASK: u32 = 0x000f0000
+const TIMINGR_SDADEL_SHIFT: u32 = 16
+const TIMINGR_SCLDEL_MASK: u32 = 0x00f00000
+const TIMINGR_SCLDEL_SHIFT: u32 = 20
+const TIMINGR_PRESC_MASK: u32 = 0xf0000000
+const TIMINGR_PRESC_SHIFT: u32 = 28
+
+// Access: No wait states, except if a write access occurs while a write access to this register is
+// ongoing. In this case, wait states are inserted in the second write access until the previous
+// one is completed. The latency of the second write access can be up to 2 x PCLK1 + 6 x I2CCLK.
+const TIMEOUTR_OFFSET: u32 = 0x00000014
+const TIMEOUTR_TIMEOUTA_MASK: u32 = 0x00000fff
+const TIMEOUTR_TIMEOUTA_SHIFT: u32 = 0
+const TIMEOUTR_TIDLE_MASK: u32 = 0x00001000
+const TIMEOUTR_TIDLE_SHIFT: u32 = 12
+const TIMEOUTR_TIMOUTEN_MASK: u32 = 0x00008000
+const TIMEOUTR_TIMOUTEN_SHIFT: u32 = 15
+const TIMEOUTR_TIMEOUTB_MASK: u32 = 0x0fff0000
+const TIMEOUTR_TIMEOUTB_SHIFT: u32 = 16
+const TIMEOUTR_TEXTEN_MASK: u32 = 0x80000000
+const TIMEOUTR_TEXTEN_SHIFT: u32 = 31
+
+// Access: No wait states
+const ISR_OFFSET: u32 = 0x00000018
+const ISR_TXE_MASK: u32 = 0x00000001
+const ISR_TXE_SHIFT: u32 = 0
+const ISR_TXIS_MASK: u32 = 0x00000002
+const ISR_TXIS_SHIFT: u32 = 1
+const ISR_RXNE_MASK: u32 = 0x00000004
+const ISR_RXNE_SHIFT: u32 = 2
+const ISR_ADDR_MASK: u32 = 0x00000008
+const ISR_ADDR_SHIFT: u32 = 3
+const ISR_NACKF_MASK: u32 = 0x00000010
+const ISR_NACKF_SHIFT: u32 = 4
+const ISR_STOPF_MASK: u32 = 0x00000020
+const ISR_STOPF_SHIFT: u32 = 5
+const ISR_TC_MASK: u32 = 0x00000040
+const ISR_TC_SHIFT: u32 = 6
+const ISR_TCR_MASK: u32 = 0x00000080
+const ISR_TCR_SHIFT: u32 = 7
+const ISR_BERR_MASK: u32 = 0x00000100
+const ISR_BERR_SHIFT: u32 = 8
+const ISR_ARLO_MASK: u32 = 0x00000200
+const ISR_ARLO_SHIFT: u32 = 9
+const ISR_OVR_MASK: u32 = 0x00000400
+const ISR_OVR_SHIFT: u32 = 10
+const ISR_PECERR_MASK: u32 = 0x00000800
+const ISR_PECERR_SHIFT: u32 = 11
+const ISR_TIMEOUT_MASK: u32 = 0x00001000
+const ISR_TIMEOUT_SHIFT: u32 = 12
+const ISR_ALERT_MASK: u32 = 0x00002000
+const ISR_ALERT_SHIFT: u32 = 13
+const ISR_BUSY_MASK: u32 = 0x00008000
+const ISR_BUSY_SHIFT: u32 = 15
+const ISR_DIR_MASK: u32 = 0x00010000
+const ISR_DIR_SHIFT: u32 = 16
+const ISR_ADDCODE_MASK: u32 = 0x00fe0000
+const ISR_ADDCODE_SHIFT: u32 = 17
+
+// Access: No wait states
+const ICR_OFFSET: u32 = 0x0000001c
+const ICR_ADDRCF_MASK: u32 = 0x00000008
+const ICR_ADDRCF_SHIFT: u32 = 3
+const ICR_NACKCF_MASK: u32 = 0x00000010
+const ICR_NACKCF_SHIFT: u32 = 4
+const ICR_STOPCF_MASK: u32 = 0x00000020
+const ICR_STOPCF_SHIFT: u32 = 5
+const ICR_BERRCF_MASK: u32 = 0x00000100
+const ICR_BERRCF_SHIFT: u32 = 8
+const ICR_ARLOCF_MASK: u32 = 0x00000200
+const ICR_ARLOCF_SHIFT: u32 = 9
+const ICR_OVRCF_MASK: u32 = 0x00000400
+const ICR_OVRCF_SHIFT: u32 = 10
+const ICR_PECCF_MASK: u32 = 0x00000800
+const ICR_PECCF_SHIFT: u32 = 11
+const ICR_TIMOUTCF_MASK: u32 = 0x00001000
+const ICR_TIMOUTCF_SHIFT: u32 = 12
+const ICR_ALERTCF_MASK: u32 = 0x00002000
+const ICR_ALERTCF_SHIFT: u32 = 13
+
+// Access: No wait states
+const PECR_OFFSET: u32 = 0x00000020
+const PECR_PEC_MASK: u32 = 0x000000ff
+const PECR_PEC_SHIFT: u32 = 0
+
+// Access: No wait states
+const RXDR_OFFSET: u32 = 0x00000024
+const RXDR_RXDATA_MASK: u32 = 0x000000ff
+const RXDR_RXDATA_SHIFT: u32 = 0
+
+// Access: No wait states
+const TXDR_OFFSET: u32 = 0x00000028
+const TXDR_TXDATA_MASK: u32 = 0x000000ff
+const TXDR_TXDATA_SHIFT: u32 = 0

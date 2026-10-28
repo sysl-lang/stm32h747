@@ -1,0 +1,13 @@
+// accelerator - control register (ART_CTR)
+
+module sh.sysl.stm32h747.art
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40024400
+
+// control register
+const CTR_OFFSET: u32 = 0x00000000
+const CTR_EN_MASK: u32 = 0x00000001
+const CTR_EN_SHIFT: u32 = 0
+const CTR_PCACHEADDR_MASK: u32 = 0x000fff00
+const CTR_PCACHEADDR_SHIFT: u32 = 8

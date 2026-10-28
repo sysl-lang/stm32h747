@@ -1,0 +1,37 @@
+// Cryptographic processor
+
+module sh.sysl.stm32h747.crc
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58024c00
+
+// Data register
+const DR_OFFSET: u32 = 0x00000000
+const DR_DR_MASK: u32 = 0xffffffff
+const DR_DR_SHIFT: u32 = 0
+
+// Independent Data register
+const IDR_OFFSET: u32 = 0x00000004
+const IDR_IDR_MASK: u32 = 0xffffffff
+const IDR_IDR_SHIFT: u32 = 0
+
+// Control register
+const CR_OFFSET: u32 = 0x00000008
+const CR_RESET_MASK: u32 = 0x00000001
+const CR_RESET_SHIFT: u32 = 0
+const CR_POLYSIZE_MASK: u32 = 0x00000018
+const CR_POLYSIZE_SHIFT: u32 = 3
+const CR_REV_IN_MASK: u32 = 0x00000060
+const CR_REV_IN_SHIFT: u32 = 5
+const CR_REV_OUT_MASK: u32 = 0x00000080
+const CR_REV_OUT_SHIFT: u32 = 7
+
+// Initial CRC value
+const INIT_OFFSET: u32 = 0x00000010
+const INIT_CRC_INIT_MASK: u32 = 0xffffffff
+const INIT_CRC_INIT_SHIFT: u32 = 0
+
+// CRC polynomial
+const POL_OFFSET: u32 = 0x00000014
+const POL_POL_MASK: u32 = 0xffffffff
+const POL_POL_SHIFT: u32 = 0

@@ -1,0 +1,511 @@
+// RTC
+
+module sh.sysl.stm32h747.rtc
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58004000
+
+// The RTC_TR is the calendar time shadow register. This register must be written in initialization
+// mode only. Refer to Calendar initialization and configuration on page9 and Reading the calendar
+// on page10.This register is write protected. The write access procedure is described in RTC
+// register write protection on page9.
+const RTC_TR_OFFSET: u32 = 0x00000000
+const RTC_TR_SU_MASK: u32 = 0x0000000f
+const RTC_TR_SU_SHIFT: u32 = 0
+const RTC_TR_ST_MASK: u32 = 0x00000070
+const RTC_TR_ST_SHIFT: u32 = 4
+const RTC_TR_MNU_MASK: u32 = 0x00000f00
+const RTC_TR_MNU_SHIFT: u32 = 8
+const RTC_TR_MNT_MASK: u32 = 0x00007000
+const RTC_TR_MNT_SHIFT: u32 = 12
+const RTC_TR_HU_MASK: u32 = 0x000f0000
+const RTC_TR_HU_SHIFT: u32 = 16
+const RTC_TR_HT_MASK: u32 = 0x00300000
+const RTC_TR_HT_SHIFT: u32 = 20
+const RTC_TR_PM_MASK: u32 = 0x00400000
+const RTC_TR_PM_SHIFT: u32 = 22
+
+// The RTC_DR is the calendar date shadow register. This register must be written in initialization
+// mode only. Refer to Calendar initialization and configuration on page9 and Reading the calendar
+// on page10.This register is write protected. The write access procedure is described in RTC
+// register write protection on page9.
+const RTC_DR_OFFSET: u32 = 0x00000004
+const RTC_DR_DU_MASK: u32 = 0x0000000f
+const RTC_DR_DU_SHIFT: u32 = 0
+const RTC_DR_DT_MASK: u32 = 0x00000030
+const RTC_DR_DT_SHIFT: u32 = 4
+const RTC_DR_MU_MASK: u32 = 0x00000f00
+const RTC_DR_MU_SHIFT: u32 = 8
+const RTC_DR_MT_MASK: u32 = 0x00001000
+const RTC_DR_MT_SHIFT: u32 = 12
+const RTC_DR_WDU_MASK: u32 = 0x0000e000
+const RTC_DR_WDU_SHIFT: u32 = 13
+const RTC_DR_YU_MASK: u32 = 0x000f0000
+const RTC_DR_YU_SHIFT: u32 = 16
+const RTC_DR_YT_MASK: u32 = 0x00f00000
+const RTC_DR_YT_SHIFT: u32 = 20
+
+// RTC control register
+const RTC_CR_OFFSET: u32 = 0x00000008
+const RTC_CR_WUCKSEL_MASK: u32 = 0x00000007
+const RTC_CR_WUCKSEL_SHIFT: u32 = 0
+const RTC_CR_TSEDGE_MASK: u32 = 0x00000008
+const RTC_CR_TSEDGE_SHIFT: u32 = 3
+const RTC_CR_REFCKON_MASK: u32 = 0x00000010
+const RTC_CR_REFCKON_SHIFT: u32 = 4
+const RTC_CR_BYPSHAD_MASK: u32 = 0x00000020
+const RTC_CR_BYPSHAD_SHIFT: u32 = 5
+const RTC_CR_FMT_MASK: u32 = 0x00000040
+const RTC_CR_FMT_SHIFT: u32 = 6
+const RTC_CR_ALRAE_MASK: u32 = 0x00000100
+const RTC_CR_ALRAE_SHIFT: u32 = 8
+const RTC_CR_ALRBE_MASK: u32 = 0x00000200
+const RTC_CR_ALRBE_SHIFT: u32 = 9
+const RTC_CR_WUTE_MASK: u32 = 0x00000400
+const RTC_CR_WUTE_SHIFT: u32 = 10
+const RTC_CR_TSE_MASK: u32 = 0x00000800
+const RTC_CR_TSE_SHIFT: u32 = 11
+const RTC_CR_ALRAIE_MASK: u32 = 0x00001000
+const RTC_CR_ALRAIE_SHIFT: u32 = 12
+const RTC_CR_ALRBIE_MASK: u32 = 0x00002000
+const RTC_CR_ALRBIE_SHIFT: u32 = 13
+const RTC_CR_WUTIE_MASK: u32 = 0x00004000
+const RTC_CR_WUTIE_SHIFT: u32 = 14
+const RTC_CR_TSIE_MASK: u32 = 0x00008000
+const RTC_CR_TSIE_SHIFT: u32 = 15
+const RTC_CR_ADD1H_MASK: u32 = 0x00010000
+const RTC_CR_ADD1H_SHIFT: u32 = 16
+const RTC_CR_SUB1H_MASK: u32 = 0x00020000
+const RTC_CR_SUB1H_SHIFT: u32 = 17
+const RTC_CR_BKP_MASK: u32 = 0x00040000
+const RTC_CR_BKP_SHIFT: u32 = 18
+const RTC_CR_COSEL_MASK: u32 = 0x00080000
+const RTC_CR_COSEL_SHIFT: u32 = 19
+const RTC_CR_POL_MASK: u32 = 0x00100000
+const RTC_CR_POL_SHIFT: u32 = 20
+const RTC_CR_OSEL_MASK: u32 = 0x00600000
+const RTC_CR_OSEL_SHIFT: u32 = 21
+const RTC_CR_COE_MASK: u32 = 0x00800000
+const RTC_CR_COE_SHIFT: u32 = 23
+const RTC_CR_ITSE_MASK: u32 = 0x01000000
+const RTC_CR_ITSE_SHIFT: u32 = 24
+
+// This register is write protected (except for RTC_ISR[13:8] bits). The write access procedure is
+// described in RTC register write protection on page9.
+const RTC_ISR_OFFSET: u32 = 0x0000000c
+const RTC_ISR_ALRAWF_MASK: u32 = 0x00000001
+const RTC_ISR_ALRAWF_SHIFT: u32 = 0
+const RTC_ISR_ALRBWF_MASK: u32 = 0x00000002
+const RTC_ISR_ALRBWF_SHIFT: u32 = 1
+const RTC_ISR_WUTWF_MASK: u32 = 0x00000004
+const RTC_ISR_WUTWF_SHIFT: u32 = 2
+const RTC_ISR_SHPF_MASK: u32 = 0x00000008
+const RTC_ISR_SHPF_SHIFT: u32 = 3
+const RTC_ISR_INITS_MASK: u32 = 0x00000010
+const RTC_ISR_INITS_SHIFT: u32 = 4
+const RTC_ISR_RSF_MASK: u32 = 0x00000020
+const RTC_ISR_RSF_SHIFT: u32 = 5
+const RTC_ISR_INITF_MASK: u32 = 0x00000040
+const RTC_ISR_INITF_SHIFT: u32 = 6
+const RTC_ISR_INIT_MASK: u32 = 0x00000080
+const RTC_ISR_INIT_SHIFT: u32 = 7
+const RTC_ISR_ALRAF_MASK: u32 = 0x00000100
+const RTC_ISR_ALRAF_SHIFT: u32 = 8
+const RTC_ISR_ALRBF_MASK: u32 = 0x00000200
+const RTC_ISR_ALRBF_SHIFT: u32 = 9
+const RTC_ISR_WUTF_MASK: u32 = 0x00000400
+const RTC_ISR_WUTF_SHIFT: u32 = 10
+const RTC_ISR_TSF_MASK: u32 = 0x00000800
+const RTC_ISR_TSF_SHIFT: u32 = 11
+const RTC_ISR_TSOVF_MASK: u32 = 0x00001000
+const RTC_ISR_TSOVF_SHIFT: u32 = 12
+const RTC_ISR_TAMP1F_MASK: u32 = 0x00002000
+const RTC_ISR_TAMP1F_SHIFT: u32 = 13
+const RTC_ISR_TAMP2F_MASK: u32 = 0x00004000
+const RTC_ISR_TAMP2F_SHIFT: u32 = 14
+const RTC_ISR_TAMP3F_MASK: u32 = 0x00008000
+const RTC_ISR_TAMP3F_SHIFT: u32 = 15
+const RTC_ISR_RECALPF_MASK: u32 = 0x00010000
+const RTC_ISR_RECALPF_SHIFT: u32 = 16
+const RTC_ISR_ITSF_MASK: u32 = 0x00020000
+const RTC_ISR_ITSF_SHIFT: u32 = 17
+
+// This register must be written in initialization mode only. The initialization must be performed
+// in two separate write accesses. Refer to Calendar initialization and configuration on page9.This
+// register is write protected. The write access procedure is described in RTC register write
+// protection on page9.
+const RTC_PRER_OFFSET: u32 = 0x00000010
+const RTC_PRER_PREDIV_S_MASK: u32 = 0x00007fff
+const RTC_PRER_PREDIV_S_SHIFT: u32 = 0
+const RTC_PRER_PREDIV_A_MASK: u32 = 0x007f0000
+const RTC_PRER_PREDIV_A_SHIFT: u32 = 16
+
+// This register can be written only when WUTWF is set to 1 in RTC_ISR.This register is write
+// protected. The write access procedure is described in RTC register write protection on page9.
+const RTC_WUTR_OFFSET: u32 = 0x00000014
+const RTC_WUTR_WUT_MASK: u32 = 0x0000ffff
+const RTC_WUTR_WUT_SHIFT: u32 = 0
+
+// This register can be written only when ALRAWF is set to 1 in RTC_ISR, or in initialization
+// mode.This register is write protected. The write access procedure is described in RTC register
+// write protection on page9.
+const RTC_ALRMAR_OFFSET: u32 = 0x0000001c
+const RTC_ALRMAR_SU_MASK: u32 = 0x0000000f
+const RTC_ALRMAR_SU_SHIFT: u32 = 0
+const RTC_ALRMAR_ST_MASK: u32 = 0x00000070
+const RTC_ALRMAR_ST_SHIFT: u32 = 4
+const RTC_ALRMAR_MSK1_MASK: u32 = 0x00000080
+const RTC_ALRMAR_MSK1_SHIFT: u32 = 7
+const RTC_ALRMAR_MNU_MASK: u32 = 0x00000f00
+const RTC_ALRMAR_MNU_SHIFT: u32 = 8
+const RTC_ALRMAR_MNT_MASK: u32 = 0x00007000
+const RTC_ALRMAR_MNT_SHIFT: u32 = 12
+const RTC_ALRMAR_MSK2_MASK: u32 = 0x00008000
+const RTC_ALRMAR_MSK2_SHIFT: u32 = 15
+const RTC_ALRMAR_HU_MASK: u32 = 0x000f0000
+const RTC_ALRMAR_HU_SHIFT: u32 = 16
+const RTC_ALRMAR_HT_MASK: u32 = 0x00300000
+const RTC_ALRMAR_HT_SHIFT: u32 = 20
+const RTC_ALRMAR_PM_MASK: u32 = 0x00400000
+const RTC_ALRMAR_PM_SHIFT: u32 = 22
+const RTC_ALRMAR_MSK3_MASK: u32 = 0x00800000
+const RTC_ALRMAR_MSK3_SHIFT: u32 = 23
+const RTC_ALRMAR_DU_MASK: u32 = 0x0f000000
+const RTC_ALRMAR_DU_SHIFT: u32 = 24
+const RTC_ALRMAR_DT_MASK: u32 = 0x30000000
+const RTC_ALRMAR_DT_SHIFT: u32 = 28
+const RTC_ALRMAR_WDSEL_MASK: u32 = 0x40000000
+const RTC_ALRMAR_WDSEL_SHIFT: u32 = 30
+const RTC_ALRMAR_MSK4_MASK: u32 = 0x80000000
+const RTC_ALRMAR_MSK4_SHIFT: u32 = 31
+
+// This register can be written only when ALRBWF is set to 1 in RTC_ISR, or in initialization
+// mode.This register is write protected. The write access procedure is described in RTC register
+// write protection on page9.
+const RTC_ALRMBR_OFFSET: u32 = 0x00000020
+const RTC_ALRMBR_SU_MASK: u32 = 0x0000000f
+const RTC_ALRMBR_SU_SHIFT: u32 = 0
+const RTC_ALRMBR_ST_MASK: u32 = 0x00000070
+const RTC_ALRMBR_ST_SHIFT: u32 = 4
+const RTC_ALRMBR_MSK1_MASK: u32 = 0x00000080
+const RTC_ALRMBR_MSK1_SHIFT: u32 = 7
+const RTC_ALRMBR_MNU_MASK: u32 = 0x00000f00
+const RTC_ALRMBR_MNU_SHIFT: u32 = 8
+const RTC_ALRMBR_MNT_MASK: u32 = 0x00007000
+const RTC_ALRMBR_MNT_SHIFT: u32 = 12
+const RTC_ALRMBR_MSK2_MASK: u32 = 0x00008000
+const RTC_ALRMBR_MSK2_SHIFT: u32 = 15
+const RTC_ALRMBR_HU_MASK: u32 = 0x000f0000
+const RTC_ALRMBR_HU_SHIFT: u32 = 16
+const RTC_ALRMBR_HT_MASK: u32 = 0x00300000
+const RTC_ALRMBR_HT_SHIFT: u32 = 20
+const RTC_ALRMBR_PM_MASK: u32 = 0x00400000
+const RTC_ALRMBR_PM_SHIFT: u32 = 22
+const RTC_ALRMBR_MSK3_MASK: u32 = 0x00800000
+const RTC_ALRMBR_MSK3_SHIFT: u32 = 23
+const RTC_ALRMBR_DU_MASK: u32 = 0x0f000000
+const RTC_ALRMBR_DU_SHIFT: u32 = 24
+const RTC_ALRMBR_DT_MASK: u32 = 0x30000000
+const RTC_ALRMBR_DT_SHIFT: u32 = 28
+const RTC_ALRMBR_WDSEL_MASK: u32 = 0x40000000
+const RTC_ALRMBR_WDSEL_SHIFT: u32 = 30
+const RTC_ALRMBR_MSK4_MASK: u32 = 0x80000000
+const RTC_ALRMBR_MSK4_SHIFT: u32 = 31
+
+// RTC write protection register
+const RTC_WPR_OFFSET: u32 = 0x00000024
+const RTC_WPR_KEY_MASK: u32 = 0x000000ff
+const RTC_WPR_KEY_SHIFT: u32 = 0
+
+// RTC sub second register
+const RTC_SSR_OFFSET: u32 = 0x00000028
+const RTC_SSR_SS_MASK: u32 = 0x0000ffff
+const RTC_SSR_SS_SHIFT: u32 = 0
+
+// This register is write protected. The write access procedure is described in RTC register write
+// protection on page9.
+const RTC_SHIFTR_OFFSET: u32 = 0x0000002c
+const RTC_SHIFTR_SUBFS_MASK: u32 = 0x00007fff
+const RTC_SHIFTR_SUBFS_SHIFT: u32 = 0
+const RTC_SHIFTR_ADD1S_MASK: u32 = 0x80000000
+const RTC_SHIFTR_ADD1S_SHIFT: u32 = 31
+
+// The content of this register is valid only when TSF is set to 1 in RTC_ISR. It is cleared when
+// TSF bit is reset.
+const RTC_TSTR_OFFSET: u32 = 0x00000030
+const RTC_TSTR_SU_MASK: u32 = 0x0000000f
+const RTC_TSTR_SU_SHIFT: u32 = 0
+const RTC_TSTR_ST_MASK: u32 = 0x00000070
+const RTC_TSTR_ST_SHIFT: u32 = 4
+const RTC_TSTR_MNU_MASK: u32 = 0x00000f00
+const RTC_TSTR_MNU_SHIFT: u32 = 8
+const RTC_TSTR_MNT_MASK: u32 = 0x00007000
+const RTC_TSTR_MNT_SHIFT: u32 = 12
+const RTC_TSTR_HU_MASK: u32 = 0x000f0000
+const RTC_TSTR_HU_SHIFT: u32 = 16
+const RTC_TSTR_HT_MASK: u32 = 0x00300000
+const RTC_TSTR_HT_SHIFT: u32 = 20
+const RTC_TSTR_PM_MASK: u32 = 0x00400000
+const RTC_TSTR_PM_SHIFT: u32 = 22
+
+// The content of this register is valid only when TSF is set to 1 in RTC_ISR. It is cleared when
+// TSF bit is reset.
+const RTC_TSDR_OFFSET: u32 = 0x00000034
+const RTC_TSDR_DU_MASK: u32 = 0x0000000f
+const RTC_TSDR_DU_SHIFT: u32 = 0
+const RTC_TSDR_DT_MASK: u32 = 0x00000030
+const RTC_TSDR_DT_SHIFT: u32 = 4
+const RTC_TSDR_MU_MASK: u32 = 0x00000f00
+const RTC_TSDR_MU_SHIFT: u32 = 8
+const RTC_TSDR_MT_MASK: u32 = 0x00001000
+const RTC_TSDR_MT_SHIFT: u32 = 12
+const RTC_TSDR_WDU_MASK: u32 = 0x0000e000
+const RTC_TSDR_WDU_SHIFT: u32 = 13
+
+// The content of this register is valid only when RTC_ISR/TSF is set. It is cleared when the
+// RTC_ISR/TSF bit is reset.
+const RTC_TSSSR_OFFSET: u32 = 0x00000038
+const RTC_TSSSR_SS_MASK: u32 = 0x0000ffff
+const RTC_TSSSR_SS_SHIFT: u32 = 0
+
+// This register is write protected. The write access procedure is described in RTC register write
+// protection on page9.
+const RTC_CALR_OFFSET: u32 = 0x0000003c
+const RTC_CALR_CALM_MASK: u32 = 0x000001ff
+const RTC_CALR_CALM_SHIFT: u32 = 0
+const RTC_CALR_CALW16_MASK: u32 = 0x00002000
+const RTC_CALR_CALW16_SHIFT: u32 = 13
+const RTC_CALR_CALW8_MASK: u32 = 0x00004000
+const RTC_CALR_CALW8_SHIFT: u32 = 14
+const RTC_CALR_CALP_MASK: u32 = 0x00008000
+const RTC_CALR_CALP_SHIFT: u32 = 15
+
+// RTC tamper and alternate function configuration register
+const RTC_TAMPCR_OFFSET: u32 = 0x00000040
+const RTC_TAMPCR_TAMP1E_MASK: u32 = 0x00000001
+const RTC_TAMPCR_TAMP1E_SHIFT: u32 = 0
+const RTC_TAMPCR_TAMP1TRG_MASK: u32 = 0x00000002
+const RTC_TAMPCR_TAMP1TRG_SHIFT: u32 = 1
+const RTC_TAMPCR_TAMPIE_MASK: u32 = 0x00000004
+const RTC_TAMPCR_TAMPIE_SHIFT: u32 = 2
+const RTC_TAMPCR_TAMP2E_MASK: u32 = 0x00000008
+const RTC_TAMPCR_TAMP2E_SHIFT: u32 = 3
+const RTC_TAMPCR_TAMP2TRG_MASK: u32 = 0x00000010
+const RTC_TAMPCR_TAMP2TRG_SHIFT: u32 = 4
+const RTC_TAMPCR_TAMP3E_MASK: u32 = 0x00000020
+const RTC_TAMPCR_TAMP3E_SHIFT: u32 = 5
+const RTC_TAMPCR_TAMP3TRG_MASK: u32 = 0x00000040
+const RTC_TAMPCR_TAMP3TRG_SHIFT: u32 = 6
+const RTC_TAMPCR_TAMPTS_MASK: u32 = 0x00000080
+const RTC_TAMPCR_TAMPTS_SHIFT: u32 = 7
+const RTC_TAMPCR_TAMPFREQ_MASK: u32 = 0x00000700
+const RTC_TAMPCR_TAMPFREQ_SHIFT: u32 = 8
+const RTC_TAMPCR_TAMPFLT_MASK: u32 = 0x00001800
+const RTC_TAMPCR_TAMPFLT_SHIFT: u32 = 11
+const RTC_TAMPCR_TAMPPRCH_MASK: u32 = 0x00006000
+const RTC_TAMPCR_TAMPPRCH_SHIFT: u32 = 13
+const RTC_TAMPCR_TAMPPUDIS_MASK: u32 = 0x00008000
+const RTC_TAMPCR_TAMPPUDIS_SHIFT: u32 = 15
+const RTC_TAMPCR_TAMP1IE_MASK: u32 = 0x00010000
+const RTC_TAMPCR_TAMP1IE_SHIFT: u32 = 16
+const RTC_TAMPCR_TAMP1NOERASE_MASK: u32 = 0x00020000
+const RTC_TAMPCR_TAMP1NOERASE_SHIFT: u32 = 17
+const RTC_TAMPCR_TAMP1MF_MASK: u32 = 0x00040000
+const RTC_TAMPCR_TAMP1MF_SHIFT: u32 = 18
+const RTC_TAMPCR_TAMP2IE_MASK: u32 = 0x00080000
+const RTC_TAMPCR_TAMP2IE_SHIFT: u32 = 19
+const RTC_TAMPCR_TAMP2NOERASE_MASK: u32 = 0x00100000
+const RTC_TAMPCR_TAMP2NOERASE_SHIFT: u32 = 20
+const RTC_TAMPCR_TAMP2MF_MASK: u32 = 0x00200000
+const RTC_TAMPCR_TAMP2MF_SHIFT: u32 = 21
+const RTC_TAMPCR_TAMP3IE_MASK: u32 = 0x00400000
+const RTC_TAMPCR_TAMP3IE_SHIFT: u32 = 22
+const RTC_TAMPCR_TAMP3NOERASE_MASK: u32 = 0x00800000
+const RTC_TAMPCR_TAMP3NOERASE_SHIFT: u32 = 23
+const RTC_TAMPCR_TAMP3MF_MASK: u32 = 0x01000000
+const RTC_TAMPCR_TAMP3MF_SHIFT: u32 = 24
+
+// This register can be written only when ALRAE is reset in RTC_CR register, or in initialization
+// mode.This register is write protected. The write access procedure is described in RTC register
+// write protection on page9
+const RTC_ALRMASSR_OFFSET: u32 = 0x00000044
+const RTC_ALRMASSR_SS_MASK: u32 = 0x00007fff
+const RTC_ALRMASSR_SS_SHIFT: u32 = 0
+const RTC_ALRMASSR_MASKSS_MASK: u32 = 0x0f000000
+const RTC_ALRMASSR_MASKSS_SHIFT: u32 = 24
+
+// This register can be written only when ALRBE is reset in RTC_CR register, or in initialization
+// mode.This register is write protected.The write access procedure is described in Section: RTC
+// register write protection.
+const RTC_ALRMBSSR_OFFSET: u32 = 0x00000048
+const RTC_ALRMBSSR_SS_MASK: u32 = 0x00007fff
+const RTC_ALRMBSSR_SS_SHIFT: u32 = 0
+const RTC_ALRMBSSR_MASKSS_MASK: u32 = 0x0f000000
+const RTC_ALRMBSSR_MASKSS_SHIFT: u32 = 24
+
+// RTC backup registers
+const RTC_BKP0R_OFFSET: u32 = 0x00000050
+const RTC_BKP0R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP0R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP1R_OFFSET: u32 = 0x00000054
+const RTC_BKP1R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP1R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP2R_OFFSET: u32 = 0x00000058
+const RTC_BKP2R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP2R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP3R_OFFSET: u32 = 0x0000005c
+const RTC_BKP3R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP3R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP4R_OFFSET: u32 = 0x00000060
+const RTC_BKP4R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP4R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP5R_OFFSET: u32 = 0x00000064
+const RTC_BKP5R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP5R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP6R_OFFSET: u32 = 0x00000068
+const RTC_BKP6R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP6R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP7R_OFFSET: u32 = 0x0000006c
+const RTC_BKP7R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP7R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP8R_OFFSET: u32 = 0x00000070
+const RTC_BKP8R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP8R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP9R_OFFSET: u32 = 0x00000074
+const RTC_BKP9R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP9R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP10R_OFFSET: u32 = 0x00000078
+const RTC_BKP10R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP10R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP11R_OFFSET: u32 = 0x0000007c
+const RTC_BKP11R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP11R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP12R_OFFSET: u32 = 0x00000080
+const RTC_BKP12R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP12R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP13R_OFFSET: u32 = 0x00000084
+const RTC_BKP13R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP13R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP14R_OFFSET: u32 = 0x00000088
+const RTC_BKP14R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP14R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP15R_OFFSET: u32 = 0x0000008c
+const RTC_BKP15R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP15R_BKP_SHIFT: u32 = 0
+
+// RTC option register
+const RTC_OR_OFFSET: u32 = 0x0000004c
+const RTC_OR_RTC_ALARM_TYPE_MASK: u32 = 0x00000001
+const RTC_OR_RTC_ALARM_TYPE_SHIFT: u32 = 0
+const RTC_OR_RTC_OUT_RMP_MASK: u32 = 0x00000002
+const RTC_OR_RTC_OUT_RMP_SHIFT: u32 = 1
+
+// RTC backup registers
+const RTC_BKP16R_OFFSET: u32 = 0x00000090
+const RTC_BKP16R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP16R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP17R_OFFSET: u32 = 0x00000094
+const RTC_BKP17R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP17R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP18R_OFFSET: u32 = 0x00000098
+const RTC_BKP18R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP18R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP19R_OFFSET: u32 = 0x0000009c
+const RTC_BKP19R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP19R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP20R_OFFSET: u32 = 0x000000a0
+const RTC_BKP20R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP20R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP21R_OFFSET: u32 = 0x000000a4
+const RTC_BKP21R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP21R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP22R_OFFSET: u32 = 0x000000a8
+const RTC_BKP22R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP22R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP23R_OFFSET: u32 = 0x000000ac
+const RTC_BKP23R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP23R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP24R_OFFSET: u32 = 0x000000b0
+const RTC_BKP24R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP24R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP25R_OFFSET: u32 = 0x000000b4
+const RTC_BKP25R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP25R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP26R_OFFSET: u32 = 0x000000b8
+const RTC_BKP26R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP26R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP27R_OFFSET: u32 = 0x000000bc
+const RTC_BKP27R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP27R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP28R_OFFSET: u32 = 0x000000c0
+const RTC_BKP28R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP28R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP29R_OFFSET: u32 = 0x000000c4
+const RTC_BKP29R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP29R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP30R_OFFSET: u32 = 0x000000c8
+const RTC_BKP30R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP30R_BKP_SHIFT: u32 = 0
+
+// RTC backup registers
+const RTC_BKP31R_OFFSET: u32 = 0x000000cc
+const RTC_BKP31R_BKP_MASK: u32 = 0xffffffff
+const RTC_BKP31R_BKP_SHIFT: u32 = 0

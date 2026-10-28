@@ -1,0 +1,82 @@
+module sh.sysl.stm32h747.adc12_common
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40022300
+
+// ADC Common status register
+const CSR_OFFSET: u32 = 0x00000000
+const CSR_ADRDY_MST_MASK: u32 = 0x00000001
+const CSR_ADRDY_MST_SHIFT: u32 = 0
+const CSR_EOSMP_MST_MASK: u32 = 0x00000002
+const CSR_EOSMP_MST_SHIFT: u32 = 1
+const CSR_EOC_MST_MASK: u32 = 0x00000004
+const CSR_EOC_MST_SHIFT: u32 = 2
+const CSR_EOS_MST_MASK: u32 = 0x00000008
+const CSR_EOS_MST_SHIFT: u32 = 3
+const CSR_OVR_MST_MASK: u32 = 0x00000010
+const CSR_OVR_MST_SHIFT: u32 = 4
+const CSR_JEOC_MST_MASK: u32 = 0x00000020
+const CSR_JEOC_MST_SHIFT: u32 = 5
+const CSR_JEOS_MST_MASK: u32 = 0x00000040
+const CSR_JEOS_MST_SHIFT: u32 = 6
+const CSR_AWD1_MST_MASK: u32 = 0x00000080
+const CSR_AWD1_MST_SHIFT: u32 = 7
+const CSR_AWD2_MST_MASK: u32 = 0x00000100
+const CSR_AWD2_MST_SHIFT: u32 = 8
+const CSR_AWD3_MST_MASK: u32 = 0x00000200
+const CSR_AWD3_MST_SHIFT: u32 = 9
+const CSR_JQOVF_MST_MASK: u32 = 0x00000400
+const CSR_JQOVF_MST_SHIFT: u32 = 10
+const CSR_ADRDY_SLV_MASK: u32 = 0x00010000
+const CSR_ADRDY_SLV_SHIFT: u32 = 16
+const CSR_EOSMP_SLV_MASK: u32 = 0x00020000
+const CSR_EOSMP_SLV_SHIFT: u32 = 17
+const CSR_EOC_SLV_MASK: u32 = 0x00040000
+const CSR_EOC_SLV_SHIFT: u32 = 18
+const CSR_EOS_SLV_MASK: u32 = 0x00080000
+const CSR_EOS_SLV_SHIFT: u32 = 19
+const CSR_OVR_SLV_MASK: u32 = 0x00100000
+const CSR_OVR_SLV_SHIFT: u32 = 20
+const CSR_JEOC_SLV_MASK: u32 = 0x00200000
+const CSR_JEOC_SLV_SHIFT: u32 = 21
+const CSR_JEOS_SLV_MASK: u32 = 0x00400000
+const CSR_JEOS_SLV_SHIFT: u32 = 22
+const CSR_AWD1_SLV_MASK: u32 = 0x00800000
+const CSR_AWD1_SLV_SHIFT: u32 = 23
+const CSR_AWD2_SLV_MASK: u32 = 0x01000000
+const CSR_AWD2_SLV_SHIFT: u32 = 24
+const CSR_AWD3_SLV_MASK: u32 = 0x02000000
+const CSR_AWD3_SLV_SHIFT: u32 = 25
+const CSR_JQOVF_SLV_MASK: u32 = 0x04000000
+const CSR_JQOVF_SLV_SHIFT: u32 = 26
+
+// ADC common control register
+const CCR_OFFSET: u32 = 0x00000008
+const CCR_DUAL_MASK: u32 = 0x0000001f
+const CCR_DUAL_SHIFT: u32 = 0
+const CCR_DELAY_MASK: u32 = 0x00000f00
+const CCR_DELAY_SHIFT: u32 = 8
+const CCR_DAMDF_MASK: u32 = 0x0000c000
+const CCR_DAMDF_SHIFT: u32 = 14
+const CCR_CKMODE_MASK: u32 = 0x00030000
+const CCR_CKMODE_SHIFT: u32 = 16
+const CCR_PRESC_MASK: u32 = 0x003c0000
+const CCR_PRESC_SHIFT: u32 = 18
+const CCR_VREFEN_MASK: u32 = 0x00400000
+const CCR_VREFEN_SHIFT: u32 = 22
+const CCR_VSENSEEN_MASK: u32 = 0x00800000
+const CCR_VSENSEEN_SHIFT: u32 = 23
+const CCR_VBATEN_MASK: u32 = 0x01000000
+const CCR_VBATEN_SHIFT: u32 = 24
+
+// ADC common regular data register for dual and triple modes
+const CDR_OFFSET: u32 = 0x0000000c
+const CDR_RDATA_SLV_MASK: u32 = 0xffff0000
+const CDR_RDATA_SLV_SHIFT: u32 = 16
+const CDR_RDATA_MST_MASK: u32 = 0x0000ffff
+const CDR_RDATA_MST_SHIFT: u32 = 0
+
+// ADC x common regular data register for 32-bit dual mode
+const CDR2_OFFSET: u32 = 0x00000010
+const CDR2_RDATA_ALT_MASK: u32 = 0xffffffff
+const CDR2_RDATA_ALT_SHIFT: u32 = 0

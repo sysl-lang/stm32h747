@@ -1,0 +1,310 @@
+// General purpose timers
+
+module sh.sysl.stm32h747.tim2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40000000
+
+// control register 1
+const CR1_OFFSET: u32 = 0x00000000
+const CR1_UIFREMAP_MASK: u32 = 0x00000800
+const CR1_UIFREMAP_SHIFT: u32 = 11
+const CR1_CKD_MASK: u32 = 0x00000300
+const CR1_CKD_SHIFT: u32 = 8
+const CR1_ARPE_MASK: u32 = 0x00000080
+const CR1_ARPE_SHIFT: u32 = 7
+const CR1_CMS_MASK: u32 = 0x00000060
+const CR1_CMS_SHIFT: u32 = 5
+const CR1_DIR_MASK: u32 = 0x00000010
+const CR1_DIR_SHIFT: u32 = 4
+const CR1_OPM_MASK: u32 = 0x00000008
+const CR1_OPM_SHIFT: u32 = 3
+const CR1_URS_MASK: u32 = 0x00000004
+const CR1_URS_SHIFT: u32 = 2
+const CR1_UDIS_MASK: u32 = 0x00000002
+const CR1_UDIS_SHIFT: u32 = 1
+const CR1_CEN_MASK: u32 = 0x00000001
+const CR1_CEN_SHIFT: u32 = 0
+
+// control register 2
+const CR2_OFFSET: u32 = 0x00000004
+const CR2_TI1S_MASK: u32 = 0x00000080
+const CR2_TI1S_SHIFT: u32 = 7
+const CR2_MMS_MASK: u32 = 0x00000070
+const CR2_MMS_SHIFT: u32 = 4
+const CR2_CCDS_MASK: u32 = 0x00000008
+const CR2_CCDS_SHIFT: u32 = 3
+
+// slave mode control register
+const SMCR_OFFSET: u32 = 0x00000008
+const SMCR_TS_4_3_MASK: u32 = 0x00300000
+const SMCR_TS_4_3_SHIFT: u32 = 20
+const SMCR_SMS_3_MASK: u32 = 0x00010000
+const SMCR_SMS_3_SHIFT: u32 = 16
+const SMCR_ETP_MASK: u32 = 0x00008000
+const SMCR_ETP_SHIFT: u32 = 15
+const SMCR_ECE_MASK: u32 = 0x00004000
+const SMCR_ECE_SHIFT: u32 = 14
+const SMCR_ETPS_MASK: u32 = 0x00003000
+const SMCR_ETPS_SHIFT: u32 = 12
+const SMCR_ETF_MASK: u32 = 0x00000f00
+const SMCR_ETF_SHIFT: u32 = 8
+const SMCR_MSM_MASK: u32 = 0x00000080
+const SMCR_MSM_SHIFT: u32 = 7
+const SMCR_TS_MASK: u32 = 0x00000070
+const SMCR_TS_SHIFT: u32 = 4
+const SMCR_SMS_MASK: u32 = 0x00000007
+const SMCR_SMS_SHIFT: u32 = 0
+
+// DMA/Interrupt enable register
+const DIER_OFFSET: u32 = 0x0000000c
+const DIER_TDE_MASK: u32 = 0x00004000
+const DIER_TDE_SHIFT: u32 = 14
+const DIER_CC4DE_MASK: u32 = 0x00001000
+const DIER_CC4DE_SHIFT: u32 = 12
+const DIER_CC3DE_MASK: u32 = 0x00000800
+const DIER_CC3DE_SHIFT: u32 = 11
+const DIER_CC2DE_MASK: u32 = 0x00000400
+const DIER_CC2DE_SHIFT: u32 = 10
+const DIER_CC1DE_MASK: u32 = 0x00000200
+const DIER_CC1DE_SHIFT: u32 = 9
+const DIER_UDE_MASK: u32 = 0x00000100
+const DIER_UDE_SHIFT: u32 = 8
+const DIER_TIE_MASK: u32 = 0x00000040
+const DIER_TIE_SHIFT: u32 = 6
+const DIER_CC4IE_MASK: u32 = 0x00000010
+const DIER_CC4IE_SHIFT: u32 = 4
+const DIER_CC3IE_MASK: u32 = 0x00000008
+const DIER_CC3IE_SHIFT: u32 = 3
+const DIER_CC2IE_MASK: u32 = 0x00000004
+const DIER_CC2IE_SHIFT: u32 = 2
+const DIER_CC1IE_MASK: u32 = 0x00000002
+const DIER_CC1IE_SHIFT: u32 = 1
+const DIER_UIE_MASK: u32 = 0x00000001
+const DIER_UIE_SHIFT: u32 = 0
+
+// status register
+const SR_OFFSET: u32 = 0x00000010
+const SR_CC4OF_MASK: u32 = 0x00001000
+const SR_CC4OF_SHIFT: u32 = 12
+const SR_CC3OF_MASK: u32 = 0x00000800
+const SR_CC3OF_SHIFT: u32 = 11
+const SR_CC2OF_MASK: u32 = 0x00000400
+const SR_CC2OF_SHIFT: u32 = 10
+const SR_CC1OF_MASK: u32 = 0x00000200
+const SR_CC1OF_SHIFT: u32 = 9
+const SR_TIF_MASK: u32 = 0x00000040
+const SR_TIF_SHIFT: u32 = 6
+const SR_CC4IF_MASK: u32 = 0x00000010
+const SR_CC4IF_SHIFT: u32 = 4
+const SR_CC3IF_MASK: u32 = 0x00000008
+const SR_CC3IF_SHIFT: u32 = 3
+const SR_CC2IF_MASK: u32 = 0x00000004
+const SR_CC2IF_SHIFT: u32 = 2
+const SR_CC1IF_MASK: u32 = 0x00000002
+const SR_CC1IF_SHIFT: u32 = 1
+const SR_UIF_MASK: u32 = 0x00000001
+const SR_UIF_SHIFT: u32 = 0
+
+// event generation register
+const EGR_OFFSET: u32 = 0x00000014
+const EGR_TG_MASK: u32 = 0x00000040
+const EGR_TG_SHIFT: u32 = 6
+const EGR_CC4G_MASK: u32 = 0x00000010
+const EGR_CC4G_SHIFT: u32 = 4
+const EGR_CC3G_MASK: u32 = 0x00000008
+const EGR_CC3G_SHIFT: u32 = 3
+const EGR_CC2G_MASK: u32 = 0x00000004
+const EGR_CC2G_SHIFT: u32 = 2
+const EGR_CC1G_MASK: u32 = 0x00000002
+const EGR_CC1G_SHIFT: u32 = 1
+const EGR_UG_MASK: u32 = 0x00000001
+const EGR_UG_SHIFT: u32 = 0
+
+// capture/compare mode register 1 (output mode)
+const CCMR1_Output_OFFSET: u32 = 0x00000018
+const CCMR1_Output_CC1S_MASK: u32 = 0x00000003
+const CCMR1_Output_CC1S_SHIFT: u32 = 0
+const CCMR1_Output_OC1FE_MASK: u32 = 0x00000004
+const CCMR1_Output_OC1FE_SHIFT: u32 = 2
+const CCMR1_Output_OC1PE_MASK: u32 = 0x00000008
+const CCMR1_Output_OC1PE_SHIFT: u32 = 3
+const CCMR1_Output_OC1M_MASK: u32 = 0x00000070
+const CCMR1_Output_OC1M_SHIFT: u32 = 4
+const CCMR1_Output_OC1CE_MASK: u32 = 0x00000080
+const CCMR1_Output_OC1CE_SHIFT: u32 = 7
+const CCMR1_Output_CC2S_MASK: u32 = 0x00000300
+const CCMR1_Output_CC2S_SHIFT: u32 = 8
+const CCMR1_Output_OC2FE_MASK: u32 = 0x00000400
+const CCMR1_Output_OC2FE_SHIFT: u32 = 10
+const CCMR1_Output_OC2PE_MASK: u32 = 0x00000800
+const CCMR1_Output_OC2PE_SHIFT: u32 = 11
+const CCMR1_Output_OC2M_MASK: u32 = 0x00007000
+const CCMR1_Output_OC2M_SHIFT: u32 = 12
+const CCMR1_Output_OC2CE_MASK: u32 = 0x00008000
+const CCMR1_Output_OC2CE_SHIFT: u32 = 15
+const CCMR1_Output_OC1M_3_MASK: u32 = 0x00010000
+const CCMR1_Output_OC1M_3_SHIFT: u32 = 16
+const CCMR1_Output_OC2M_3_MASK: u32 = 0x01000000
+const CCMR1_Output_OC2M_3_SHIFT: u32 = 24
+
+// capture/compare mode register 1 (input mode)
+// The SVD declares this an alternate reading of CCMR1_Output.
+const CCMR1_Input_OFFSET: u32 = 0x00000018
+const CCMR1_Input_IC2F_MASK: u32 = 0x0000f000
+const CCMR1_Input_IC2F_SHIFT: u32 = 12
+const CCMR1_Input_IC2PCS_MASK: u32 = 0x00000c00
+const CCMR1_Input_IC2PCS_SHIFT: u32 = 10
+const CCMR1_Input_CC2S_MASK: u32 = 0x00000300
+const CCMR1_Input_CC2S_SHIFT: u32 = 8
+const CCMR1_Input_IC1F_MASK: u32 = 0x000000f0
+const CCMR1_Input_IC1F_SHIFT: u32 = 4
+const CCMR1_Input_ICPCS_MASK: u32 = 0x0000000c
+const CCMR1_Input_ICPCS_SHIFT: u32 = 2
+const CCMR1_Input_CC1S_MASK: u32 = 0x00000003
+const CCMR1_Input_CC1S_SHIFT: u32 = 0
+
+// capture/compare mode register 2 (output mode)
+const CCMR2_Output_OFFSET: u32 = 0x0000001c
+const CCMR2_Output_OC4M_3_MASK: u32 = 0x01000000
+const CCMR2_Output_OC4M_3_SHIFT: u32 = 24
+const CCMR2_Output_OC3M_3_MASK: u32 = 0x00010000
+const CCMR2_Output_OC3M_3_SHIFT: u32 = 16
+const CCMR2_Output_OC4CE_MASK: u32 = 0x00008000
+const CCMR2_Output_OC4CE_SHIFT: u32 = 15
+const CCMR2_Output_OC4M_MASK: u32 = 0x00007000
+const CCMR2_Output_OC4M_SHIFT: u32 = 12
+const CCMR2_Output_OC4PE_MASK: u32 = 0x00000800
+const CCMR2_Output_OC4PE_SHIFT: u32 = 11
+const CCMR2_Output_OC4FE_MASK: u32 = 0x00000400
+const CCMR2_Output_OC4FE_SHIFT: u32 = 10
+const CCMR2_Output_CC4S_MASK: u32 = 0x00000300
+const CCMR2_Output_CC4S_SHIFT: u32 = 8
+const CCMR2_Output_OC3CE_MASK: u32 = 0x00000080
+const CCMR2_Output_OC3CE_SHIFT: u32 = 7
+const CCMR2_Output_OC3M_MASK: u32 = 0x00000070
+const CCMR2_Output_OC3M_SHIFT: u32 = 4
+const CCMR2_Output_OC3PE_MASK: u32 = 0x00000008
+const CCMR2_Output_OC3PE_SHIFT: u32 = 3
+const CCMR2_Output_OC3FE_MASK: u32 = 0x00000004
+const CCMR2_Output_OC3FE_SHIFT: u32 = 2
+const CCMR2_Output_CC3S_MASK: u32 = 0x00000003
+const CCMR2_Output_CC3S_SHIFT: u32 = 0
+
+// capture/compare mode register 2 (input mode)
+// The SVD declares this an alternate reading of CCMR2_Output.
+const CCMR2_Input_OFFSET: u32 = 0x0000001c
+const CCMR2_Input_IC4F_MASK: u32 = 0x0000f000
+const CCMR2_Input_IC4F_SHIFT: u32 = 12
+const CCMR2_Input_IC4PSC_MASK: u32 = 0x00000c00
+const CCMR2_Input_IC4PSC_SHIFT: u32 = 10
+const CCMR2_Input_CC4S_MASK: u32 = 0x00000300
+const CCMR2_Input_CC4S_SHIFT: u32 = 8
+const CCMR2_Input_IC3F_MASK: u32 = 0x000000f0
+const CCMR2_Input_IC3F_SHIFT: u32 = 4
+const CCMR2_Input_IC3PSC_MASK: u32 = 0x0000000c
+const CCMR2_Input_IC3PSC_SHIFT: u32 = 2
+const CCMR2_Input_CC3S_MASK: u32 = 0x00000003
+const CCMR2_Input_CC3S_SHIFT: u32 = 0
+
+// capture/compare enable register
+const CCER_OFFSET: u32 = 0x00000020
+const CCER_CC4NP_MASK: u32 = 0x00008000
+const CCER_CC4NP_SHIFT: u32 = 15
+const CCER_CC4P_MASK: u32 = 0x00002000
+const CCER_CC4P_SHIFT: u32 = 13
+const CCER_CC4E_MASK: u32 = 0x00001000
+const CCER_CC4E_SHIFT: u32 = 12
+const CCER_CC3NP_MASK: u32 = 0x00000800
+const CCER_CC3NP_SHIFT: u32 = 11
+const CCER_CC3P_MASK: u32 = 0x00000200
+const CCER_CC3P_SHIFT: u32 = 9
+const CCER_CC3E_MASK: u32 = 0x00000100
+const CCER_CC3E_SHIFT: u32 = 8
+const CCER_CC2NP_MASK: u32 = 0x00000080
+const CCER_CC2NP_SHIFT: u32 = 7
+const CCER_CC2P_MASK: u32 = 0x00000020
+const CCER_CC2P_SHIFT: u32 = 5
+const CCER_CC2E_MASK: u32 = 0x00000010
+const CCER_CC2E_SHIFT: u32 = 4
+const CCER_CC1NP_MASK: u32 = 0x00000008
+const CCER_CC1NP_SHIFT: u32 = 3
+const CCER_CC1P_MASK: u32 = 0x00000002
+const CCER_CC1P_SHIFT: u32 = 1
+const CCER_CC1E_MASK: u32 = 0x00000001
+const CCER_CC1E_SHIFT: u32 = 0
+
+// counter
+const CNT_OFFSET: u32 = 0x00000024
+const CNT_CNT_L_MASK: u32 = 0x0000ffff
+const CNT_CNT_L_SHIFT: u32 = 0
+const CNT_CNT_H_MASK: u32 = 0xffff0000
+const CNT_CNT_H_SHIFT: u32 = 16
+
+// prescaler
+const PSC_OFFSET: u32 = 0x00000028
+const PSC_PSC_MASK: u32 = 0x0000ffff
+const PSC_PSC_SHIFT: u32 = 0
+
+// auto-reload register
+const ARR_OFFSET: u32 = 0x0000002c
+const ARR_ARR_H_MASK: u32 = 0xffff0000
+const ARR_ARR_H_SHIFT: u32 = 16
+const ARR_ARR_L_MASK: u32 = 0x0000ffff
+const ARR_ARR_L_SHIFT: u32 = 0
+
+// capture/compare register 1
+const CCR1_OFFSET: u32 = 0x00000034
+const CCR1_CCR1_H_MASK: u32 = 0xffff0000
+const CCR1_CCR1_H_SHIFT: u32 = 16
+const CCR1_CCR1_L_MASK: u32 = 0x0000ffff
+const CCR1_CCR1_L_SHIFT: u32 = 0
+
+// capture/compare register 2
+const CCR2_OFFSET: u32 = 0x00000038
+const CCR2_CCR2_H_MASK: u32 = 0xffff0000
+const CCR2_CCR2_H_SHIFT: u32 = 16
+const CCR2_CCR2_L_MASK: u32 = 0x0000ffff
+const CCR2_CCR2_L_SHIFT: u32 = 0
+
+// capture/compare register 3
+const CCR3_OFFSET: u32 = 0x0000003c
+const CCR3_CCR3_H_MASK: u32 = 0xffff0000
+const CCR3_CCR3_H_SHIFT: u32 = 16
+const CCR3_CCR3_L_MASK: u32 = 0x0000ffff
+const CCR3_CCR3_L_SHIFT: u32 = 0
+
+// capture/compare register 4
+const CCR4_OFFSET: u32 = 0x00000040
+const CCR4_CCR4_H_MASK: u32 = 0xffff0000
+const CCR4_CCR4_H_SHIFT: u32 = 16
+const CCR4_CCR4_L_MASK: u32 = 0x0000ffff
+const CCR4_CCR4_L_SHIFT: u32 = 0
+
+// DMA control register
+const DCR_OFFSET: u32 = 0x00000048
+const DCR_DBL_MASK: u32 = 0x00001f00
+const DCR_DBL_SHIFT: u32 = 8
+const DCR_DBA_MASK: u32 = 0x0000001f
+const DCR_DBA_SHIFT: u32 = 0
+
+// DMA address for full transfer
+const DMAR_OFFSET: u32 = 0x0000004c
+const DMAR_DMAB_MASK: u32 = 0x0000ffff
+const DMAR_DMAB_SHIFT: u32 = 0
+
+// TIM alternate function option register 1
+const AF1_OFFSET: u32 = 0x00000060
+const AF1_ETRSEL_MASK: u32 = 0x0003c000
+const AF1_ETRSEL_SHIFT: u32 = 14
+
+// TIM timer input selection register
+const TISEL_OFFSET: u32 = 0x00000068
+const TISEL_TI1SEL_MASK: u32 = 0x0000000f
+const TISEL_TI1SEL_SHIFT: u32 = 0
+const TISEL_TI2SEL_MASK: u32 = 0x00000f00
+const TISEL_TI2SEL_SHIFT: u32 = 8
+const TISEL_TI3SEL_MASK: u32 = 0x000f0000
+const TISEL_TI3SEL_SHIFT: u32 = 16
+const TISEL_TI4SEL_MASK: u32 = 0x0f000000
+const TISEL_TI4SEL_SHIFT: u32 = 24

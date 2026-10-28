@@ -1,0 +1,145 @@
+// QUADSPI
+
+module sh.sysl.stm32h747.quadspi
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x52005000
+
+// QUADSPI control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_EN_MASK: u32 = 0x00000001
+const CR_EN_SHIFT: u32 = 0
+const CR_ABORT_MASK: u32 = 0x00000002
+const CR_ABORT_SHIFT: u32 = 1
+const CR_DMAEN_MASK: u32 = 0x00000004
+const CR_DMAEN_SHIFT: u32 = 2
+const CR_TCEN_MASK: u32 = 0x00000008
+const CR_TCEN_SHIFT: u32 = 3
+const CR_SSHIFT_MASK: u32 = 0x00000010
+const CR_SSHIFT_SHIFT: u32 = 4
+const CR_DFM_MASK: u32 = 0x00000040
+const CR_DFM_SHIFT: u32 = 6
+const CR_FSEL_MASK: u32 = 0x00000080
+const CR_FSEL_SHIFT: u32 = 7
+const CR_FTHRES_MASK: u32 = 0x00001f00
+const CR_FTHRES_SHIFT: u32 = 8
+const CR_TEIE_MASK: u32 = 0x00010000
+const CR_TEIE_SHIFT: u32 = 16
+const CR_TCIE_MASK: u32 = 0x00020000
+const CR_TCIE_SHIFT: u32 = 17
+const CR_FTIE_MASK: u32 = 0x00040000
+const CR_FTIE_SHIFT: u32 = 18
+const CR_SMIE_MASK: u32 = 0x00080000
+const CR_SMIE_SHIFT: u32 = 19
+const CR_TOIE_MASK: u32 = 0x00100000
+const CR_TOIE_SHIFT: u32 = 20
+const CR_APMS_MASK: u32 = 0x00400000
+const CR_APMS_SHIFT: u32 = 22
+const CR_PMM_MASK: u32 = 0x00800000
+const CR_PMM_SHIFT: u32 = 23
+const CR_PRESCALER_MASK: u32 = 0xff000000
+const CR_PRESCALER_SHIFT: u32 = 24
+
+// QUADSPI device configuration register
+const DCR_OFFSET: u32 = 0x00000004
+const DCR_CKMODE_MASK: u32 = 0x00000001
+const DCR_CKMODE_SHIFT: u32 = 0
+const DCR_CSHT_MASK: u32 = 0x00000700
+const DCR_CSHT_SHIFT: u32 = 8
+const DCR_FSIZE_MASK: u32 = 0x001f0000
+const DCR_FSIZE_SHIFT: u32 = 16
+
+// QUADSPI status register
+const SR_OFFSET: u32 = 0x00000008
+const SR_TEF_MASK: u32 = 0x00000001
+const SR_TEF_SHIFT: u32 = 0
+const SR_TCF_MASK: u32 = 0x00000002
+const SR_TCF_SHIFT: u32 = 1
+const SR_FTF_MASK: u32 = 0x00000004
+const SR_FTF_SHIFT: u32 = 2
+const SR_SMF_MASK: u32 = 0x00000008
+const SR_SMF_SHIFT: u32 = 3
+const SR_TOF_MASK: u32 = 0x00000010
+const SR_TOF_SHIFT: u32 = 4
+const SR_BUSY_MASK: u32 = 0x00000020
+const SR_BUSY_SHIFT: u32 = 5
+const SR_FLEVEL_MASK: u32 = 0x00003f00
+const SR_FLEVEL_SHIFT: u32 = 8
+
+// QUADSPI flag clear register
+const FCR_OFFSET: u32 = 0x0000000c
+const FCR_CTEF_MASK: u32 = 0x00000001
+const FCR_CTEF_SHIFT: u32 = 0
+const FCR_CTCF_MASK: u32 = 0x00000002
+const FCR_CTCF_SHIFT: u32 = 1
+const FCR_CSMF_MASK: u32 = 0x00000008
+const FCR_CSMF_SHIFT: u32 = 3
+const FCR_CTOF_MASK: u32 = 0x00000010
+const FCR_CTOF_SHIFT: u32 = 4
+
+// QUADSPI data length register
+const DLR_OFFSET: u32 = 0x00000010
+const DLR_DL_MASK: u32 = 0xffffffff
+const DLR_DL_SHIFT: u32 = 0
+
+// QUADSPI communication configuration register
+const CCR_OFFSET: u32 = 0x00000014
+const CCR_INSTRUCTION_MASK: u32 = 0x000000ff
+const CCR_INSTRUCTION_SHIFT: u32 = 0
+const CCR_IMODE_MASK: u32 = 0x00000300
+const CCR_IMODE_SHIFT: u32 = 8
+const CCR_ADMODE_MASK: u32 = 0x00000c00
+const CCR_ADMODE_SHIFT: u32 = 10
+const CCR_ADSIZE_MASK: u32 = 0x00003000
+const CCR_ADSIZE_SHIFT: u32 = 12
+const CCR_ABMODE_MASK: u32 = 0x0000c000
+const CCR_ABMODE_SHIFT: u32 = 14
+const CCR_ABSIZE_MASK: u32 = 0x00030000
+const CCR_ABSIZE_SHIFT: u32 = 16
+const CCR_DCYC_MASK: u32 = 0x007c0000
+const CCR_DCYC_SHIFT: u32 = 18
+const CCR_DMODE_MASK: u32 = 0x03000000
+const CCR_DMODE_SHIFT: u32 = 24
+const CCR_FMODE_MASK: u32 = 0x0c000000
+const CCR_FMODE_SHIFT: u32 = 26
+const CCR_SIOO_MASK: u32 = 0x10000000
+const CCR_SIOO_SHIFT: u32 = 28
+const CCR_DHHC_MASK: u32 = 0x40000000
+const CCR_DHHC_SHIFT: u32 = 30
+const CCR_DDRM_MASK: u32 = 0x80000000
+const CCR_DDRM_SHIFT: u32 = 31
+
+// QUADSPI address register
+const AR_OFFSET: u32 = 0x00000018
+const AR_ADDRESS_MASK: u32 = 0xffffffff
+const AR_ADDRESS_SHIFT: u32 = 0
+
+// QUADSPI alternate bytes registers
+const ABR_OFFSET: u32 = 0x0000001c
+const ABR_ALTERNATE_MASK: u32 = 0xffffffff
+const ABR_ALTERNATE_SHIFT: u32 = 0
+
+// QUADSPI data register
+const DR_OFFSET: u32 = 0x00000020
+const DR_DATA_MASK: u32 = 0xffffffff
+const DR_DATA_SHIFT: u32 = 0
+
+// QUADSPI polling status mask register
+const PSMKR_OFFSET: u32 = 0x00000024
+const PSMKR_MASK_MASK: u32 = 0xffffffff
+const PSMKR_MASK_SHIFT: u32 = 0
+
+// QUADSPI polling status match register
+const PSMAR_OFFSET: u32 = 0x00000028
+const PSMAR_MATCH_MASK: u32 = 0xffffffff
+const PSMAR_MATCH_SHIFT: u32 = 0
+
+// QUADSPI polling interval register
+const PIR_OFFSET: u32 = 0x0000002c
+const PIR_INTERVAL_MASK: u32 = 0x0000ffff
+const PIR_INTERVAL_SHIFT: u32 = 0
+
+// QUADSPI low-power timeout register
+const LPTR_OFFSET: u32 = 0x00000030
+const LPTR_TIMEOUT_MASK: u32 = 0x0000ffff
+const LPTR_TIMEOUT_SHIFT: u32 = 0

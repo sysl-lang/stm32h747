@@ -1,0 +1,345 @@
+module sh.sysl.stm32h747.sdmmc2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x48022400
+
+// SDMMC power control register
+const POWER_OFFSET: u32 = 0x00000000
+const POWER_PWRCTRL_MASK: u32 = 0x00000003
+const POWER_PWRCTRL_SHIFT: u32 = 0
+const POWER_VSWITCH_MASK: u32 = 0x00000004
+const POWER_VSWITCH_SHIFT: u32 = 2
+const POWER_VSWITCHEN_MASK: u32 = 0x00000008
+const POWER_VSWITCHEN_SHIFT: u32 = 3
+const POWER_DIRPOL_MASK: u32 = 0x00000010
+const POWER_DIRPOL_SHIFT: u32 = 4
+
+// The SDMMC_CLKCR register controls the SDMMC_CK output clock, the SDMMC_RX_CLK receive clock, and
+// the bus width.
+const CLKCR_OFFSET: u32 = 0x00000004
+const CLKCR_CLKDIV_MASK: u32 = 0x000003ff
+const CLKCR_CLKDIV_SHIFT: u32 = 0
+const CLKCR_PWRSAV_MASK: u32 = 0x00001000
+const CLKCR_PWRSAV_SHIFT: u32 = 12
+const CLKCR_WIDBUS_MASK: u32 = 0x0000c000
+const CLKCR_WIDBUS_SHIFT: u32 = 14
+const CLKCR_NEGEDGE_MASK: u32 = 0x00010000
+const CLKCR_NEGEDGE_SHIFT: u32 = 16
+const CLKCR_HWFC_EN_MASK: u32 = 0x00020000
+const CLKCR_HWFC_EN_SHIFT: u32 = 17
+const CLKCR_DDR_MASK: u32 = 0x00040000
+const CLKCR_DDR_SHIFT: u32 = 18
+const CLKCR_BUSSPEED_MASK: u32 = 0x00080000
+const CLKCR_BUSSPEED_SHIFT: u32 = 19
+const CLKCR_SELCLKRX_MASK: u32 = 0x00300000
+const CLKCR_SELCLKRX_SHIFT: u32 = 20
+
+// The SDMMC_ARGR register contains a 32-bit command argument, which is sent to a card as part of a
+// command message.
+const ARGR_OFFSET: u32 = 0x00000008
+const ARGR_CMDARG_MASK: u32 = 0xffffffff
+const ARGR_CMDARG_SHIFT: u32 = 0
+
+// The SDMMC_CMDR register contains the command index and command type bits. The command index is
+// sent to a card as part of a command message. The command type bits control the command path
+// state machine (CPSM).
+const CMDR_OFFSET: u32 = 0x0000000c
+const CMDR_CMDINDEX_MASK: u32 = 0x0000003f
+const CMDR_CMDINDEX_SHIFT: u32 = 0
+const CMDR_CMDTRANS_MASK: u32 = 0x00000040
+const CMDR_CMDTRANS_SHIFT: u32 = 6
+const CMDR_CMDSTOP_MASK: u32 = 0x00000080
+const CMDR_CMDSTOP_SHIFT: u32 = 7
+const CMDR_WAITRESP_MASK: u32 = 0x00000300
+const CMDR_WAITRESP_SHIFT: u32 = 8
+const CMDR_WAITINT_MASK: u32 = 0x00000400
+const CMDR_WAITINT_SHIFT: u32 = 10
+const CMDR_WAITPEND_MASK: u32 = 0x00000800
+const CMDR_WAITPEND_SHIFT: u32 = 11
+const CMDR_CPSMEN_MASK: u32 = 0x00001000
+const CMDR_CPSMEN_SHIFT: u32 = 12
+const CMDR_DTHOLD_MASK: u32 = 0x00002000
+const CMDR_DTHOLD_SHIFT: u32 = 13
+const CMDR_BOOTMODE_MASK: u32 = 0x00004000
+const CMDR_BOOTMODE_SHIFT: u32 = 14
+const CMDR_BOOTEN_MASK: u32 = 0x00008000
+const CMDR_BOOTEN_SHIFT: u32 = 15
+const CMDR_CMDSUSPEND_MASK: u32 = 0x00010000
+const CMDR_CMDSUSPEND_SHIFT: u32 = 16
+
+// The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received
+// response.
+const RESP1R_OFFSET: u32 = 0x00000014
+const RESP1R_CARDSTATUS1_MASK: u32 = 0xffffffff
+const RESP1R_CARDSTATUS1_SHIFT: u32 = 0
+
+// The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received
+// response.
+const RESP2R_OFFSET: u32 = 0x00000018
+const RESP2R_CARDSTATUS2_MASK: u32 = 0xffffffff
+const RESP2R_CARDSTATUS2_SHIFT: u32 = 0
+
+// The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received
+// response.
+const RESP3R_OFFSET: u32 = 0x0000001c
+const RESP3R_CARDSTATUS3_MASK: u32 = 0xffffffff
+const RESP3R_CARDSTATUS3_SHIFT: u32 = 0
+
+// The SDMMC_RESP1/2/3/4R registers contain the status of a card, which is part of the received
+// response.
+const RESP4R_OFFSET: u32 = 0x00000020
+const RESP4R_CARDSTATUS4_MASK: u32 = 0xffffffff
+const RESP4R_CARDSTATUS4_SHIFT: u32 = 0
+
+// The SDMMC_DTIMER register contains the data timeout period, in card bus clock periods. A counter
+// loads the value from the SDMMC_DTIMER register, and starts decrementing when the data path state
+// machine (DPSM) enters the Wait_R or Busy state. If the timer reaches 0 while the DPSM is in
+// either of these states, the timeout status flag is set.
+const DTIMER_OFFSET: u32 = 0x00000024
+const DTIMER_DATATIME_MASK: u32 = 0xffffffff
+const DTIMER_DATATIME_SHIFT: u32 = 0
+
+// The SDMMC_DLENR register contains the number of data bytes to be transferred. The value is
+// loaded into the data counter when data transfer starts.
+const DLENR_OFFSET: u32 = 0x00000028
+const DLENR_DATALENGTH_MASK: u32 = 0x01ffffff
+const DLENR_DATALENGTH_SHIFT: u32 = 0
+
+// The SDMMC_DCTRL register control the data path state machine (DPSM).
+const DCTRL_OFFSET: u32 = 0x0000002c
+const DCTRL_DTEN_MASK: u32 = 0x00000001
+const DCTRL_DTEN_SHIFT: u32 = 0
+const DCTRL_DTDIR_MASK: u32 = 0x00000002
+const DCTRL_DTDIR_SHIFT: u32 = 1
+const DCTRL_DTMODE_MASK: u32 = 0x0000000c
+const DCTRL_DTMODE_SHIFT: u32 = 2
+const DCTRL_DBLOCKSIZE_MASK: u32 = 0x000000f0
+const DCTRL_DBLOCKSIZE_SHIFT: u32 = 4
+const DCTRL_RWSTART_MASK: u32 = 0x00000100
+const DCTRL_RWSTART_SHIFT: u32 = 8
+const DCTRL_RWSTOP_MASK: u32 = 0x00000200
+const DCTRL_RWSTOP_SHIFT: u32 = 9
+const DCTRL_RWMOD_MASK: u32 = 0x00000400
+const DCTRL_RWMOD_SHIFT: u32 = 10
+const DCTRL_SDIOEN_MASK: u32 = 0x00000800
+const DCTRL_SDIOEN_SHIFT: u32 = 11
+const DCTRL_BOOTACKEN_MASK: u32 = 0x00001000
+const DCTRL_BOOTACKEN_SHIFT: u32 = 12
+const DCTRL_FIFORST_MASK: u32 = 0x00002000
+const DCTRL_FIFORST_SHIFT: u32 = 13
+
+// The SDMMC_DCNTR register loads the value from the data length register (see SDMMC_DLENR) when
+// the DPSM moves from the Idle state to the Wait_R or Wait_S state. As data is transferred, the
+// counter decrements the value until it reaches 0. The DPSM then moves to the Idle state and when
+// there has been no error, the data status end flag (DATAEND) is set.
+const DCNTR_OFFSET: u32 = 0x00000030
+const DCNTR_DATACOUNT_MASK: u32 = 0x01ffffff
+const DCNTR_DATACOUNT_SHIFT: u32 = 0
+
+// The SDMMC_STAR register is a read-only register. It contains two types of flag:Static flags
+// (bits [29,21,11:0]): these bits remain asserted until they are cleared by writing to the SDMMC
+// interrupt Clear register (see SDMMC_ICR)Dynamic flags (bits [20:12]): these bits change state
+// depending on the state of the underlying logic (for example, FIFO full and empty flags are
+// asserted and de-asserted as data while written to the FIFO)
+const STAR_OFFSET: u32 = 0x00000034
+const STAR_CCRCFAIL_MASK: u32 = 0x00000001
+const STAR_CCRCFAIL_SHIFT: u32 = 0
+const STAR_DCRCFAIL_MASK: u32 = 0x00000002
+const STAR_DCRCFAIL_SHIFT: u32 = 1
+const STAR_CTIMEOUT_MASK: u32 = 0x00000004
+const STAR_CTIMEOUT_SHIFT: u32 = 2
+const STAR_DTIMEOUT_MASK: u32 = 0x00000008
+const STAR_DTIMEOUT_SHIFT: u32 = 3
+const STAR_TXUNDERR_MASK: u32 = 0x00000010
+const STAR_TXUNDERR_SHIFT: u32 = 4
+const STAR_RXOVERR_MASK: u32 = 0x00000020
+const STAR_RXOVERR_SHIFT: u32 = 5
+const STAR_CMDREND_MASK: u32 = 0x00000040
+const STAR_CMDREND_SHIFT: u32 = 6
+const STAR_CMDSENT_MASK: u32 = 0x00000080
+const STAR_CMDSENT_SHIFT: u32 = 7
+const STAR_DATAEND_MASK: u32 = 0x00000100
+const STAR_DATAEND_SHIFT: u32 = 8
+const STAR_DHOLD_MASK: u32 = 0x00000200
+const STAR_DHOLD_SHIFT: u32 = 9
+const STAR_DBCKEND_MASK: u32 = 0x00000400
+const STAR_DBCKEND_SHIFT: u32 = 10
+const STAR_DABORT_MASK: u32 = 0x00000800
+const STAR_DABORT_SHIFT: u32 = 11
+const STAR_DPSMACT_MASK: u32 = 0x00001000
+const STAR_DPSMACT_SHIFT: u32 = 12
+const STAR_CPSMACT_MASK: u32 = 0x00002000
+const STAR_CPSMACT_SHIFT: u32 = 13
+const STAR_TXFIFOHE_MASK: u32 = 0x00004000
+const STAR_TXFIFOHE_SHIFT: u32 = 14
+const STAR_RXFIFOHF_MASK: u32 = 0x00008000
+const STAR_RXFIFOHF_SHIFT: u32 = 15
+const STAR_TXFIFOF_MASK: u32 = 0x00010000
+const STAR_TXFIFOF_SHIFT: u32 = 16
+const STAR_RXFIFOF_MASK: u32 = 0x00020000
+const STAR_RXFIFOF_SHIFT: u32 = 17
+const STAR_TXFIFOE_MASK: u32 = 0x00040000
+const STAR_TXFIFOE_SHIFT: u32 = 18
+const STAR_RXFIFOE_MASK: u32 = 0x00080000
+const STAR_RXFIFOE_SHIFT: u32 = 19
+const STAR_BUSYD0_MASK: u32 = 0x00100000
+const STAR_BUSYD0_SHIFT: u32 = 20
+const STAR_BUSYD0END_MASK: u32 = 0x00200000
+const STAR_BUSYD0END_SHIFT: u32 = 21
+const STAR_SDIOIT_MASK: u32 = 0x00400000
+const STAR_SDIOIT_SHIFT: u32 = 22
+const STAR_ACKFAIL_MASK: u32 = 0x00800000
+const STAR_ACKFAIL_SHIFT: u32 = 23
+const STAR_ACKTIMEOUT_MASK: u32 = 0x01000000
+const STAR_ACKTIMEOUT_SHIFT: u32 = 24
+const STAR_VSWEND_MASK: u32 = 0x02000000
+const STAR_VSWEND_SHIFT: u32 = 25
+const STAR_CKSTOP_MASK: u32 = 0x04000000
+const STAR_CKSTOP_SHIFT: u32 = 26
+const STAR_IDMATE_MASK: u32 = 0x08000000
+const STAR_IDMATE_SHIFT: u32 = 27
+const STAR_IDMABTC_MASK: u32 = 0x10000000
+const STAR_IDMABTC_SHIFT: u32 = 28
+
+// The SDMMC_ICR register is a write-only register. Writing a bit with 1 clears the corresponding
+// bit in the SDMMC_STAR status register.
+const ICR_OFFSET: u32 = 0x00000038
+const ICR_CCRCFAILC_MASK: u32 = 0x00000001
+const ICR_CCRCFAILC_SHIFT: u32 = 0
+const ICR_DCRCFAILC_MASK: u32 = 0x00000002
+const ICR_DCRCFAILC_SHIFT: u32 = 1
+const ICR_CTIMEOUTC_MASK: u32 = 0x00000004
+const ICR_CTIMEOUTC_SHIFT: u32 = 2
+const ICR_DTIMEOUTC_MASK: u32 = 0x00000008
+const ICR_DTIMEOUTC_SHIFT: u32 = 3
+const ICR_TXUNDERRC_MASK: u32 = 0x00000010
+const ICR_TXUNDERRC_SHIFT: u32 = 4
+const ICR_RXOVERRC_MASK: u32 = 0x00000020
+const ICR_RXOVERRC_SHIFT: u32 = 5
+const ICR_CMDRENDC_MASK: u32 = 0x00000040
+const ICR_CMDRENDC_SHIFT: u32 = 6
+const ICR_CMDSENTC_MASK: u32 = 0x00000080
+const ICR_CMDSENTC_SHIFT: u32 = 7
+const ICR_DATAENDC_MASK: u32 = 0x00000100
+const ICR_DATAENDC_SHIFT: u32 = 8
+const ICR_DHOLDC_MASK: u32 = 0x00000200
+const ICR_DHOLDC_SHIFT: u32 = 9
+const ICR_DBCKENDC_MASK: u32 = 0x00000400
+const ICR_DBCKENDC_SHIFT: u32 = 10
+const ICR_DABORTC_MASK: u32 = 0x00000800
+const ICR_DABORTC_SHIFT: u32 = 11
+const ICR_BUSYD0ENDC_MASK: u32 = 0x00200000
+const ICR_BUSYD0ENDC_SHIFT: u32 = 21
+const ICR_SDIOITC_MASK: u32 = 0x00400000
+const ICR_SDIOITC_SHIFT: u32 = 22
+const ICR_ACKFAILC_MASK: u32 = 0x00800000
+const ICR_ACKFAILC_SHIFT: u32 = 23
+const ICR_ACKTIMEOUTC_MASK: u32 = 0x01000000
+const ICR_ACKTIMEOUTC_SHIFT: u32 = 24
+const ICR_VSWENDC_MASK: u32 = 0x02000000
+const ICR_VSWENDC_SHIFT: u32 = 25
+const ICR_CKSTOPC_MASK: u32 = 0x04000000
+const ICR_CKSTOPC_SHIFT: u32 = 26
+const ICR_IDMATEC_MASK: u32 = 0x08000000
+const ICR_IDMATEC_SHIFT: u32 = 27
+const ICR_IDMABTCC_MASK: u32 = 0x10000000
+const ICR_IDMABTCC_SHIFT: u32 = 28
+
+// The interrupt mask register determines which status flags generate an interrupt request by
+// setting the corresponding bit to 1.
+const MASKR_OFFSET: u32 = 0x0000003c
+const MASKR_CCRCFAILIE_MASK: u32 = 0x00000001
+const MASKR_CCRCFAILIE_SHIFT: u32 = 0
+const MASKR_DCRCFAILIE_MASK: u32 = 0x00000002
+const MASKR_DCRCFAILIE_SHIFT: u32 = 1
+const MASKR_CTIMEOUTIE_MASK: u32 = 0x00000004
+const MASKR_CTIMEOUTIE_SHIFT: u32 = 2
+const MASKR_DTIMEOUTIE_MASK: u32 = 0x00000008
+const MASKR_DTIMEOUTIE_SHIFT: u32 = 3
+const MASKR_TXUNDERRIE_MASK: u32 = 0x00000010
+const MASKR_TXUNDERRIE_SHIFT: u32 = 4
+const MASKR_RXOVERRIE_MASK: u32 = 0x00000020
+const MASKR_RXOVERRIE_SHIFT: u32 = 5
+const MASKR_CMDRENDIE_MASK: u32 = 0x00000040
+const MASKR_CMDRENDIE_SHIFT: u32 = 6
+const MASKR_CMDSENTIE_MASK: u32 = 0x00000080
+const MASKR_CMDSENTIE_SHIFT: u32 = 7
+const MASKR_DATAENDIE_MASK: u32 = 0x00000100
+const MASKR_DATAENDIE_SHIFT: u32 = 8
+const MASKR_DHOLDIE_MASK: u32 = 0x00000200
+const MASKR_DHOLDIE_SHIFT: u32 = 9
+const MASKR_DBCKENDIE_MASK: u32 = 0x00000400
+const MASKR_DBCKENDIE_SHIFT: u32 = 10
+const MASKR_DABORTIE_MASK: u32 = 0x00000800
+const MASKR_DABORTIE_SHIFT: u32 = 11
+const MASKR_TXFIFOHEIE_MASK: u32 = 0x00004000
+const MASKR_TXFIFOHEIE_SHIFT: u32 = 14
+const MASKR_RXFIFOHFIE_MASK: u32 = 0x00008000
+const MASKR_RXFIFOHFIE_SHIFT: u32 = 15
+const MASKR_RXFIFOFIE_MASK: u32 = 0x00020000
+const MASKR_RXFIFOFIE_SHIFT: u32 = 17
+const MASKR_TXFIFOEIE_MASK: u32 = 0x00040000
+const MASKR_TXFIFOEIE_SHIFT: u32 = 18
+const MASKR_BUSYD0ENDIE_MASK: u32 = 0x00200000
+const MASKR_BUSYD0ENDIE_SHIFT: u32 = 21
+const MASKR_SDIOITIE_MASK: u32 = 0x00400000
+const MASKR_SDIOITIE_SHIFT: u32 = 22
+const MASKR_ACKFAILIE_MASK: u32 = 0x00800000
+const MASKR_ACKFAILIE_SHIFT: u32 = 23
+const MASKR_ACKTIMEOUTIE_MASK: u32 = 0x01000000
+const MASKR_ACKTIMEOUTIE_SHIFT: u32 = 24
+const MASKR_VSWENDIE_MASK: u32 = 0x02000000
+const MASKR_VSWENDIE_SHIFT: u32 = 25
+const MASKR_CKSTOPIE_MASK: u32 = 0x04000000
+const MASKR_CKSTOPIE_SHIFT: u32 = 26
+const MASKR_IDMABTCIE_MASK: u32 = 0x10000000
+const MASKR_IDMABTCIE_SHIFT: u32 = 28
+
+// The SDMMC_ACKTIMER register contains the acknowledgment timeout period, in SDMMC_CK bus clock
+// periods. A counter loads the value from the SDMMC_ACKTIMER register, and starts decrementing
+// when the data path state machine (DPSM) enters the Wait_Ack state. If the timer reaches 0 while
+// the DPSM is in this states, the acknowledgment timeout status flag is set.
+const ACKTIMER_OFFSET: u32 = 0x00000040
+const ACKTIMER_ACKTIME_MASK: u32 = 0x01ffffff
+const ACKTIMER_ACKTIME_SHIFT: u32 = 0
+
+// The receive and transmit FIFOs can be read or written as 32-bit wide registers. The FIFOs
+// contain 32 entries on 32 sequential addresses. This allows the CPU to use its load and store
+// multiple operands to read from/write to the FIFO.
+const IDMACTRLR_OFFSET: u32 = 0x00000050
+const IDMACTRLR_IDMAEN_MASK: u32 = 0x00000001
+const IDMACTRLR_IDMAEN_SHIFT: u32 = 0
+const IDMACTRLR_IDMABMODE_MASK: u32 = 0x00000002
+const IDMACTRLR_IDMABMODE_SHIFT: u32 = 1
+const IDMACTRLR_IDMABACT_MASK: u32 = 0x00000004
+const IDMACTRLR_IDMABACT_SHIFT: u32 = 2
+
+// The SDMMC_IDMABSIZER register contains the buffers size when in double buffer configuration.
+const IDMABSIZER_OFFSET: u32 = 0x00000054
+const IDMABSIZER_IDMABNDT_MASK: u32 = 0x00001fe0
+const IDMABSIZER_IDMABNDT_SHIFT: u32 = 5
+
+// The SDMMC_IDMABASE0R register contains the memory buffer base address in single buffer
+// configuration and the buffer 0 base address in double buffer configuration.
+const IDMABASE0R_OFFSET: u32 = 0x00000058
+const IDMABASE0R_IDMABASE0_MASK: u32 = 0xffffffff
+const IDMABASE0R_IDMABASE0_SHIFT: u32 = 0
+
+// The SDMMC_IDMABASE1R register contains the double buffer configuration second buffer memory base
+// address.
+const IDMABASE1R_OFFSET: u32 = 0x0000005c
+const IDMABASE1R_IDMABASE1_MASK: u32 = 0xffffffff
+const IDMABASE1R_IDMABASE1_SHIFT: u32 = 0
+
+// The receive and transmit FIFOs can be only read or written as word (32-bit) wide registers. The
+// FIFOs contain 16 entries on sequential addresses. This allows the CPU to use its load and store
+// multiple operands to read from/write to the FIFO.When accessing SDMMC_FIFOR with half word or
+// byte access an AHB bus fault is generated.
+const FIFOR_OFFSET: u32 = 0x00000080
+const FIFOR_FIFODATA_MASK: u32 = 0xffffffff
+const FIFOR_FIFODATA_SHIFT: u32 = 0
+
+// SDMMC command response register
+const RESPCMDR_OFFSET: u32 = 0x00000010
+const RESPCMDR_RESPCMD_MASK: u32 = 0x0000003f
+const RESPCMDR_RESPCMD_SHIFT: u32 = 0

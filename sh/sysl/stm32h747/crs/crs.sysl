@@ -1,0 +1,71 @@
+// CRS
+
+module sh.sysl.stm32h747.crs
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40008400
+
+// CRS control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_SYNCOKIE_MASK: u32 = 0x00000001
+const CR_SYNCOKIE_SHIFT: u32 = 0
+const CR_SYNCWARNIE_MASK: u32 = 0x00000002
+const CR_SYNCWARNIE_SHIFT: u32 = 1
+const CR_ERRIE_MASK: u32 = 0x00000004
+const CR_ERRIE_SHIFT: u32 = 2
+const CR_ESYNCIE_MASK: u32 = 0x00000008
+const CR_ESYNCIE_SHIFT: u32 = 3
+const CR_CEN_MASK: u32 = 0x00000020
+const CR_CEN_SHIFT: u32 = 5
+const CR_AUTOTRIMEN_MASK: u32 = 0x00000040
+const CR_AUTOTRIMEN_SHIFT: u32 = 6
+const CR_SWSYNC_MASK: u32 = 0x00000080
+const CR_SWSYNC_SHIFT: u32 = 7
+const CR_TRIM_MASK: u32 = 0x00003f00
+const CR_TRIM_SHIFT: u32 = 8
+
+// This register can be written only when the frequency error counter is disabled (CEN bit is
+// cleared in CRS_CR). When the counter is enabled, this register is write-protected.
+const CFGR_OFFSET: u32 = 0x00000004
+const CFGR_RELOAD_MASK: u32 = 0x0000ffff
+const CFGR_RELOAD_SHIFT: u32 = 0
+const CFGR_FELIM_MASK: u32 = 0x00ff0000
+const CFGR_FELIM_SHIFT: u32 = 16
+const CFGR_SYNCDIV_MASK: u32 = 0x07000000
+const CFGR_SYNCDIV_SHIFT: u32 = 24
+const CFGR_SYNCSRC_MASK: u32 = 0x30000000
+const CFGR_SYNCSRC_SHIFT: u32 = 28
+const CFGR_SYNCPOL_MASK: u32 = 0x80000000
+const CFGR_SYNCPOL_SHIFT: u32 = 31
+
+// CRS interrupt and status register
+const ISR_OFFSET: u32 = 0x00000008
+const ISR_SYNCOKF_MASK: u32 = 0x00000001
+const ISR_SYNCOKF_SHIFT: u32 = 0
+const ISR_SYNCWARNF_MASK: u32 = 0x00000002
+const ISR_SYNCWARNF_SHIFT: u32 = 1
+const ISR_ERRF_MASK: u32 = 0x00000004
+const ISR_ERRF_SHIFT: u32 = 2
+const ISR_ESYNCF_MASK: u32 = 0x00000008
+const ISR_ESYNCF_SHIFT: u32 = 3
+const ISR_SYNCERR_MASK: u32 = 0x00000100
+const ISR_SYNCERR_SHIFT: u32 = 8
+const ISR_SYNCMISS_MASK: u32 = 0x00000200
+const ISR_SYNCMISS_SHIFT: u32 = 9
+const ISR_TRIMOVF_MASK: u32 = 0x00000400
+const ISR_TRIMOVF_SHIFT: u32 = 10
+const ISR_FEDIR_MASK: u32 = 0x00008000
+const ISR_FEDIR_SHIFT: u32 = 15
+const ISR_FECAP_MASK: u32 = 0xffff0000
+const ISR_FECAP_SHIFT: u32 = 16
+
+// CRS interrupt flag clear register
+const ICR_OFFSET: u32 = 0x0000000c
+const ICR_SYNCOKC_MASK: u32 = 0x00000001
+const ICR_SYNCOKC_SHIFT: u32 = 0
+const ICR_SYNCWARNC_MASK: u32 = 0x00000002
+const ICR_SYNCWARNC_SHIFT: u32 = 1
+const ICR_ERRC_MASK: u32 = 0x00000004
+const ICR_ERRC_SHIFT: u32 = 2
+const ICR_ESYNCC_MASK: u32 = 0x00000008
+const ICR_ESYNCC_SHIFT: u32 = 3

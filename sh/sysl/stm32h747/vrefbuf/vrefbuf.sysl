@@ -1,0 +1,22 @@
+// VREFBUF
+
+module sh.sysl.stm32h747.vrefbuf
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58003c00
+
+// VREFBUF control and status register
+const CSR_OFFSET: u32 = 0x00000000
+const CSR_ENVR_MASK: u32 = 0x00000001
+const CSR_ENVR_SHIFT: u32 = 0
+const CSR_HIZ_MASK: u32 = 0x00000002
+const CSR_HIZ_SHIFT: u32 = 1
+const CSR_VRR_MASK: u32 = 0x00000008
+const CSR_VRR_SHIFT: u32 = 3
+const CSR_VRS_MASK: u32 = 0x00000070
+const CSR_VRS_SHIFT: u32 = 4
+
+// VREFBUF calibration control register
+const CCR_OFFSET: u32 = 0x00000004
+const CCR_TRIM_MASK: u32 = 0x0000003f
+const CCR_TRIM_SHIFT: u32 = 0

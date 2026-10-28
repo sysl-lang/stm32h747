@@ -1,0 +1,25 @@
+module sh.sysl.stm32h747.wwdg2
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x40002c00
+
+// Control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_T_MASK: u32 = 0x0000007f
+const CR_T_SHIFT: u32 = 0
+const CR_WDGA_MASK: u32 = 0x00000080
+const CR_WDGA_SHIFT: u32 = 7
+
+// Configuration register
+const CFR_OFFSET: u32 = 0x00000004
+const CFR_W_MASK: u32 = 0x0000007f
+const CFR_W_SHIFT: u32 = 0
+const CFR_WDGTB_MASK: u32 = 0x00001800
+const CFR_WDGTB_SHIFT: u32 = 11
+const CFR_EWI_MASK: u32 = 0x00000200
+const CFR_EWI_SHIFT: u32 = 9
+
+// Status register
+const SR_OFFSET: u32 = 0x00000008
+const SR_EWIF_MASK: u32 = 0x00000001
+const SR_EWIF_SHIFT: u32 = 0

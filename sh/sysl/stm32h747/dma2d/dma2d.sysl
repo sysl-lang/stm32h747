@@ -1,0 +1,196 @@
+// DMA2D
+
+module sh.sysl.stm32h747.dma2d
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x52001000
+
+// DMA2D control register
+const CR_OFFSET: u32 = 0x00000000
+const CR_START_MASK: u32 = 0x00000001
+const CR_START_SHIFT: u32 = 0
+const CR_SUSP_MASK: u32 = 0x00000002
+const CR_SUSP_SHIFT: u32 = 1
+const CR_ABORT_MASK: u32 = 0x00000004
+const CR_ABORT_SHIFT: u32 = 2
+const CR_TEIE_MASK: u32 = 0x00000100
+const CR_TEIE_SHIFT: u32 = 8
+const CR_TCIE_MASK: u32 = 0x00000200
+const CR_TCIE_SHIFT: u32 = 9
+const CR_TWIE_MASK: u32 = 0x00000400
+const CR_TWIE_SHIFT: u32 = 10
+const CR_CAEIE_MASK: u32 = 0x00000800
+const CR_CAEIE_SHIFT: u32 = 11
+const CR_CTCIE_MASK: u32 = 0x00001000
+const CR_CTCIE_SHIFT: u32 = 12
+const CR_CEIE_MASK: u32 = 0x00002000
+const CR_CEIE_SHIFT: u32 = 13
+const CR_MODE_MASK: u32 = 0x00030000
+const CR_MODE_SHIFT: u32 = 16
+
+// DMA2D Interrupt Status Register
+const ISR_OFFSET: u32 = 0x00000004
+const ISR_TEIF_MASK: u32 = 0x00000001
+const ISR_TEIF_SHIFT: u32 = 0
+const ISR_TCIF_MASK: u32 = 0x00000002
+const ISR_TCIF_SHIFT: u32 = 1
+const ISR_TWIF_MASK: u32 = 0x00000004
+const ISR_TWIF_SHIFT: u32 = 2
+const ISR_CAEIF_MASK: u32 = 0x00000008
+const ISR_CAEIF_SHIFT: u32 = 3
+const ISR_CTCIF_MASK: u32 = 0x00000010
+const ISR_CTCIF_SHIFT: u32 = 4
+const ISR_CEIF_MASK: u32 = 0x00000020
+const ISR_CEIF_SHIFT: u32 = 5
+
+// DMA2D interrupt flag clear register
+const IFCR_OFFSET: u32 = 0x00000008
+const IFCR_CTEIF_MASK: u32 = 0x00000001
+const IFCR_CTEIF_SHIFT: u32 = 0
+const IFCR_CTCIF_MASK: u32 = 0x00000002
+const IFCR_CTCIF_SHIFT: u32 = 1
+const IFCR_CTWIF_MASK: u32 = 0x00000004
+const IFCR_CTWIF_SHIFT: u32 = 2
+const IFCR_CAECIF_MASK: u32 = 0x00000008
+const IFCR_CAECIF_SHIFT: u32 = 3
+const IFCR_CCTCIF_MASK: u32 = 0x00000010
+const IFCR_CCTCIF_SHIFT: u32 = 4
+const IFCR_CCEIF_MASK: u32 = 0x00000020
+const IFCR_CCEIF_SHIFT: u32 = 5
+
+// DMA2D foreground memory address register
+const FGMAR_OFFSET: u32 = 0x0000000c
+const FGMAR_MA_MASK: u32 = 0xffffffff
+const FGMAR_MA_SHIFT: u32 = 0
+
+// DMA2D foreground offset register
+const FGOR_OFFSET: u32 = 0x00000010
+const FGOR_LO_MASK: u32 = 0x00003fff
+const FGOR_LO_SHIFT: u32 = 0
+
+// DMA2D background memory address register
+const BGMAR_OFFSET: u32 = 0x00000014
+const BGMAR_MA_MASK: u32 = 0xffffffff
+const BGMAR_MA_SHIFT: u32 = 0
+
+// DMA2D background offset register
+const BGOR_OFFSET: u32 = 0x00000018
+const BGOR_LO_MASK: u32 = 0x00003fff
+const BGOR_LO_SHIFT: u32 = 0
+
+// DMA2D foreground PFC control register
+const FGPFCCR_OFFSET: u32 = 0x0000001c
+const FGPFCCR_CM_MASK: u32 = 0x0000000f
+const FGPFCCR_CM_SHIFT: u32 = 0
+const FGPFCCR_CCM_MASK: u32 = 0x00000010
+const FGPFCCR_CCM_SHIFT: u32 = 4
+const FGPFCCR_START_MASK: u32 = 0x00000020
+const FGPFCCR_START_SHIFT: u32 = 5
+const FGPFCCR_CS_MASK: u32 = 0x0000ff00
+const FGPFCCR_CS_SHIFT: u32 = 8
+const FGPFCCR_AM_MASK: u32 = 0x00030000
+const FGPFCCR_AM_SHIFT: u32 = 16
+const FGPFCCR_CSS_MASK: u32 = 0x000c0000
+const FGPFCCR_CSS_SHIFT: u32 = 18
+const FGPFCCR_AI_MASK: u32 = 0x00100000
+const FGPFCCR_AI_SHIFT: u32 = 20
+const FGPFCCR_RBS_MASK: u32 = 0x00200000
+const FGPFCCR_RBS_SHIFT: u32 = 21
+const FGPFCCR_ALPHA_MASK: u32 = 0xff000000
+const FGPFCCR_ALPHA_SHIFT: u32 = 24
+
+// DMA2D foreground color register
+const FGCOLR_OFFSET: u32 = 0x00000020
+const FGCOLR_BLUE_MASK: u32 = 0x000000ff
+const FGCOLR_BLUE_SHIFT: u32 = 0
+const FGCOLR_GREEN_MASK: u32 = 0x0000ff00
+const FGCOLR_GREEN_SHIFT: u32 = 8
+const FGCOLR_RED_MASK: u32 = 0x00ff0000
+const FGCOLR_RED_SHIFT: u32 = 16
+
+// DMA2D background PFC control register
+const BGPFCCR_OFFSET: u32 = 0x00000024
+const BGPFCCR_CM_MASK: u32 = 0x0000000f
+const BGPFCCR_CM_SHIFT: u32 = 0
+const BGPFCCR_CCM_MASK: u32 = 0x00000010
+const BGPFCCR_CCM_SHIFT: u32 = 4
+const BGPFCCR_START_MASK: u32 = 0x00000020
+const BGPFCCR_START_SHIFT: u32 = 5
+const BGPFCCR_CS_MASK: u32 = 0x0000ff00
+const BGPFCCR_CS_SHIFT: u32 = 8
+const BGPFCCR_AM_MASK: u32 = 0x00030000
+const BGPFCCR_AM_SHIFT: u32 = 16
+const BGPFCCR_AI_MASK: u32 = 0x00100000
+const BGPFCCR_AI_SHIFT: u32 = 20
+const BGPFCCR_RBS_MASK: u32 = 0x00200000
+const BGPFCCR_RBS_SHIFT: u32 = 21
+const BGPFCCR_ALPHA_MASK: u32 = 0xff000000
+const BGPFCCR_ALPHA_SHIFT: u32 = 24
+
+// DMA2D background color register
+const BGCOLR_OFFSET: u32 = 0x00000028
+const BGCOLR_BLUE_MASK: u32 = 0x000000ff
+const BGCOLR_BLUE_SHIFT: u32 = 0
+const BGCOLR_GREEN_MASK: u32 = 0x0000ff00
+const BGCOLR_GREEN_SHIFT: u32 = 8
+const BGCOLR_RED_MASK: u32 = 0x00ff0000
+const BGCOLR_RED_SHIFT: u32 = 16
+
+// DMA2D foreground CLUT memory address register
+const FGCMAR_OFFSET: u32 = 0x0000002c
+const FGCMAR_MA_MASK: u32 = 0xffffffff
+const FGCMAR_MA_SHIFT: u32 = 0
+
+// DMA2D background CLUT memory address register
+const BGCMAR_OFFSET: u32 = 0x00000030
+const BGCMAR_MA_MASK: u32 = 0xffffffff
+const BGCMAR_MA_SHIFT: u32 = 0
+
+// DMA2D output PFC control register
+const OPFCCR_OFFSET: u32 = 0x00000034
+const OPFCCR_CM_MASK: u32 = 0x00000007
+const OPFCCR_CM_SHIFT: u32 = 0
+const OPFCCR_AI_MASK: u32 = 0x00100000
+const OPFCCR_AI_SHIFT: u32 = 20
+const OPFCCR_RBS_MASK: u32 = 0x00200000
+const OPFCCR_RBS_SHIFT: u32 = 21
+
+// DMA2D output color register
+const OCOLR_OFFSET: u32 = 0x00000038
+const OCOLR_BLUE_MASK: u32 = 0x000000ff
+const OCOLR_BLUE_SHIFT: u32 = 0
+const OCOLR_GREEN_MASK: u32 = 0x0000ff00
+const OCOLR_GREEN_SHIFT: u32 = 8
+const OCOLR_RED_MASK: u32 = 0x00ff0000
+const OCOLR_RED_SHIFT: u32 = 16
+const OCOLR_ALPHA_MASK: u32 = 0xff000000
+const OCOLR_ALPHA_SHIFT: u32 = 24
+
+// DMA2D output memory address register
+const OMAR_OFFSET: u32 = 0x0000003c
+const OMAR_MA_MASK: u32 = 0xffffffff
+const OMAR_MA_SHIFT: u32 = 0
+
+// DMA2D output offset register
+const OOR_OFFSET: u32 = 0x00000040
+const OOR_LO_MASK: u32 = 0x00003fff
+const OOR_LO_SHIFT: u32 = 0
+
+// DMA2D number of line register
+const NLR_OFFSET: u32 = 0x00000044
+const NLR_NL_MASK: u32 = 0x0000ffff
+const NLR_NL_SHIFT: u32 = 0
+const NLR_PL_MASK: u32 = 0x3fff0000
+const NLR_PL_SHIFT: u32 = 16
+
+// DMA2D line watermark register
+const LWR_OFFSET: u32 = 0x00000048
+const LWR_LW_MASK: u32 = 0x0000ffff
+const LWR_LW_SHIFT: u32 = 0
+
+// DMA2D AXI master timer configuration register
+const AMTCR_OFFSET: u32 = 0x0000004c
+const AMTCR_EN_MASK: u32 = 0x00000001
+const AMTCR_EN_SHIFT: u32 = 0
+const AMTCR_DT_MASK: u32 = 0x0000ff00
+const AMTCR_DT_SHIFT: u32 = 8

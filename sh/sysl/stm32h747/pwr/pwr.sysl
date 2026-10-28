@@ -1,0 +1,173 @@
+// PWR
+
+module sh.sysl.stm32h747.pwr
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x58024800
+
+// PWR control register 1
+const CR1_OFFSET: u32 = 0x00000000
+const CR1_LPDS_MASK: u32 = 0x00000001
+const CR1_LPDS_SHIFT: u32 = 0
+const CR1_PVDE_MASK: u32 = 0x00000010
+const CR1_PVDE_SHIFT: u32 = 4
+const CR1_PLS_MASK: u32 = 0x000000e0
+const CR1_PLS_SHIFT: u32 = 5
+const CR1_DBP_MASK: u32 = 0x00000100
+const CR1_DBP_SHIFT: u32 = 8
+const CR1_FLPS_MASK: u32 = 0x00000200
+const CR1_FLPS_SHIFT: u32 = 9
+const CR1_SVOS_MASK: u32 = 0x0000c000
+const CR1_SVOS_SHIFT: u32 = 14
+const CR1_AVDEN_MASK: u32 = 0x00010000
+const CR1_AVDEN_SHIFT: u32 = 16
+const CR1_ALS_MASK: u32 = 0x00060000
+const CR1_ALS_SHIFT: u32 = 17
+
+// PWR control status register 1
+const CSR1_OFFSET: u32 = 0x00000004
+const CSR1_PVDO_MASK: u32 = 0x00000010
+const CSR1_PVDO_SHIFT: u32 = 4
+const CSR1_ACTVOSRDY_MASK: u32 = 0x00002000
+const CSR1_ACTVOSRDY_SHIFT: u32 = 13
+const CSR1_ACTVOS_MASK: u32 = 0x0000c000
+const CSR1_ACTVOS_SHIFT: u32 = 14
+const CSR1_AVDO_MASK: u32 = 0x00010000
+const CSR1_AVDO_SHIFT: u32 = 16
+
+// This register is not reset by wakeup from Standby mode, RESET signal and VDD POR. It is only
+// reset by VSW POR and VSWRST reset. This register shall not be accessed when VSWRST bit in
+// RCC_BDCR register resets the VSW domain.After reset, PWR_CR2 register is write-protected. Prior
+// to modifying its content, the DBP bit in PWR_CR1 register must be set to disable the write
+// protection.
+const CR2_OFFSET: u32 = 0x00000008
+const CR2_BREN_MASK: u32 = 0x00000001
+const CR2_BREN_SHIFT: u32 = 0
+const CR2_MONEN_MASK: u32 = 0x00000010
+const CR2_MONEN_SHIFT: u32 = 4
+const CR2_BRRDY_MASK: u32 = 0x00010000
+const CR2_BRRDY_SHIFT: u32 = 16
+const CR2_VBATL_MASK: u32 = 0x00100000
+const CR2_VBATL_SHIFT: u32 = 20
+const CR2_VBATH_MASK: u32 = 0x00200000
+const CR2_VBATH_SHIFT: u32 = 21
+const CR2_TEMPL_MASK: u32 = 0x00400000
+const CR2_TEMPL_SHIFT: u32 = 22
+const CR2_TEMPH_MASK: u32 = 0x00800000
+const CR2_TEMPH_SHIFT: u32 = 23
+
+// Reset only by POR only, not reset by wakeup from Standby mode and RESET pad. The lower byte of
+// this register is written once after POR and shall be written before changing VOS level or ck_sys
+// clock frequency. No limitation applies to the upper bytes.Programming data corresponding to an
+// invalid combination of SDLEVEL, SDEXTHP, SDEN, LDOEN and BYPASS bits (see Table9) will be
+// ignored: data will not be written, the written-once mechanism will lock the register and any
+// further write access will be ignored. The default supply configuration will be kept and the
+// ACTVOSRDY bit in PWR control status register 1 (PWR_CSR1) will go on indicating invalid voltage
+// levels. The system shall be power cycled before writing a new value.
+const CR3_OFFSET: u32 = 0x0000000c
+const CR3_BYPASS_MASK: u32 = 0x00000001
+const CR3_BYPASS_SHIFT: u32 = 0
+const CR3_LDOEN_MASK: u32 = 0x00000002
+const CR3_LDOEN_SHIFT: u32 = 1
+const CR3_SDEN_MASK: u32 = 0x00000004
+const CR3_SDEN_SHIFT: u32 = 2
+const CR3_VBE_MASK: u32 = 0x00000100
+const CR3_VBE_SHIFT: u32 = 8
+const CR3_VBRS_MASK: u32 = 0x00000200
+const CR3_VBRS_SHIFT: u32 = 9
+const CR3_USB33DEN_MASK: u32 = 0x01000000
+const CR3_USB33DEN_SHIFT: u32 = 24
+const CR3_USBREGEN_MASK: u32 = 0x02000000
+const CR3_USBREGEN_SHIFT: u32 = 25
+const CR3_USB33RDY_MASK: u32 = 0x04000000
+const CR3_USB33RDY_SHIFT: u32 = 26
+
+// This register allows controlling CPU1 power.
+const CPUCR_OFFSET: u32 = 0x00000010
+const CPUCR_PDDS_D1_MASK: u32 = 0x00000001
+const CPUCR_PDDS_D1_SHIFT: u32 = 0
+const CPUCR_PDDS_D2_MASK: u32 = 0x00000002
+const CPUCR_PDDS_D2_SHIFT: u32 = 1
+const CPUCR_PDDS_D3_MASK: u32 = 0x00000004
+const CPUCR_PDDS_D3_SHIFT: u32 = 2
+const CPUCR_STOPF_MASK: u32 = 0x00000020
+const CPUCR_STOPF_SHIFT: u32 = 5
+const CPUCR_SBF_MASK: u32 = 0x00000040
+const CPUCR_SBF_SHIFT: u32 = 6
+const CPUCR_SBF_D1_MASK: u32 = 0x00000080
+const CPUCR_SBF_D1_SHIFT: u32 = 7
+const CPUCR_SBF_D2_MASK: u32 = 0x00000100
+const CPUCR_SBF_D2_SHIFT: u32 = 8
+const CPUCR_CSSF_MASK: u32 = 0x00000200
+const CPUCR_CSSF_SHIFT: u32 = 9
+const CPUCR_RUN_D3_MASK: u32 = 0x00000800
+const CPUCR_RUN_D3_SHIFT: u32 = 11
+
+// This register allows controlling D3 domain power.Following reset VOSRDY will be read 1 by
+// software
+const D3CR_OFFSET: u32 = 0x00000018
+const D3CR_VOSRDY_MASK: u32 = 0x00002000
+const D3CR_VOSRDY_SHIFT: u32 = 13
+const D3CR_VOS_MASK: u32 = 0x0000c000
+const D3CR_VOS_SHIFT: u32 = 14
+
+// reset only by system reset, not reset by wakeup from Standby mode5 wait states are required when
+// writing this register (when clearing a WKUPF bit in PWR_WKUPFR, the AHB write access will
+// complete after the WKUPF has been cleared).
+const WKUPCR_OFFSET: u32 = 0x00000020
+const WKUPCR_WKUPC_MASK: u32 = 0x0000003f
+const WKUPCR_WKUPC_SHIFT: u32 = 0
+
+// reset only by system reset, not reset by wakeup from Standby mode
+const WKUPFR_OFFSET: u32 = 0x00000024
+const WKUPFR_WKUPF1_MASK: u32 = 0x00000001
+const WKUPFR_WKUPF1_SHIFT: u32 = 0
+const WKUPFR_WKUPF2_MASK: u32 = 0x00000002
+const WKUPFR_WKUPF2_SHIFT: u32 = 1
+const WKUPFR_WKUPF3_MASK: u32 = 0x00000004
+const WKUPFR_WKUPF3_SHIFT: u32 = 2
+const WKUPFR_WKUPF4_MASK: u32 = 0x00000008
+const WKUPFR_WKUPF4_SHIFT: u32 = 3
+const WKUPFR_WKUPF5_MASK: u32 = 0x00000010
+const WKUPFR_WKUPF5_SHIFT: u32 = 4
+const WKUPFR_WKUPF6_MASK: u32 = 0x00000020
+const WKUPFR_WKUPF6_SHIFT: u32 = 5
+
+// Reset only by system reset, not reset by wakeup from Standby mode
+const WKUPEPR_OFFSET: u32 = 0x00000028
+const WKUPEPR_WKUPEN1_MASK: u32 = 0x00000001
+const WKUPEPR_WKUPEN1_SHIFT: u32 = 0
+const WKUPEPR_WKUPEN2_MASK: u32 = 0x00000002
+const WKUPEPR_WKUPEN2_SHIFT: u32 = 1
+const WKUPEPR_WKUPEN3_MASK: u32 = 0x00000004
+const WKUPEPR_WKUPEN3_SHIFT: u32 = 2
+const WKUPEPR_WKUPEN4_MASK: u32 = 0x00000008
+const WKUPEPR_WKUPEN4_SHIFT: u32 = 3
+const WKUPEPR_WKUPEN5_MASK: u32 = 0x00000010
+const WKUPEPR_WKUPEN5_SHIFT: u32 = 4
+const WKUPEPR_WKUPEN6_MASK: u32 = 0x00000020
+const WKUPEPR_WKUPEN6_SHIFT: u32 = 5
+const WKUPEPR_WKUPP1_MASK: u32 = 0x00000100
+const WKUPEPR_WKUPP1_SHIFT: u32 = 8
+const WKUPEPR_WKUPP2_MASK: u32 = 0x00000200
+const WKUPEPR_WKUPP2_SHIFT: u32 = 9
+const WKUPEPR_WKUPP3_MASK: u32 = 0x00000400
+const WKUPEPR_WKUPP3_SHIFT: u32 = 10
+const WKUPEPR_WKUPP4_MASK: u32 = 0x00000800
+const WKUPEPR_WKUPP4_SHIFT: u32 = 11
+const WKUPEPR_WKUPP5_MASK: u32 = 0x00001000
+const WKUPEPR_WKUPP5_SHIFT: u32 = 12
+const WKUPEPR_WKUPP6_MASK: u32 = 0x00002000
+const WKUPEPR_WKUPP6_SHIFT: u32 = 13
+const WKUPEPR_WKUPPUPD1_MASK: u32 = 0x00030000
+const WKUPEPR_WKUPPUPD1_SHIFT: u32 = 16
+const WKUPEPR_WKUPPUPD2_MASK: u32 = 0x000c0000
+const WKUPEPR_WKUPPUPD2_SHIFT: u32 = 18
+const WKUPEPR_WKUPPUPD3_MASK: u32 = 0x00300000
+const WKUPEPR_WKUPPUPD3_SHIFT: u32 = 20
+const WKUPEPR_WKUPPUPD4_MASK: u32 = 0x00c00000
+const WKUPEPR_WKUPPUPD4_SHIFT: u32 = 22
+const WKUPEPR_WKUPPUPD5_MASK: u32 = 0x03000000
+const WKUPEPR_WKUPPUPD5_SHIFT: u32 = 24
+const WKUPEPR_WKUPPUPD6_MASK: u32 = 0x0c000000
+const WKUPEPR_WKUPPUPD6_SHIFT: u32 = 26

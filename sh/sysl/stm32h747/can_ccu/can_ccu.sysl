@@ -1,0 +1,66 @@
+// CCU registers
+
+module sh.sysl.stm32h747.can_ccu
+
+// The peripheral's base address. Every offset below is from here.
+const BASE: u32 = 0x4000a800
+
+// Clock Calibration Unit Core Release Register
+const CREL_OFFSET: u32 = 0x00000000
+const CREL_DAY_MASK: u32 = 0x000000ff
+const CREL_DAY_SHIFT: u32 = 0
+const CREL_MON_MASK: u32 = 0x0000ff00
+const CREL_MON_SHIFT: u32 = 8
+const CREL_YEAR_MASK: u32 = 0x000f0000
+const CREL_YEAR_SHIFT: u32 = 16
+const CREL_SUBSTEP_MASK: u32 = 0x00f00000
+const CREL_SUBSTEP_SHIFT: u32 = 20
+const CREL_STEP_MASK: u32 = 0x0f000000
+const CREL_STEP_SHIFT: u32 = 24
+const CREL_REL_MASK: u32 = 0xf0000000
+const CREL_REL_SHIFT: u32 = 28
+
+// Calibration Configuration Register
+const CCFG_OFFSET: u32 = 0x00000004
+const CCFG_TQBT_MASK: u32 = 0x0000001f
+const CCFG_TQBT_SHIFT: u32 = 0
+const CCFG_BCC_MASK: u32 = 0x00000040
+const CCFG_BCC_SHIFT: u32 = 6
+const CCFG_CFL_MASK: u32 = 0x00000080
+const CCFG_CFL_SHIFT: u32 = 7
+const CCFG_OCPM_MASK: u32 = 0x0000ff00
+const CCFG_OCPM_SHIFT: u32 = 8
+const CCFG_CDIV_MASK: u32 = 0x000f0000
+const CCFG_CDIV_SHIFT: u32 = 16
+const CCFG_SWR_MASK: u32 = 0x80000000
+const CCFG_SWR_SHIFT: u32 = 31
+
+// Calibration Status Register
+const CSTAT_OFFSET: u32 = 0x00000008
+const CSTAT_OCPC_MASK: u32 = 0x0003ffff
+const CSTAT_OCPC_SHIFT: u32 = 0
+const CSTAT_TQC_MASK: u32 = 0x1ffc0000
+const CSTAT_TQC_SHIFT: u32 = 18
+const CSTAT_CALS_MASK: u32 = 0xc0000000
+const CSTAT_CALS_SHIFT: u32 = 30
+
+// Calibration Watchdog Register
+const CWD_OFFSET: u32 = 0x0000000c
+const CWD_WDC_MASK: u32 = 0x0000ffff
+const CWD_WDC_SHIFT: u32 = 0
+const CWD_WDV_MASK: u32 = 0xffff0000
+const CWD_WDV_SHIFT: u32 = 16
+
+// Clock Calibration Unit Interrupt Register
+const IR_OFFSET: u32 = 0x00000010
+const IR_CWE_MASK: u32 = 0x00000001
+const IR_CWE_SHIFT: u32 = 0
+const IR_CSC_MASK: u32 = 0x00000002
+const IR_CSC_SHIFT: u32 = 1
+
+// Clock Calibration Unit Interrupt Enable Register
+const IE_OFFSET: u32 = 0x00000014
+const IE_CWEE_MASK: u32 = 0x00000001
+const IE_CWEE_SHIFT: u32 = 0
+const IE_CSCE_MASK: u32 = 0x00000002
+const IE_CSCE_SHIFT: u32 = 1
